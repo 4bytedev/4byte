@@ -1,0 +1,66 @@
+name: Pull Request Review Bot
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  pull-requests: write
+  checks: read
+
+jobs:
+  review-bot:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Retrieve previous workflow conclusions
+        id: checks
+        uses: LouisBrunner/checks-conclusion-action@v2
+        with:
+          checkName: |
+            Lint
+            Security Scan
+            Test
+
+      - name: Post automated review summary comment
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: "🤖 Automated Review Summary"
+          message: |
+            ${{#if eq(steps.checks.outputs.conclusion 'success')}}
+            ✅ All automated checks have passed successfully.  
+            The pull request meets the required quality and security standards.
+            ${{else}}
+            ⚠️ One or more automated checks have failed.  
+            Please review the logs, resolve the reported issues, and push the necessary changes.
+            ${{/if}}
+
+      - name: Request changes if checks failed
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { context, github } = require('@actions/github');
+            await github.pulls.createReview({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number,
+              body: "❌ Automated analysis detected issues in Lint, Security, or Test workflows. Please address these findings before this pull request can be approved.",
+              event: "REQUEST_CHANGES"
+            });
+
+      - name: Approve pull request if all checks passed
+        if: success()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { context, github } = require('@actions/github');
+            await github.pulls.createReview({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number,
+              body: "✅ All quality and security checks have passed. The pull request is approved for merging.",
+              event: "APPROVE"
+            });
