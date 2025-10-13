@@ -24,21 +24,25 @@ jobs:
             Security Scan
             Test
 
+      - name: Set comment message based on check results
+        id: set-comment
+        run: |
+          if [ "${{ steps.checks.outputs.conclusion }}" = "success" ]; then
+            echo "message=✅ All automated checks have passed successfully.  
+            The pull request meets the required quality and security standards." >> $GITHUB_OUTPUT
+          else
+            echo "message=⚠️ One or more automated checks have failed.  
+            Please review the logs, resolve the reported issues, and push the necessary changes." >> $GITHUB_OUTPUT
+          fi
+
       - name: Post automated review summary comment
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           header: "🤖 Automated Review Summary"
-          message: |
-            ${{#if eq(steps.checks.outputs.conclusion 'success')}}
-            ✅ All automated checks have passed successfully.  
-            The pull request meets the required quality and security standards.
-            ${{else}}
-            ⚠️ One or more automated checks have failed.  
-            Please review the logs, resolve the reported issues, and push the necessary changes.
-            ${{/if}}
+          message: ${{ steps.set-comment.outputs.message }}
 
       - name: Request changes if checks failed
-        if: failure()
+        if: steps.checks.outputs.conclusion != 'success'
         uses: actions/github-script@v7
         with:
           script: |
@@ -52,7 +56,7 @@ jobs:
             });
 
       - name: Approve pull request if all checks passed
-        if: success()
+        if: steps.checks.outputs.conclusion == 'success'
         uses: actions/github-script@v7
         with:
           script: |
