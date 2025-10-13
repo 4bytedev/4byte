@@ -17,7 +17,7 @@ jobs:
     steps:
       - name: Retrieve previous workflow conclusions
         id: checks
-        uses: LouisBrunner/checks-conclusion-action@v2
+        uses: LouisBrunner/checks-action@v2
         with:
           checkName: |
             Lint
