@@ -8,26 +8,37 @@ on:
 permissions:
   contents: read
   pull-requests: write
-  checks: read
+  statuses: read
 
 jobs:
   review-bot:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Retrieve previous workflow conclusions
-        id: checks
-        uses: LouisBrunner/checks-action@v2
+      - name: Get PR status
+        id: pr-status
+        uses: actions/github-script@v7
         with:
-          checkName: |
-            Lint
-            Security Scan
-            Test
+          script: |
+            const { context, github } = require('@actions/github');
+            
+            // Get the combined status for the PR head SHA
+            const { data: status } = await github.repos.getCombinedStatusForRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: context.payload.pull_request.head.sha
+            });
+            
+            // Check if all statuses are successful
+            const allSuccess = status.statuses.every(s => s.state === 'success');
+            console.log(`All status checks passed: ${allSuccess}`);
+            
+            // Set output
+            require('fs').appendFileSync(process.env.GITHUB_OUTPUT, `conclusion=${allSuccess ? 'success' : 'failure'}\n`);
 
-      - name: Set comment message based on check results
+      - name: Set comment message
         id: set-comment
         run: |
-          if [ "${{ steps.checks.outputs.conclusion }}" = "success" ]; then
+          if [ "${{ steps.pr-status.outputs.conclusion }}" = "success" ]; then
             echo "message=✅ All automated checks have passed successfully.  
             The pull request meets the required quality and security standards." >> $GITHUB_OUTPUT
           else
@@ -42,7 +53,7 @@ jobs:
           message: ${{ steps.set-comment.outputs.message }}
 
       - name: Request changes if checks failed
-        if: steps.checks.outputs.conclusion != 'success'
+        if: steps.pr-status.outputs.conclusion != 'success'
         uses: actions/github-script@v7
         with:
           script: |
@@ -51,12 +62,12 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               pull_number: context.issue.number,
-              body: "❌ Automated analysis detected issues in Lint, Security, or Test workflows. Please address these findings before this pull request can be approved.",
+              body: "❌ Automated analysis detected issues in required checks. Please address these findings before this pull request can be approved.",
               event: "REQUEST_CHANGES"
             });
 
       - name: Approve pull request if all checks passed
-        if: steps.checks.outputs.conclusion == 'success'
+        if: steps.pr-status.outputs.conclusion == 'success'
         uses: actions/github-script@v7
         with:
           script: |
