@@ -67,12 +67,17 @@ class TagProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->publishes([
                 __DIR__.'/../database/seeders' => database_path('seeders/packages/tag'),
-            ], 'tag-seeders');
+            ], 'seeders');
         }
     }
 
     protected function loadMigrations(): void
     {
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+        if ($this->app->runningInConsole()) {
+            $this->publishes([
+                __DIR__.'/../database/migrations' => database_path('migrations/'),
+            ], 'migrations');
+        }
     }
 }

@@ -74,5 +74,10 @@ class CategoryProvider extends ServiceProvider
     protected function loadMigrations(): void
     {
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+        if ($this->app->runningInConsole()) {
+            $this->publishes([
+                __DIR__.'/../database/migrations' => database_path('migrations/'),
+            ], 'migrations');
+        }
     }
 }

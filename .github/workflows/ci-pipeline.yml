@@ -84,7 +84,7 @@ jobs:
 
       - name: Publish all vendors
         run: |
-          php artisan vendor:publish --all
+          php artisan vendor:publish --tag=migrations
 
       - name: phpstan
         run: |
