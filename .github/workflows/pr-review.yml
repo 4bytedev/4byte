@@ -1,81 +1,81 @@
-name: Pull Request Review Bot
+name: PR Review
 
 on:
-  pull_request:
-    branches:
-      - main
+  workflow_run:
+    workflows: ["Lint", "Security", "Test"]  # workflow display name
+    types:
+      - completed
 
 permissions:
   contents: read
   pull-requests: write
+  checks: read
   statuses: read
 
 jobs:
-  review-bot:
+  review:
     runs-on: ubuntu-latest
     steps:
-      - name: Get PR status
-        id: pr-status
+      - name: Get workflow runs status
         uses: actions/github-script@v7
         with:
           script: |
-            const { context, github } = require('@actions/github');
-            
-            // Get the combined status for the PR head SHA
-            const { data: status } = await github.repos.getCombinedStatusForRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: context.payload.pull_request.head.sha
+            const { context, github, core } = require('@actions/github-script');
+            const prNumber = context.payload.workflow_run.pull_requests[0].number;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+
+            // PR'ın HEAD SHA'sı
+            const sha = context.payload.workflow_run.head_sha;
+
+            // Tüm workflow run’larını al
+            const { data: runs } = await github.actions.listWorkflowRunsForRepo({
+              owner,
+              repo,
+              per_page: 50
             });
-            
-            // Check if all statuses are successful
-            const allSuccess = status.statuses.every(s => s.state === 'success');
-            console.log(`All status checks passed: ${allSuccess}`);
-            
-            // Set output
-            require('fs').appendFileSync(process.env.GITHUB_OUTPUT, `conclusion=${allSuccess ? 'success' : 'failure'}\n`);
 
-      - name: Set comment message
-        id: set-comment
-        run: |
-          if [ "${{ steps.pr-status.outputs.conclusion }}" = "success" ]; then
-            echo "message=✅ All automated checks have passed successfully.  
-            The pull request meets the required quality and security standards." >> $GITHUB_OUTPUT
-          else
-            echo "message=⚠️ One or more automated checks have failed.  
-            Please review the logs, resolve the reported issues, and push the necessary changes." >> $GITHUB_OUTPUT
-          fi
+            // PR SHA ile eşleşen workflow’ları filtrele
+            const relevantRuns = runs.workflow_runs.filter(r =>
+              r.head_sha === sha &&
+              ["Lint", "Security", "Test"].includes(r.name) &&
+              r.status === "completed"
+            );
 
-      - name: Post automated review summary comment
-        uses: marocchino/sticky-pull-request-comment@v2
-        with:
-          header: "🤖 Automated Review Summary"
-          message: ${{ steps.set-comment.outputs.message }}
+            // Eğer hepsi completed değilse exit
+            if (relevantRuns.length < 3) {
+              console.log("Henüz tüm workflow’lar tamamlanmadı. Bekle.");
+              core.setOutput("conclusion", "pending");
+              return;
+            }
 
-      - name: Request changes if checks failed
-        if: steps.pr-status.outputs.conclusion != 'success'
+            const allSuccess = relevantRuns.every(r => r.conclusion === "success");
+            core.setOutput("conclusion", allSuccess ? "success" : "failure");
+            core.setOutput("pr_number", prNumber);
+
+      - name: Approve or request changes
+        if: steps.review.outputs.conclusion != 'pending'
         uses: actions/github-script@v7
         with:
           script: |
-            const { context, github } = require('@actions/github');
-            await github.pulls.createReview({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: context.issue.number,
-              body: "❌ Automated analysis detected issues in required checks. Please address these findings before this pull request can be approved.",
-              event: "REQUEST_CHANGES"
-            });
+            const { github, context } = require('@actions/github');
+            const prNumber = parseInt("${{ steps.review.outputs.pr_number }}");
+            const conclusion = "${{ steps.review.outputs.conclusion }}";
 
-      - name: Approve pull request if all checks passed
-        if: steps.pr-status.outputs.conclusion == 'success'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const { context, github } = require('@actions/github');
-            await github.pulls.createReview({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: context.issue.number,
-              body: "✅ All quality and security checks have passed. The pull request is approved for merging.",
-              event: "APPROVE"
-            });
+            if (conclusion === "success") {
+              await github.pulls.createReview({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: prNumber,
+                body: "✅ All workflows passed. PR approved.",
+                event: "APPROVE"
+              });
+            } else {
+              await github.pulls.createReview({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: prNumber,
+                body: "❌ One or more workflows failed. Please fix before merge.",
+                event: "REQUEST_CHANGES"
+              });
+            }
