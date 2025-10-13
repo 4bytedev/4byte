@@ -305,15 +305,16 @@ final class GorseService
      */
     private function request(string $method, string $uri, $body)
     {
-        $client = new GuzzleHttp\Client(['base_uri' => $this->endpoint]);
-        $options = [];
-        if ($this->apiKey) {
-            $options[GuzzleHttp\RequestOptions::HEADERS] = ['X-API-Key' => $this->apiKey];
-        }
-        if ($body != null) {
-            $options[GuzzleHttp\RequestOptions::JSON] = $body;
-        }
         try {
+            $client = new GuzzleHttp\Client(['base_uri' => $this->endpoint]);
+            $options = [];
+            if ($this->apiKey) {
+                $options[GuzzleHttp\RequestOptions::HEADERS] = ['X-API-Key' => $this->apiKey];
+            }
+            if ($body != null) {
+                $options[GuzzleHttp\RequestOptions::JSON] = $body;
+            }
+
             $response = $client->request($method, $uri, $options);
             $statusCode = $response->getStatusCode();
             $content = (string) $response->getBody();

@@ -6,6 +6,12 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+  id-token: write
+  issues: write
+  pull-requests: write
+
 jobs:
   security:
     runs-on: ubuntu-latest
@@ -39,14 +45,23 @@ jobs:
         run: composer audit
 
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v2
+        uses: github/codeql-action/init@v3
         with:
           languages: javascript, php
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v2
+        uses: github/codeql-action/analyze@v3
 
-      - name: Scan for exposed secrets
-        uses: trufflesecurity/secret-scanner-action@v1
+      - name: TruffleHog OSS
+        id: trufflehog
+        uses: trufflesecurity/trufflehog@main
+        continue-on-error: true
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          path: ./
+          base: main
+          head: HEAD
+          extra_args: --debug
+
+      - name: Scan Results Status
+        if: steps.trufflehog.outcome == 'failure'
+        run: exit 1
