@@ -23,7 +23,5 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
-/bootstrap/cache/*
 docker-compose.local.yml
 public/sitemap.xml
-bootstrap/ssr/
