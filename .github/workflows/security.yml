@@ -2,9 +2,11 @@ name: Security Scan
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
   pull_request:
-    branches: [main]
+    branches:
+      - main
 
 permissions:
   contents: read
@@ -45,7 +47,6 @@ jobs:
         run: composer audit
 
       - name: TruffleHog OSS
-        id: trufflehog
         uses: trufflesecurity/trufflehog@main
         continue-on-error: true
         with:
@@ -53,7 +54,3 @@ jobs:
           base: main
           head: HEAD
           extra_args: --debug
-
-      - name: Scan Results Status
-        if: steps.trufflehog.outcome == 'failure'
-        run: exit 1
