@@ -327,7 +327,7 @@ final class GorseService
 
             error_log("Gorse API Error ({$statusCode}): {$content}");
 
-            return null;
+            return;
         }
     }
 }
