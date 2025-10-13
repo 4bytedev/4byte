@@ -2,7 +2,7 @@ name: PR Review
 
 on:
   workflow_run:
-    workflows: ["Lint", "Security", "Test"]  # workflow display name
+    workflows: ["Lint", "Security", "Test"]
     types:
       - completed
 
@@ -25,24 +25,20 @@ jobs:
             const owner = context.repo.owner;
             const repo = context.repo.repo;
 
-            // PR'ın HEAD SHA'sı
             const sha = context.payload.workflow_run.head_sha;
 
-            // Tüm workflow run’larını al
             const { data: runs } = await github.actions.listWorkflowRunsForRepo({
               owner,
               repo,
               per_page: 50
             });
 
-            // PR SHA ile eşleşen workflow’ları filtrele
             const relevantRuns = runs.workflow_runs.filter(r =>
               r.head_sha === sha &&
               ["Lint", "Security", "Test"].includes(r.name) &&
               r.status === "completed"
             );
 
-            // Eğer hepsi completed değilse exit
             if (relevantRuns.length < 3) {
               console.log("Henüz tüm workflow’lar tamamlanmadı. Bekle.");
               core.setOutput("conclusion", "pending");

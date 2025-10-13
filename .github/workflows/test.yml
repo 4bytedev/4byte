@@ -34,6 +34,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -70,7 +72,7 @@ jobs:
 
       - name: phpstan
         run: |
-          ./vendor/bin/phpstan analyse --level=8 --memory-limit=1G
+          ./vendor/bin/phpstan analyse app tests packages --level=8 --memory-limit=1G
 
       - name: phpinsights
         run: |
