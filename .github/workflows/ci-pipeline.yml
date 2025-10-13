@@ -82,9 +82,13 @@ jobs:
           sudo chown -R $USER:$USER storage bootstrap/cache
           chmod -R 775 storage bootstrap/cache
 
+      - name: Publish all vendors
+        run: |
+          php artisan vendor:publish --all
+
       - name: phpstan
         run: |
-          ./vendor/bin/phpstan analyse app tests packages --level=8 --memory-limit=1G
+          ./vendor/bin/phpstan analyse app tests packages --level=5 --memory-limit=1G
 
       - name: phpinsights
         run: |

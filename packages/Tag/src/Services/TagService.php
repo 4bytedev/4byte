@@ -28,7 +28,7 @@ class TagService
         return Cache::rememberForever("tag:{$slug}:id", function () use ($slug) {
             return Tag::where('slug', $slug)
                 ->select(['id'])
-                ->firstOrFail()?->id;
+                ->firstOrFail()->id;
         });
     }
 
