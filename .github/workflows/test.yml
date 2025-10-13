@@ -37,7 +37,10 @@ jobs:
         run: composer install --no-interaction --prefer-dist
 
       - name: Run PHP Tests
-        run: php artisan test
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+          php artisan test
 
       - name: Run JS Tests
         run: npm test
