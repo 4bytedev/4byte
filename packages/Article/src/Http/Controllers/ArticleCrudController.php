@@ -1,0 +1,155 @@
+<?php
+
+namespace Packages\Article\Http\Controllers;
+
+use App\Http\Controllers\Controller;
+use App\Services\SeoService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
+use Packages\Article\Http\Requests\CreateRequest;
+use Packages\Article\Http\Requests\EditRequest;
+use Packages\Article\Models\Article;
+use Packages\Article\Services\ArticleService;
+use Packages\Category\Models\Category;
+use Packages\Recommend\Services\FeedService;
+use Packages\Tag\Models\Tag;
+
+class ArticleCrudController extends Controller
+{
+    protected ArticleService $articleService;
+
+    protected SeoService $seoService;
+
+    protected FeedService $feedService;
+
+    public function __construct()
+    {
+        $this->articleService = app(ArticleService::class);
+        $this->seoService = app(SeoService::class);
+        $this->feedService = app(FeedService::class);
+    }
+
+    public function createView(Request $request)
+    {
+        $topCategories = $this->feedService->categories();
+
+        $topTags = $this->feedService->tags();
+
+        return Inertia::render('Article/Create', [
+            'topCategories' => $topCategories,
+            'topTags' => $topTags,
+        ]);
+    }
+
+    public function create(CreateRequest $request)
+    {
+        $isDraft = ! $request->boolean('published', false);
+
+        $data = $request->validated();
+
+        $image = null;
+
+        if ($isDraft) {
+            $extra = $request->only(['excerpt', 'content', 'image', 'categories', 'tags', 'sources']);
+            $data = array_merge($data, $extra);
+        }
+
+        $slug = $request->createSlug();
+
+        $article = Article::create([
+            'title' => $data['title'],
+            'slug' => $slug,
+            'excerpt' => $data['excerpt'] ?? null,
+            'content' => $data['content'] ?? null,
+            'status' => $isDraft ? 'DRAFT' : 'PUBLISHED',
+            'published_at' => $isDraft ? null : now(),
+            'image' => $image,
+            'sources' => $data['sources'] ?? [],
+            'user_id' => Auth::id(),
+        ]);
+
+        if ($request->hasFile('image')) {
+            $article->addMediaFromRequest('image')->toMediaCollection('article');
+        }
+
+        if (isset($data['categories'])) {
+            $categoryIds = Category::whereIn('slug', $data['categories'])->pluck('id')->toArray();
+            $article->categories()->sync($categoryIds);
+        }
+
+        if (isset($data['tags'])) {
+            $tagIds = Tag::whereIn('slug', $data['tags'])->pluck('id')->toArray();
+            $article->tags()->sync($tagIds);
+        }
+
+        return response()->json(['slug' => $slug]);
+    }
+
+    public function editView(Article $article)
+    {
+        $topCategories = $this->feedService->categories();
+
+        $topTags = $this->feedService->tags();
+
+        return Inertia::render('Article/Edit', [
+            'topCategories' => $topCategories,
+            'topTags' => $topTags,
+            'slug' => $article->slug,
+            'article' => [
+                'title' => $article->title,
+                'excerpt' => $article->excerpt,
+                'content' => $article->content,
+                'categories' => $article->categories->pluck('slug'),
+                'tags' => $article->tags->pluck('slug'),
+                'published' => $article->status == 'PUBLISHED',
+                'image' => $article->image_url,
+            ],
+        ]);
+    }
+
+    public function edit(EditRequest $request, Article $article)
+    {
+        $isDraft = ! $request->boolean('published', false);
+
+        $data = $request->validated();
+
+        $image = null;
+
+        if ($isDraft) {
+            $extra = $request->only(['excerpt', 'content', 'image', 'categories', 'tags', 'sources']);
+            $data = array_merge($data, $extra);
+        }
+
+        if (isset($data['image'])) {
+            $path = $data['image']->store('article/images');
+            $image = $path;
+        }
+
+        $slug = $request->createSlug($article->id);
+
+        $article->update([
+            'title' => $data['title'],
+            'slug' => $slug,
+            'excerpt' => $data['excerpt'] ?? null,
+            'content' => $data['content'] ?? null,
+            'status' => $isDraft ? 'DRAFT' : 'PUBLISHED',
+            'published_at' => $isDraft ? null : now(),
+            'image' => $image,
+            'sources' => $data['sources'] ?? [],
+            'user_id' => Auth::id(),
+        ]);
+
+        if (isset($data['categories'])) {
+            $categoryIds = Category::whereIn('slug', $data['categories'])->pluck('id')->toArray();
+            $article->categories()->sync($categoryIds);
+        }
+
+        if (isset($data['tags'])) {
+            $tagIds = Tag::whereIn('slug', $data['tags'])->pluck('id')->toArray();
+            $article->tags()->sync($tagIds);
+        }
+
+        return response()->json(['slug' => $slug]);
+    }
+}

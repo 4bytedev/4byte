@@ -1,0 +1,146 @@
+<?php
+
+namespace App\Services;
+
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Redis;
+use Jenssegers\Agent\Agent;
+
+class SessionService
+{
+    /**
+     * Kullanıcının tüm oturumlarını getirir.
+     */
+    public static function getUserSessions(): array
+    {
+        $driver = config('session.driver');
+
+        return match ($driver) {
+            'database' => self::getDatabaseSessions(),
+            'redis' => self::getRedisSessions(),
+            default => [],
+        };
+    }
+
+    /**
+     * Database sessionlarını getir.
+     */
+    protected static function getDatabaseSessions(): array
+    {
+        $sessions = DB::connection(config('session.connection'))->table(config('session.table'))
+            ->where('user_id', Auth::id())
+            ->latest('last_activity')
+            ->get();
+
+        return $sessions->map(fn ($session) => self::formatSession($session))->toArray();
+    }
+
+    /**
+     * Redis sessionlarını getir.
+     */
+    protected static function getRedisSessions(): array
+    {
+        $prefix = config('session.prefix', 'laravel:session:');
+        $keys = Redis::keys($prefix.'*');
+        $sessions = [];
+
+        foreach ($keys as $key) {
+            $data = @unserialize(Redis::get($key));
+            if (! is_array($data) || ($data['login_web'] ?? null) !== Auth::id()) {
+                continue;
+            }
+
+            $session = (object) [
+                'id' => $key,
+                'user_agent' => $data['user_agent'] ?? '',
+                'ip_address' => $data['_ip'] ?? 'Unknown',
+                'last_activity' => $data['_last_activity'] ?? null,
+            ];
+
+            $sessions[] = self::formatSession($session);
+        }
+
+        return $sessions;
+    }
+
+    /**
+     * Session objesini standard formata çevirir.
+     */
+    protected static function formatSession(object $session): object
+    {
+        $agent = self::createAgent($session->user_agent ?? '');
+
+        return (object) [
+            'device' => [
+                'browser' => $agent->browser(),
+                'desktop' => $agent->isDesktop(),
+                'mobile' => $agent->isMobile(),
+                'tablet' => $agent->isTablet(),
+                'platform' => $agent->platform(),
+            ],
+            'ip_address' => $session->ip_address ?? 'Unknown',
+            'is_current_device' => ($session->id ?? '') === request()->session()->getId(),
+            'last_active' => isset($session->last_activity)
+                ? Carbon::createFromTimestamp($session->last_activity)->diffForHumans()
+                : 'Unknown',
+        ];
+    }
+
+    /**
+     * Agent objesi oluştur.
+     */
+    protected static function createAgent(string $userAgent): Agent
+    {
+        return tap(new Agent, fn ($agent) => $agent->setUserAgent($userAgent));
+    }
+
+    /**
+     * Diğer oturumları kapat.
+     */
+    public static function logoutOtherSessions(string $password): bool
+    {
+        if (! Hash::check($password, Auth::user()->password)) {
+            return false;
+        }
+
+        Auth::guard()->logoutOtherDevices($password);
+
+        $driver = config('session.driver');
+
+        if ($driver === 'database') {
+            self::deleteDatabaseSessions();
+        } elseif ($driver === 'redis') {
+            self::deleteRedisSessions();
+        }
+
+        request()->session()->put([
+            'password_hash_'.Auth::getDefaultDriver() => Auth::user()->getAuthPassword(),
+        ]);
+
+        return true;
+    }
+
+    protected static function deleteDatabaseSessions(): void
+    {
+        DB::connection(config('session.connection'))->table(config('session.table'))
+            ->where('user_id', Auth::id())
+            ->where('id', '!=', request()->session()->getId())
+            ->delete();
+    }
+
+    protected static function deleteRedisSessions(): void
+    {
+        $prefix = config('session.prefix', 'laravel:session:');
+        $keys = Redis::keys($prefix.'*');
+
+        foreach ($keys as $key) {
+            $data = @unserialize(Redis::get($key));
+            if (($data['login_web'] ?? null) === Auth::id() && $key !== request()->session()->getId()) {
+                Redis::del($key);
+            }
+        }
+    }
+}

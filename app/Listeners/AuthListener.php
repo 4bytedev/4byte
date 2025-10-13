@@ -1,0 +1,40 @@
+<?php
+
+namespace App\Listeners;
+
+use Illuminate\Auth\Events\Login;
+use Illuminate\Auth\Events\Logout;
+use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Auth\Events\PasswordResetLinkSent;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Spatie\Activitylog\Facades\Activity;
+
+class AuthListener implements ShouldQueue
+{
+    use Queueable;
+
+    /**
+     * Create the event listener.
+     */
+    public function __construct()
+    {
+        //
+    }
+
+    /**
+     * Handle the event.
+     */
+    public function handle(Login|Registered|Logout|PasswordResetLinkSent|PasswordReset $event): void
+    {
+        Activity::causedBy($event->user)
+            ->performedOn($event->user)
+            ->withProperties([
+                'ip' => request()->ip(),
+                'user_agent' => request()->userAgent(),
+            ])
+            ->event(class_basename($event))
+            ->log(class_basename($event));
+    }
+}

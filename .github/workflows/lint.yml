@@ -1,0 +1,42 @@
+name: Lint
+
+on: [push]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        php: [8.4]
+        node: [20]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          tools: pint
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+          cache: "npm"
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Run Pint
+        run: composer run lint
+
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Commit linted files
+        uses: stefanzweifel/git-auto-commit-action@v6
+        with:
+          commit_message: "[CHORE]: fix code style"

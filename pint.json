@@ -1,0 +1,31 @@
+{
+    "preset": "laravel",
+    "exclude": [
+        "resources/js"
+    ],
+    "rules": {
+        "simplified_null_return": true,
+        "indentation_type": true,
+        "array_indentation": true,
+        "no_unused_imports": true,
+        "single_quote": false,
+        "binary_operator_spaces": {
+            "default": "single_space"
+        },
+        "blank_line_after_namespace": true,
+        "phpdoc_scalar": true,
+        "not_operator_with_successor_space": true,
+        "no_extra_blank_lines": {
+            "tokens": [
+                "extra",
+                "use",
+                "return",
+                "throw",
+                "case",
+                "continue",
+                "break"
+            ]
+        },
+        "line_ending": true
+    }
+}

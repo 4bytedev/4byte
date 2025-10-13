@@ -1,0 +1,17 @@
+#!/bin/sh
+set -e
+
+php artisan vendor:publish --force --tag=livewire:assets
+php artisan app:upload-assets --clean
+php artisan app:upload-front-end
+
+php artisan migrate --force
+php artisan filament:optimize
+php artisan icons:cache
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+php artisan route:cache
+php artisan optimize
+
+exec /usr/bin/supervisord -n -c /etc/supervisor/conf.d/supervisord.laravel.conf

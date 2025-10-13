@@ -1,0 +1,44 @@
+<?php
+
+namespace Packages\Page\Services;
+
+use App\Services\UserService;
+use Illuminate\Support\Facades\Cache;
+use Packages\Page\Data\PageData;
+use Packages\Page\Models\Page;
+
+class PageService
+{
+    protected UserService $userService;
+
+    public function __construct()
+    {
+        $this->userService = app(UserService::class);
+    }
+
+    public function getData(int $pageId)
+    {
+        $page = Cache::rememberForever("page:{$pageId}", function () use ($pageId) {
+            $page = Page::query()
+                ->where('status', 'PUBLISHED')
+                ->select(['id', 'title', 'slug', 'content', 'excerpt', 'image', 'published_at', 'user_id'])
+                ->findOrFail($pageId);
+
+            return $page;
+        });
+
+        $user = $this->userService->getData($page->user_id);
+
+        return PageData::fromModel($page, $user);
+    }
+
+    public function getId(string $slug)
+    {
+        return Cache::rememberForever("page:{$slug}:id", function () use ($slug) {
+            return Page::where('status', 'PUBLISHED')
+                ->where('slug', $slug)
+                ->select(['id'])
+                ->firstOrFail()?->id;
+        });
+    }
+}

@@ -1,0 +1,82 @@
+<?php
+
+namespace Packages\Recommend\Http\Controllers;
+
+use App\Data\UserData;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Packages\Article\Data\ArticleData;
+use Packages\Article\Models\Article;
+use Packages\Entry\Data\EntryData;
+use Packages\Entry\Models\Entry;
+use Packages\Recommend\Services\FeedService;
+
+class FeedController extends Controller
+{
+    protected FeedService $feedService;
+
+    public function __construct()
+    {
+        $this->feedService = app(FeedService::class);
+    }
+
+    public function data(Request $request)
+    {
+        $topCategories = $this->feedService->categories();
+
+        $topTags = $this->feedService->tags();
+
+        $topArticles = $this->feedService->articles();
+
+        return response()->json([
+            'categories' => $topCategories,
+            'tags' => $topTags,
+            'articles' => $topArticles,
+        ])->header('Cache-Control', 'public, max-age=86400, immutable');
+    }
+
+    public function feed(Request $request)
+    {
+        // $request->validate([
+        //     'page' => 'sometimes|integer|min:1',
+        //     'tab' => 'sometimes|string',
+        //     'tag' => 'sometimes|string',
+        //     'category' => 'sometimes|string',
+        //     'article' => 'sometimes|string',
+        //     'entry' => 'sometimes|string',
+        //     'user' => 'sometimes|string'
+        // ]);
+
+        // $userId = Auth::id() ?? null;
+        // $page = $request->get('page', 1);
+        // $limit = $request->get('limit', 10);
+        // $tab = $request->get('tab', 'all');
+
+        // if ($tab !== 'all') {
+        //     $tabContents = $this->feedService->getTabContents($tab, $userId);
+        //     return response()->json($tabContents);
+        // }
+
+        // $filters = $this->feedService->buildFilters($request);
+
+        // $recommendations = $this->feedService->getRecommendations($userId, $filters, $limit, ($page - 1) * $limit);
+
+        // $contents = $this->feedService->resolveContents($recommendations);
+
+        // return response()->json($contents)->header('Cache-Control', 'public, max-age=600, immutable');
+
+        $articles = Article::all();
+        $data = [];
+        foreach ($articles as $article) {
+            $data[] = ArticleData::fromModel($article, UserData::fromModel($article->user()->first()));
+        }
+        $entries = Entry::all();
+        $datae = [];
+        foreach ($entries as $entry) {
+            $datae[] = EntryData::fromModel($entry, UserData::fromModel($entry->user()->first()));
+        }
+
+        return response()->json(array_merge($data, $datae));
+    }
+}
