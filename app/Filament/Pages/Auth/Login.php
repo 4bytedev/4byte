@@ -8,7 +8,6 @@ use Filament\Facades\Filament;
 use Filament\Http\Responses\Auth\Contracts\LoginResponse;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Pages\Auth\Login as BaseLogin;
-use Illuminate\Validation\ValidationException;
 
 class Login extends BaseLogin
 {

@@ -5,7 +5,6 @@ namespace App\Filament\Pages\Auth;
 use App\Services\SettingsService;
 use App\Settings\SecuritySettings;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
-use Exception;
 use Filament\Facades\Filament;
 use Filament\Notifications\Auth\ResetPassword as ResetPasswordNotification;
 use Filament\Notifications\Notification;

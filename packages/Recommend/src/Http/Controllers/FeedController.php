@@ -2,14 +2,9 @@
 
 namespace Packages\Recommend\Http\Controllers;
 
-use App\Data\UserData;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Packages\Article\Data\ArticleData;
-use Packages\Article\Models\Article;
-use Packages\Entry\Data\EntryData;
-use Packages\Entry\Models\Entry;
 use Packages\Recommend\Services\FeedService;
 
 class FeedController extends Controller
@@ -45,7 +40,7 @@ class FeedController extends Controller
             'category' => 'sometimes|string',
             'article' => 'sometimes|string',
             'entry' => 'sometimes|string',
-            'user' => 'sometimes|string'
+            'user' => 'sometimes|string',
         ]);
 
         $userId = Auth::id() ?? null;
@@ -55,6 +50,7 @@ class FeedController extends Controller
 
         if ($tab !== 'all') {
             $tabContents = $this->feedService->getTabContents($tab, $userId);
+
             return response()->json($tabContents);
         }
 

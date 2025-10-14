@@ -89,15 +89,15 @@ class GenerateSitemapJob implements ShouldQueue
                 ->success()
                 ->body("Sitemap successfully generated. Totally \"{$totalItems}\" urls generated.")
                 ->actions(
-                /** @var array<Filament\Notifications\Actions\Action> */
-                [
-                    Action::make('view')
-                        ->label('View Sitemap')
-                        ->url(url('/sitemap.xml'))
-                        ->openUrlInNewTab()
-                        ->button()
-                        ->shouldMarkAsRead(),
-                ])
+                    /** @var array<Filament\Notifications\Actions\Action> */
+                    [
+                        Action::make('view')
+                            ->label('View Sitemap')
+                            ->url(url('/sitemap.xml'))
+                            ->openUrlInNewTab()
+                            ->button()
+                            ->shouldMarkAsRead(),
+                    ])
                 ->toDatabase()
         );
     }

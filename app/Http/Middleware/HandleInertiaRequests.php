@@ -64,21 +64,21 @@ class HandleInertiaRequests extends Middleware
                 ],
                 'i18n' => [
                     'languages' => $siteSettings->available_languages,
-                    'default' => $siteSettings->default_language
+                    'default' => $siteSettings->default_language,
                 ],
-                'banners' => Cache::rememberForever("banners", function() {
+                'banners' => Cache::rememberForever("banners", function () {
                     return Banner::query()
-                            ->where('data->is_active', true)
-                            ->where(function ($query) {
-                                $query->whereNull("data->start_time")
-                                    ->orWhere("data->start_time", '<=', now());
-                            })
-                            ->where(function ($query) {
-                                $query->whereNull("data->end_time")
-                                    ->orWhere("data->end_time", '>=', now());
-                            })
-                            ->get()
-                            ->toArray();
+                        ->where('data->is_active', true)
+                        ->where(function ($query) {
+                            $query->whereNull("data->start_time")
+                                ->orWhere("data->start_time", '<=', now());
+                        })
+                        ->where(function ($query) {
+                            $query->whereNull("data->end_time")
+                                ->orWhere("data->end_time", '>=', now());
+                        })
+                        ->get()
+                        ->toArray();
                 }),
             ],
             'account' => $user,
