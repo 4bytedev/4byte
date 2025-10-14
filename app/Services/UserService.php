@@ -40,7 +40,7 @@ class UserService
             return User::query()
                 ->select(['id'])
                 ->where('username', $username)
-                ->firstOrFail()?->id;
+                ->firstOrFail()->id;
         });
     }
 

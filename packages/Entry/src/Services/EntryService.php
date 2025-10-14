@@ -36,6 +36,15 @@ class EntryService
         return EntryData::fromModel($entry, $user);
     }
 
+    public function getId(string $slug)
+    {
+        return Cache::rememberForever("entry:{$slug}:id", function () use ($slug) {
+            return Entry::where('slug', $slug)
+                ->select(['id'])
+                ->firstOrFail()->id;
+        });
+    }
+
     public function checkLiked(int $entryId, ?int $userId)
     {
         if (! $userId) {
@@ -73,15 +82,6 @@ class EntryService
     {
         return Cache::rememberForever("entry:{$entryId}:dislikes", fn () => EntryDislike::where('entry_id', $entryId)->count()
         );
-    }
-
-    public function getId(string $slug)
-    {
-        return Cache::rememberForever("entry:{$slug}:id", function () use ($slug) {
-            return Entry::where('slug', $slug)
-                ->select(['id'])
-                ->firstOrFail()?->id;
-        });
     }
 
     public function insertLike(int $entryId, int $userId)

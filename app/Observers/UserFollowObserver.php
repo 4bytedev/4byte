@@ -16,14 +16,14 @@ class UserFollowObserver
 
     public function created(UserFollow $userFollow)
     {
-        $gorseUser = $this->gorse->getUser($userFollow->follower_id);
+        $gorseUser = $this->gorse->getUser((string) $userFollow->follower_id);
         $gorseUser->labels[] = "user:{$userFollow->follower_id}";
         $this->gorse->updateUser($gorseUser);
     }
 
     public function deleted(UserFollow $userFollow)
     {
-        $gorseUser = $this->gorse->getUser($userFollow->follower_id);
+        $gorseUser = $this->gorse->getUser((string) $userFollow->follower_id);
         $gorseUser->labels = array_filter($gorseUser->labels, fn ($label) => $label !== "user:{$userFollow->follower_id}");
         $this->gorse->updateUser($gorseUser);
     }

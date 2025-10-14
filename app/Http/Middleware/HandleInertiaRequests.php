@@ -62,24 +62,24 @@ class HandleInertiaRequests extends Middleware
                     'login' => $securitySettings->login_enabled,
                     'register' => $securitySettings->register_enabled,
                 ],
-                // 'i18n' => [
-                //     'languages' => $siteSettings->available_languages,
-                //     'default' => $siteSettings->default_language
-                // ],
-                // 'banners' => Cache::rememberForever("banners", function() {
-                //     return Banner::query()
-                //             ->where('data->is_active', true)
-                //             ->where(function ($query) {
-                //                 $query->whereNull("data->start_time")
-                //                     ->orWhere("data->start_time", '<=', now());
-                //             })
-                //             ->where(function ($query) {
-                //                 $query->whereNull("data->end_time")
-                //                     ->orWhere("data->end_time", '>=', now());
-                //             })
-                //             ->get()
-                //             ->toArray();
-                // }),
+                'i18n' => [
+                    'languages' => $siteSettings->available_languages,
+                    'default' => $siteSettings->default_language
+                ],
+                'banners' => Cache::rememberForever("banners", function() {
+                    return Banner::query()
+                            ->where('data->is_active', true)
+                            ->where(function ($query) {
+                                $query->whereNull("data->start_time")
+                                    ->orWhere("data->start_time", '<=', now());
+                            })
+                            ->where(function ($query) {
+                                $query->whereNull("data->end_time")
+                                    ->orWhere("data->end_time", '>=', now());
+                            })
+                            ->get()
+                            ->toArray();
+                }),
             ],
             'account' => $user,
             'csrf_token' => csrf_token(),

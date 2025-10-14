@@ -16,14 +16,14 @@ class CategoryFollowObserver
 
     public function created(CategoryFollow $categoryFollow)
     {
-        $gorseUser = $this->gorse->getUser($categoryFollow->user_id);
+        $gorseUser = $this->gorse->getUser((string) $categoryFollow->user_id);
         $gorseUser->labels[] = "category:{$categoryFollow->id}";
         $this->gorse->updateUser($gorseUser);
     }
 
     public function deleted(CategoryFollow $categoryFollow)
     {
-        $gorseUser = $this->gorse->getUser($categoryFollow->user_id);
+        $gorseUser = $this->gorse->getUser((string) $categoryFollow->user_id);
         $gorseUser->labels = array_filter($gorseUser->labels, fn ($label) => $label !== "category:{$categoryFollow->category_id}");
         $this->gorse->updateUser($gorseUser);
     }

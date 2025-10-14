@@ -39,6 +39,14 @@ class EntryController extends Controller
 
     public function like(Request $request)
     {
+        $request->merge([
+            'slug' => $request->route('slug'),
+        ]);
+
+        $request->validate([
+            'slug' => 'required|string|exists:entry,slug',
+        ]);
+
         $slug = $request->route('slug');
         $entryId = $this->entryService->getId($slug);
         $userId = Auth::id();
@@ -65,6 +73,14 @@ class EntryController extends Controller
 
     public function dislike(Request $request)
     {
+        $request->merge([
+            'slug' => $request->route('slug'),
+        ]);
+
+        $request->validate([
+            'slug' => 'required|string|exists:entry,slug',
+        ]);
+
         $slug = $request->route('slug');
         $entryId = $this->entryService->getId($slug);
         $userId = Auth::id();
@@ -91,6 +107,14 @@ class EntryController extends Controller
 
     public function save(Request $request)
     {
+        $request->merge([
+            'slug' => $request->route('slug'),
+        ]);
+
+        $request->validate([
+            'slug' => 'required|string|exists:entry,slug',
+        ]);
+
         $slug = $request->route('slug');
         $entryId = $this->entryService->getId($slug);
         $userId = Auth::id();
@@ -103,10 +127,16 @@ class EntryController extends Controller
 
     public function comment(Request $request)
     {
+        $request->merge([
+            'slug' => $request->route('slug'),
+        ]);
+
         $request->validate([
             'content' => 'required|string|min:20',
             'parent' => 'nullable|integer',
+            'slug' => 'required|string|exists:entry,slug',
         ]);
+
         $slug = $request->route('slug');
         $entryId = $this->entryService->getId($slug);
         $userId = Auth::id();
@@ -117,33 +147,56 @@ class EntryController extends Controller
 
     public function commentList(Request $request)
     {
+        $request->merge([
+            'slug' => $request->route('slug'),
+        ]);
+
         $request->validate([
             'page' => 'sometimes|integer|min:1',
+            'slug' => 'required|string|exists:entry,slug',
         ]);
         $slug = $request->route('slug');
         $entryId = $this->entryService->getId($slug);
 
-        $comments = $this->entryService->getComments($entryId, $request->get('page', 1), 10);
+        $comments = $this->entryService->getComments($entryId, $request->integer('page', 1), 10);
 
         return response()->json($comments);
     }
 
     public function commentReplies(Request $request)
     {
+        $request->merge([
+            'comment' => $request->route('comment'),
+            'slug' => $request->route('slug'),
+        ]);
+
         $request->validate([
             'page' => 'sometimes|integer|min:1',
+            'comment' => 'required|integer|exists:comments,id',
+            'slug' => 'required|string|exists:entry,slug',
         ]);
+
         $slug = $request->route('slug');
         $commentId = $request->route('comment');
         $entryId = $this->entryService->getId($slug);
 
-        $commentReplies = $this->entryService->getCommentReplies($entryId, $commentId, $request->get('page', 1), 10);
+        $commentReplies = $this->entryService->getCommentReplies($entryId, $commentId, $request->integer('page', 1), 10);
 
         return response()->json($commentReplies);
     }
 
     public function commentLike(Request $request)
     {
+        $request->merge([
+            'comment' => $request->route('comment'),
+            'slug' => $request->route('slug'),
+        ]);
+
+        $request->validate([
+            'comment' => 'required|integer|exists:comments,id',
+            'slug' => 'required|string|exists:entry,slug',
+        ]);
+
         $slug = $request->route('slug');
         $commentId = $request->route('comment');
         $entryId = $this->entryService->getId($slug);

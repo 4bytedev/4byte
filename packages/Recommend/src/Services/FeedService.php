@@ -49,7 +49,8 @@ class FeedService
                 ->orderBy('likes_count', 'desc')
                 ->take(7)
                 ->get()
-                ->map(function ($article) {
+                ->map(function (Article $article) {
+                    /** @var \App\Models\User $article->user */
                     return [
                         'title' => $article->title,
                         'slug' => $article->slug,
@@ -206,9 +207,9 @@ class FeedService
 
             try {
                 if ($type === 'article') {
-                    $contents[] = $this->articleService->getData($id);
+                    $contents[] = $this->articleService->getData((int) $id);
                 } elseif ($type === 'news') {
-                    $contents[] = $this->newsService->getData($id);
+                    $contents[] = $this->newsService->getData((int) $id);
                 }
             } catch (\Throwable $th) {
                 logger()->error('Invalid recommended content', ['type' => $type, 'id' => $id, 'th' => $th]);

@@ -64,7 +64,7 @@ class ArticleData extends Data
             isSaved: $articleService->checkSaved($article->id, $userId),
             canUpdate: Gate::allows('update', $article),
             canDelete: Gate::allows('delete', $article),
-            type: $article->status && $article->status == 'PUBLISHED' ? 'article' : 'draft'
+            type: $article->status == 'PUBLISHED' ? 'article' : 'draft'
         );
     }
 }

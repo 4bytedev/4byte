@@ -18,12 +18,12 @@ class ArticleCommentLikeObserver
 
     public function created(ArticleCommentLike $articleCommentLike)
     {
-        $feedback = new Feedback('like', $articleCommentLike->user_id, "article:{$articleCommentLike->article_id}:comment:{$articleCommentLike->comment_id}", '', Carbon::now());
+        $feedback = new Feedback('like', (string) $articleCommentLike->user_id, "article:{$articleCommentLike->article_id}:comment:{$articleCommentLike->comment_id}", '', Carbon::now());
         $this->gorse->insertFeedback($feedback);
     }
 
     public function deleted(ArticleCommentLike $articleCommentLike)
     {
-        $this->gorse->deleteFeedback('like', $articleCommentLike->user_id, "article:{$articleCommentLike->article_id}:comment:{$articleCommentLike->comment_id}");
+        $this->gorse->deleteFeedback('like', (string) $articleCommentLike->user_id, "article:{$articleCommentLike->article_id}:comment:{$articleCommentLike->comment_id}");
     }
 }

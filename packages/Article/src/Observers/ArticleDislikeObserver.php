@@ -18,12 +18,12 @@ class ArticleDislikeObserver
 
     public function created(ArticleDislike $articleDislike)
     {
-        $feedback = new Feedback('read', $articleDislike->user_id, 'article:'.$articleDislike->article_id, '', Carbon::now());
+        $feedback = new Feedback('read', (string) $articleDislike->user_id, 'article:'.$articleDislike->article_id, '', Carbon::now());
         $this->gorse->insertFeedback($feedback);
     }
 
     public function deleted(ArticleDislike $articleDislike)
     {
-        $this->gorse->deleteFeedback('read', $articleDislike->user_id, 'article:'.$articleDislike->article_id);
+        $this->gorse->deleteFeedback('read', (string) $articleDislike->user_id, 'article:'.$articleDislike->article_id);
     }
 }

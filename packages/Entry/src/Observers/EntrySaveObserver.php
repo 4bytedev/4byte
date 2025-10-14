@@ -18,12 +18,12 @@ class EntrySaveObserver
 
     public function created(EntrySave $entrySave)
     {
-        $feedback = new Feedback('save', $entrySave->user_id, 'entry:'.$entrySave->entry_id, '', Carbon::now());
+        $feedback = new Feedback('save', (string) $entrySave->user_id, 'entry:'.$entrySave->entry_id, '', Carbon::now());
         $this->gorse->insertFeedback($feedback);
     }
 
     public function deleted(EntrySave $entrySave)
     {
-        $this->gorse->deleteFeedback('save', $entrySave->user_id, 'entry:'.$entrySave->entry_id);
+        $this->gorse->deleteFeedback('save', (string) $entrySave->user_id, 'entry:'.$entrySave->entry_id);
     }
 }

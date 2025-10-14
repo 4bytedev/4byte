@@ -38,45 +38,32 @@ class FeedController extends Controller
 
     public function feed(Request $request)
     {
-        // $request->validate([
-        //     'page' => 'sometimes|integer|min:1',
-        //     'tab' => 'sometimes|string',
-        //     'tag' => 'sometimes|string',
-        //     'category' => 'sometimes|string',
-        //     'article' => 'sometimes|string',
-        //     'entry' => 'sometimes|string',
-        //     'user' => 'sometimes|string'
-        // ]);
+        $request->validate([
+            'page' => 'sometimes|integer|min:1',
+            'tab' => 'sometimes|string',
+            'tag' => 'sometimes|string',
+            'category' => 'sometimes|string',
+            'article' => 'sometimes|string',
+            'entry' => 'sometimes|string',
+            'user' => 'sometimes|string'
+        ]);
 
-        // $userId = Auth::id() ?? null;
-        // $page = $request->get('page', 1);
-        // $limit = $request->get('limit', 10);
-        // $tab = $request->get('tab', 'all');
+        $userId = Auth::id() ?? null;
+        $page = $request->get('page', 1);
+        $limit = $request->get('limit', 10);
+        $tab = $request->get('tab', 'all');
 
-        // if ($tab !== 'all') {
-        //     $tabContents = $this->feedService->getTabContents($tab, $userId);
-        //     return response()->json($tabContents);
-        // }
-
-        // $filters = $this->feedService->buildFilters($request);
-
-        // $recommendations = $this->feedService->getRecommendations($userId, $filters, $limit, ($page - 1) * $limit);
-
-        // $contents = $this->feedService->resolveContents($recommendations);
-
-        // return response()->json($contents)->header('Cache-Control', 'public, max-age=600, immutable');
-
-        $articles = Article::all();
-        $data = [];
-        foreach ($articles as $article) {
-            $data[] = ArticleData::fromModel($article, UserData::fromModel($article->user()->first()));
-        }
-        $entries = Entry::all();
-        $datae = [];
-        foreach ($entries as $entry) {
-            $datae[] = EntryData::fromModel($entry, UserData::fromModel($entry->user()->first()));
+        if ($tab !== 'all') {
+            $tabContents = $this->feedService->getTabContents($tab, $userId);
+            return response()->json($tabContents);
         }
 
-        return response()->json(array_merge($data, $datae));
+        $filters = $this->feedService->buildFilters($request);
+
+        $recommendations = $this->feedService->getRecommendations($userId, $filters, $limit, ($page - 1) * $limit);
+
+        $contents = $this->feedService->resolveContents($recommendations);
+
+        return response()->json($contents)->header('Cache-Control', 'public, max-age=600, immutable');
     }
 }

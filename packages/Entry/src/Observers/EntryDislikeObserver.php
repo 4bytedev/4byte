@@ -18,12 +18,12 @@ class EntryDislikeObserver
 
     public function created(EntryDislike $entryDislike)
     {
-        $feedback = new Feedback('read', $entryDislike->user_id, 'entry:'.$entryDislike->entry_id, '', Carbon::now());
+        $feedback = new Feedback('read', (string) $entryDislike->user_id, 'entry:'.$entryDislike->entry_id, '', Carbon::now());
         $this->gorse->insertFeedback($feedback);
     }
 
     public function deleted(EntryDislike $entryDislike)
     {
-        $this->gorse->deleteFeedback('read', $entryDislike->user_id, 'entry:'.$entryDislike->entry_id);
+        $this->gorse->deleteFeedback('read', (string) $entryDislike->user_id, 'entry:'.$entryDislike->entry_id);
     }
 }

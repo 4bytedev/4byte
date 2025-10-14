@@ -61,7 +61,10 @@ class Settings extends Page implements HasForms
 
     public function save(): void
     {
-        $filledDatas = $this->form->getState();
+        /** @var \Filament\Forms\Form $form */
+        $form = $this->form;
+
+        $filledDatas = $form->getState();
         $saveDatas = $this->mutateFormDataBeforeSave($filledDatas);
         $this->handleFileUploads($saveDatas);
         app(BaseSettings\SiteSettings::class)->fill($saveDatas['siteSettings'])->save();

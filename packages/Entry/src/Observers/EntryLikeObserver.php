@@ -18,12 +18,12 @@ class EntryLikeObserver
 
     public function created(EntryLike $entryLike)
     {
-        $feedback = new Feedback('like', $entryLike->user_id, 'entry:'.$entryLike->entry_id, '', Carbon::now());
+        $feedback = new Feedback('like', (string) $entryLike->user_id, 'entry:'.$entryLike->entry_id, '', Carbon::now());
         $this->gorse->insertFeedback($feedback);
     }
 
     public function deleted(EntryLike $entryLike)
     {
-        $this->gorse->deleteFeedback('like', $entryLike->user_id, 'entry:'.$entryLike->entry_id);
+        $this->gorse->deleteFeedback('like', (string) $entryLike->user_id, 'entry:'.$entryLike->entry_id);
     }
 }

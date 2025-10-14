@@ -38,7 +38,7 @@ class PageService
             return Page::where('status', 'PUBLISHED')
                 ->where('slug', $slug)
                 ->select(['id'])
-                ->firstOrFail()?->id;
+                ->firstOrFail()->id;
         });
     }
 }

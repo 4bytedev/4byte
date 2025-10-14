@@ -73,7 +73,9 @@ class PageResource extends Resource
                                             ->label(__('Content'))
                                             ->extraAttributes(['style' => 'min-height: 790px;'])
                                             ->saveUploadedFileAttachmentsUsing(function (TemporaryUploadedFile $file) use ($form) {
+                                                /** @var \Packages\Page\Models\Page|null $record */
                                                 $record = $form->getRecord();
+
                                                 if ($record) {
                                                     $media = $record->addMedia($file)->toMediaCollection('content');
 

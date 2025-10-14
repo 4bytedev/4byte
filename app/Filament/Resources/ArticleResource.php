@@ -86,7 +86,9 @@ class ArticleResource extends Resource
                                             ->label(__('Content'))
                                             ->extraAttributes(['style' => 'min-height: 790px;'])
                                             ->saveUploadedFileAttachmentsUsing(function (TemporaryUploadedFile $file) use ($form) {
+                                                /** @var \Packages\Article\Models\Article|null $record */
                                                 $record = $form->getRecord();
+
                                                 if ($record) {
                                                     $media = $record->addMedia($file)->toMediaCollection('content');
 

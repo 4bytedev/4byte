@@ -30,7 +30,7 @@ class CategoryService
         return Cache::rememberForever("category:{$slug}:id", function () use ($slug) {
             return Category::where('slug', $slug)
                 ->select(['id'])
-                ->firstOrFail()?->id;
+                ->firstOrFail()->id;
         });
     }
 

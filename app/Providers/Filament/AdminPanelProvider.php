@@ -6,13 +6,11 @@ use App\Filament\Pages\Auth\EmailVerification;
 use App\Filament\Pages\Auth\Login;
 use App\Filament\Pages\Auth\Register;
 use App\Filament\Pages\Auth\ResetPassword;
-use App\Filament\Pages\Backups;
 use App\Filament\Pages\MyProfile;
 use App\Services\SettingsService;
 use App\Settings\SecuritySettings;
 use App\Settings\SeoSettings;
 use App\Settings\SiteSettings;
-use BezhanSalleh\FilamentGoogleAnalytics\FilamentGoogleAnalyticsPlugin;
 use BezhanSalleh\FilamentLanguageSwitch\LanguageSwitch;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\Enums\ThemeMode;
@@ -35,7 +33,6 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Jeffgreco13\FilamentBreezy\BreezyCore;
 use Kenepa\Banner\BannerPlugin;
 use MarcoGermani87\FilamentCookieConsent\FilamentCookieConsent;
-use ShuvroRoy\FilamentSpatieLaravelBackup\FilamentSpatieLaravelBackupPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -74,7 +71,7 @@ class AdminPanelProvider extends PanelProvider
                 ->path($this->siteSettings->panel_url ?? 'admin')
                 ->login()
 
-                ->brandName($this->siteSettings->title ?? env('APP_NAME'))
+                ->brandName($this->siteSettings->title ?? config('app.name'))
                 ->when(isset($this->siteSettings->light_logo), fn ($panel) => $panel->brandLogo(Storage::url($this->siteSettings->light_logo)))
                 ->when(isset($this->siteSettings->dark_logo), fn ($panel) => $panel->darkModeBrandLogo(Storage::url($this->siteSettings->dark_logo)))
                 ->when(isset($this->siteSettings->favicon), fn ($panel) => $panel->favicon(Storage::url($this->siteSettings->favicon)))
@@ -92,8 +89,8 @@ class AdminPanelProvider extends PanelProvider
                 ->colors([
                     'primary' => Color::Amber,
                 ])
-                ->defaultThemeMode($this->siteSettings->theme_mode ?? 'system' == 'dark' ? ThemeMode::Dark :
-                    ($this->siteSettings->theme_mode ?? 'system' == 'light' ? ThemeMode::Light : ThemeMode::System))
+                ->defaultThemeMode($this->siteSettings->theme_mode ?? $this->siteSettings->theme_mode == 'dark' ? ThemeMode::Dark :
+                    ($this->siteSettings->theme_mode ?? $this->siteSettings->theme_mode == 'light' ? ThemeMode::Light : ThemeMode::System))
                 ->darkMode($this->siteSettings->dark_mode_enabled ?? true)
 
                 ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
@@ -145,15 +142,7 @@ class AdminPanelProvider extends PanelProvider
                 ->persistsBannersInDatabase()
                 ->bannerManagerAccessPermission('banner-manager'),
             FilamentShieldPlugin::make(),
-            FilamentSpatieLaravelBackupPlugin::make()
-                ->usingPage(Backups::class)
-                ->usingPolingInterval(10)
-                ->usingQueue('backup'),
         ];
-
-        if ($this->seoSettings->google_analytics_id) {
-            $plugins[] = FilamentGoogleAnalyticsPlugin::make();
-        }
 
         return $plugins;
     }

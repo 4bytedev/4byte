@@ -1,6 +1,6 @@
 <?php
 
-namespace PAckages\Article\Notifications;
+namespace Packages\Article\Notifications;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

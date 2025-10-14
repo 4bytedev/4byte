@@ -38,7 +38,7 @@ class Page extends Model implements HasMedia
         }
 
         $thumbUrl = null;
-        if ($media && $media->hasGeneratedConversion('thumb')) {
+        if ($media->hasGeneratedConversion('thumb')) {
             $thumbUrl = $media->getFullUrl('thumb');
         }
 
@@ -79,6 +79,7 @@ class Page extends Model implements HasMedia
             ->singleFile()
             ->acceptsFile(fn ($file) => $validateImage($file, ['image/jpeg', 'image/png', 'image/webp', 'image/avif']));
 
+        /** @phpstan-ignore-next-line */
         $this->addMediaConversion('thumb')
             ->width(256)
             ->height(256)

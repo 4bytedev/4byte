@@ -6,6 +6,7 @@ use App\Services\SettingsService;
 use App\Settings\SecuritySettings;
 use Filament\Facades\Filament;
 use Filament\Http\Responses\Auth\Contracts\LoginResponse;
+use Filament\Models\Contracts\FilamentUser;
 use Filament\Pages\Auth\Login as BaseLogin;
 use Illuminate\Validation\ValidationException;
 
@@ -24,11 +25,6 @@ class Login extends BaseLogin
         $data = $this->form->getState();
 
         $user = \App\Models\User::where('email', $data['email'])->first();
-        if ($user && is_null($user->password)) {
-            throw ValidationException::withMessages([
-                'data.email' => 'This account was created using social login. Please login with Google.',
-            ]);
-        }
 
         if (! Filament::auth()->attempt($this->getCredentialsFromFormData($data), $data['remember'] ?? false)) {
             $this->throwFailureValidationException();

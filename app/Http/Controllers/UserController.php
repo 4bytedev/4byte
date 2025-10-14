@@ -123,13 +123,15 @@ class UserController extends Controller
     public function settingsView(Request $request)
     {
         $user = $request->user();
+        /** @var \App\Models\UserProfile $profileModel */
+        $profileModel = $user->profile;
         $account = [
             'name' => $user->name,
             'username' => $user->username,
             'email' => $user->email,
             'avatar' => $user->getAvatarImage(),
         ];
-        $profile = UserProfileData::fromModel($user->profile);
+        $profile = UserProfileData::fromModel($profileModel);
         $sessions = SessionService::getUserSessions();
 
         return Inertia::render('User/Settings', [
@@ -171,6 +173,7 @@ class UserController extends Controller
         ]);
 
         $user = $request->user();
+        /** @var \App\Models\UserProfile $profile */
         $profile = $user->profile;
 
         if ($request->hasFile('cover')) {

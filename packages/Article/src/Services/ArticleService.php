@@ -39,6 +39,16 @@ class ArticleService
         return ArticleData::fromModel($article, $user);
     }
 
+    public function getId(string $slug)
+    {
+        return Cache::rememberForever("article:{$slug}:id", function () use ($slug) {
+            return Article::where('status', 'PUBLISHED')
+                ->where('slug', $slug)
+                ->select(['id'])
+                ->firstOrFail()->id;
+        });
+    }
+
     public function checkLiked(int $articleId, ?int $userId)
     {
         if (! $userId) {
@@ -76,16 +86,6 @@ class ArticleService
     {
         return Cache::rememberForever("article:{$articleId}:dislikes", fn () => ArticleDislike::where('article_id', $articleId)->count()
         );
-    }
-
-    public function getId(string $slug)
-    {
-        return Cache::rememberForever("article:{$slug}:id", function () use ($slug) {
-            return Article::where('status', 'PUBLISHED')
-                ->where('slug', $slug)
-                ->select(['id'])
-                ->firstOrFail()?->id;
-        });
     }
 
     public function insertLike(int $articleId, int $userId)

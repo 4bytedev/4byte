@@ -16,14 +16,14 @@ class TagFollowObserver
 
     public function created(TagFollow $tagFollow)
     {
-        $gorseUser = $this->gorse->getUser($tagFollow->user_id);
+        $gorseUser = $this->gorse->getUser((string) $tagFollow->user_id);
         $gorseUser->labels[] = "tag:{$tagFollow->id}";
         $this->gorse->updateUser($gorseUser);
     }
 
     public function deleted(TagFollow $tagFollow)
     {
-        $gorseUser = $this->gorse->getUser($tagFollow->user_id);
+        $gorseUser = $this->gorse->getUser((string) $tagFollow->user_id);
         $gorseUser->labels = array_filter($gorseUser->labels, fn ($label) => $label !== "tag:{$tagFollow->category_id}");
         $this->gorse->updateUser($gorseUser);
     }

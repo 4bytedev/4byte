@@ -41,6 +41,9 @@ class EditRole extends EditRecord
 
     protected function afterSave(): void
     {
+        /** @var \Spatie\Permission\Models\Role $role */
+        $role = $this->record;
+
         $permissionModels = collect();
         $this->permissions->each(function ($permission) use ($permissionModels) {
             $permissionModels->push(Utils::getPermissionModel()::firstOrCreate([
@@ -49,6 +52,6 @@ class EditRole extends EditRecord
             ]));
         });
 
-        $this->record->syncPermissions($permissionModels);
+        $role->syncPermissions($permissionModels);
     }
 }

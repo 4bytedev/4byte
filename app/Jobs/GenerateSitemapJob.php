@@ -88,7 +88,9 @@ class GenerateSitemapJob implements ShouldQueue
                 ->title('Sitemap Generated!')
                 ->success()
                 ->body("Sitemap successfully generated. Totally \"{$totalItems}\" urls generated.")
-                ->actions([
+                ->actions(
+                /** @var array<Filament\Notifications\Actions\Action> */
+                [
                     Action::make('view')
                         ->label('View Sitemap')
                         ->url(url('/sitemap.xml'))

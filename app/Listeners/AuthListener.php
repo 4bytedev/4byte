@@ -28,8 +28,11 @@ class AuthListener implements ShouldQueue
      */
     public function handle(Login|Registered|Logout|PasswordResetLinkSent|PasswordReset $event): void
     {
-        Activity::causedBy($event->user)
-            ->performedOn($event->user)
+        /** @var \App\Models\User|null $user */
+        $user = $event->user instanceof \App\Models\User ? $event->user : null;
+
+        Activity::causedBy($user)
+            ->performedOn($user)
             ->withProperties([
                 'ip' => request()->ip(),
                 'user_agent' => request()->userAgent(),

@@ -77,7 +77,7 @@ class LoginRequest extends FormRequest
         return response()->json([
             'name' => $user->name,
             'username' => $user->username,
-            'avatar' => $user->avatar_url,
+            'avatar' => $user->getAvatarImage(),
             'verified' => false,
         ]);
     }
