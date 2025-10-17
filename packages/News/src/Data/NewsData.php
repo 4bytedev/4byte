@@ -21,12 +21,13 @@ class NewsData extends Data
         public string $image,
         public ?DateTime $published_at,
         public UserData $user,
-        /** @var CategoryData[] */
+        /** @var array<CategoryData> */
         public array $categories,
-        /** @var TagData[] */
+        /** @var array<TagData> */
         public array $tags,
         public string $type = 'news'
-    ) {}
+    ) {
+    }
 
     public static function fromModel(News $news, bool $setId = false): self
     {

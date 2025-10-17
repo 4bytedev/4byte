@@ -10,4 +10,5 @@ return [
     Packages\Recommend\RecommendProvider::class,
     Packages\Tag\TagProvider::class,
     Packages\Entry\EntryProvider::class,
+    Packages\React\ReactProvider::class,
 ];

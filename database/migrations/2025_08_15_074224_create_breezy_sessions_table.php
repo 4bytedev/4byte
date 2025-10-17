@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class () extends Migration {
     public function up()
     {
         Schema::create('breezy_sessions', function (Blueprint $table) {
@@ -21,7 +20,6 @@ return new class extends Migration
             $table->timestamp('two_factor_confirmed_at')->nullable();
             $table->timestamps();
         });
-
     }
 
     public function down()

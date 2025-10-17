@@ -14,7 +14,9 @@ use Spatie\MediaLibrary\MediaCollections\File;
 
 class Page extends Model implements HasMedia
 {
-    use HasFactory, InteractsWithMedia, LogsActivity;
+    use HasFactory;
+    use InteractsWithMedia;
+    use LogsActivity;
 
     protected $fillable = [
         'title', 'slug', 'excerpt', 'content', 'status', 'published_at', 'user_id',

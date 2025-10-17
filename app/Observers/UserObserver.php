@@ -32,7 +32,7 @@ class UserObserver
         ]);
         // }
 
-        $gorseUser = new GorseUser((string) $user->id, ['article', 'news'], [], $user->username);
+        $gorseUser = new GorseUser((string) $user->id, ['article', 'entry', 'news'], [], $user->username);
         $this->gorse->insertUser($gorseUser);
     }
 

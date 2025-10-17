@@ -2,7 +2,7 @@ name: PR Review
 
 on:
   workflow_run:
-    workflows: ["Lint", "Security", "CI Pipeline"]
+    workflows: ["Lint", "Security Scan", "CI Pipeline"]
     types:
       - completed
 

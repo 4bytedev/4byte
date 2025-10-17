@@ -26,6 +26,7 @@
         "laravel/tinker": "^2.10.1",
         "league/flysystem-aws-s3-v3": "^3.0",
         "marcogermani87/filament-cookie-consent": "^1.1",
+        "rmsramos/activitylog": "^2.0",
         "sentry/sentry-laravel": "^4.16",
         "spatie/laravel-activitylog": "^4.10",
         "spatie/laravel-data": "^4.17",
@@ -62,7 +63,8 @@
             "Packages\\Page\\": "packages/Page/src/",
             "Packages\\News\\": "packages/News/src/",
             "Packages\\Recommend\\": "packages/Recommend/src/",
-            "Packages\\Entry\\": "packages/Entry/src/"
+            "Packages\\Entry\\": "packages/Entry/src/",
+            "Packages\\React\\": "packages/React/src/"
         }
     },
     "autoload-dev": {

@@ -27,7 +27,7 @@ class PagePolicy
             return true;
         }
 
-        return $user->can('view_page') && $page->user_id == $user->id;
+        return $user->can('view_page') && $page->user_id === $user->id;
     }
 
     /**
@@ -47,7 +47,7 @@ class PagePolicy
             return true;
         }
 
-        return $user->can('update_page') && $page->user_id == $user->id;
+        return $user->can('update_page') && $page->user_id === $user->id;
     }
 
     /**
@@ -59,7 +59,7 @@ class PagePolicy
             return true;
         }
 
-        return $user->can('delete_page') && $page->user_id == $user->id;
+        return $user->can('delete_page') && $page->user_id === $user->id;
     }
 
     /**
@@ -79,7 +79,7 @@ class PagePolicy
             return true;
         }
 
-        return $user->can('force_delete_page') && $page->user_id == $user->id;
+        return $user->can('force_delete_page') && $page->user_id === $user->id;
     }
 
     /**
@@ -99,7 +99,7 @@ class PagePolicy
             return true;
         }
 
-        return $user->can('restore_page') && $page->user_id == $user->id;
+        return $user->can('restore_page') && $page->user_id === $user->id;
     }
 
     /**
@@ -119,7 +119,7 @@ class PagePolicy
             return true;
         }
 
-        return $user->can('replicate_page') && $page->user_id == $user->id;
+        return $user->can('replicate_page') && $page->user_id === $user->id;
     }
 
     /**

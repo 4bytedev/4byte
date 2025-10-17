@@ -20,7 +20,6 @@ class Login extends BaseLogin
 
     public function authenticate(): ?LoginResponse
     {
-
         $data = $this->form->getState();
 
         $user = \App\Models\User::where('email', $data['email'])->first();

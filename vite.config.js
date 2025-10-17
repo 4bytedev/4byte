@@ -1,6 +1,7 @@
 import { defineConfig, loadEnv } from "vite";
 import laravel from "laravel-vite-plugin";
 import react from "@vitejs/plugin-react";
+import path from "path";
 
 export default ({ mode }) => {
 	process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
@@ -26,6 +27,11 @@ export default ({ mode }) => {
 			react(),
 			// visualizer()
 		],
+		resolve: {
+			alias: {
+				"ziggy-js": path.resolve("vendor/tightenco/ziggy"),
+			},
+		},
 		base: process.env.VITE_BASE_URL ? process.env.VITE_BASE_URL + "/build/" : "/build/",
 	});
 };

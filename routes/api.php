@@ -4,11 +4,9 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\BatchLogsActivity;
-use App\Models\UserFollow;
 use Illuminate\Support\Facades\Route;
 
 Route::name('api.')->prefix('api')->middleware(BatchLogsActivity::class)->group(function () {
-
     Route::prefix('user')->name('user.')->group(function () {
         Route::get('/{username}/preview', [UserController::class, 'preview'])->name('preview');
     });
@@ -38,10 +36,6 @@ Route::name('api.')->prefix('api')->middleware(BatchLogsActivity::class)->group(
             Route::get('/count', 'count')->name('count')->can('view-notification');
             Route::post('/mark-as-read', 'markAsRead')->name('mark-as-read')->can('view-notification');
             Route::post('/mark-all-as-read', 'markAllAsRead')->name('mark-all-as-read')->can('view-notification');
-        });
-
-        Route::prefix('user')->name('user.')->group(function () {
-            Route::post('/{username}/follow', [UserController::class, 'follow'])->name('follow')->can('create', UserFollow::class);
         });
     });
 });

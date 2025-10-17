@@ -16,14 +16,6 @@ use Packages\Page\Policies\PagePolicy;
 class PageProvider extends ServiceProvider
 {
     /**
-     * Register services.
-     */
-    public function register(): void
-    {
-        //
-    }
-
-    /**
      * Bootstrap services.
      */
     public function boot(): void

@@ -4,7 +4,6 @@ namespace Packages\Article\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Services\SeoService;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Packages\Article\Http\Requests\CreateRequest;
@@ -30,7 +29,7 @@ class ArticleCrudController extends Controller
         $this->feedService = app(FeedService::class);
     }
 
-    public function createView(Request $request)
+    public function createView()
     {
         $topCategories = $this->feedService->categories();
 

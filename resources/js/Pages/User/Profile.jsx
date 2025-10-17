@@ -20,17 +20,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/Ui/Tabs";
 import { toast } from "@/Hooks/useToast";
 import { useMediaQuery } from "@uidotdev/usehooks";
 
-export default function UserProfilePage({
-	user,
-	profile,
-	followers: initialFollowers,
-	following,
-	isFollowing: initialIsFollowing,
-}) {
-	console.log(user, profile);
-
-	const [isFollowing, setIsFollowing] = useState(initialIsFollowing);
-	const [followers, setFollowers] = useState(Number(initialFollowers));
+export default function UserProfilePage({ user, profile }) {
+	const [isFollowing, setIsFollowing] = useState(user.isFollowing);
+	const [followers, setFollowers] = useState(Number(user.followers));
 	const authStore = useAuthStore();
 	const { t } = useTranslation();
 	const isDesktop = useMediaQuery("(min-width: 1024px)");
@@ -54,7 +46,7 @@ export default function UserProfilePage({
 
 	const handleFollow = async () => {
 		ApiService.fetchJson(
-			route("api.user.follow", { username: user.username }),
+			route("api.react.follow", { type: "user", slug: user.username }),
 			{},
 			{ method: "POST" },
 		)
@@ -165,7 +157,9 @@ export default function UserProfilePage({
 											<span>
 												<Trans
 													i18nKey="followings"
-													values={{ count: following.toLocaleString() }}
+													values={{
+														count: user.followings.toLocaleString(),
+													}}
 													components={{ strong: <strong /> }}
 												/>
 											</span>

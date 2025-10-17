@@ -280,7 +280,7 @@ export default function RegisterModal() {
 								<Trans
 									i18nKey="agreement"
 									components={{
-										0: (
+										termsLink: (
 											<Link
 												href={route("page.view", {
 													slug: siteStore.pages.terms,
@@ -288,7 +288,7 @@ export default function RegisterModal() {
 												className="text-primary hover:underline"
 											/>
 										),
-										1: (
+										privacyLink: (
 											<Link
 												href={route("page.view", {
 													slug: siteStore.pages.privacy,

@@ -18,14 +18,6 @@ class HandleInertiaRequests extends Middleware
     protected $rootView = 'app';
 
     /**
-     * Determine the current asset version.
-     */
-    public function version(Request $request): ?string
-    {
-        return parent::version($request);
-    }
-
-    /**
      * Define the props that are shared by default.
      *
      * @return array<string, mixed>
@@ -66,16 +58,16 @@ class HandleInertiaRequests extends Middleware
                     'languages' => $siteSettings->available_languages,
                     'default' => $siteSettings->default_language,
                 ],
-                'banners' => Cache::rememberForever("banners", function () {
+                'banners' => Cache::rememberForever('banners', function () {
                     return Banner::query()
                         ->where('data->is_active', true)
                         ->where(function ($query) {
-                            $query->whereNull("data->start_time")
-                                ->orWhere("data->start_time", '<=', now());
+                            $query->whereNull('data->start_time')
+                                ->orWhere('data->start_time', '<=', now());
                         })
                         ->where(function ($query) {
-                            $query->whereNull("data->end_time")
-                                ->orWhere("data->end_time", '>=', now());
+                            $query->whereNull('data->end_time')
+                                ->orWhere('data->end_time', '>=', now());
                         })
                         ->get()
                         ->toArray();

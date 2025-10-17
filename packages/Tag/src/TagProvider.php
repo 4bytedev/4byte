@@ -6,24 +6,13 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Packages\Tag\Models\Tag;
-use Packages\Tag\Models\TagFollow;
 use Packages\Tag\Models\TagProfile;
-use Packages\Tag\Observers\TagFollowObserver;
 use Packages\Tag\Observers\TagObserver;
 use Packages\Tag\Observers\TagProfileObserver;
-use Packages\Tag\Policies\TagFollowPolicy;
 use Packages\Tag\Policies\TagPolicy;
 
 class TagProvider extends ServiceProvider
 {
-    /**
-     * Register services.
-     */
-    public function register(): void
-    {
-        //
-    }
-
     /**
      * Bootstrap services.
      */
@@ -40,13 +29,11 @@ class TagProvider extends ServiceProvider
     public function loadPolicies()
     {
         Gate::policy(Tag::class, TagPolicy::class);
-        Gate::policy(TagFollow::class, TagFollowPolicy::class);
     }
 
     public function loadObservers()
     {
         Tag::observe(TagObserver::class);
-        TagFollow::observe(TagFollowObserver::class);
         TagProfile::observe(TagProfileObserver::class);
     }
 

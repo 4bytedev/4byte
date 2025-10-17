@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9feb3033be018d98ba26bd864e552597",
+    "content-hash": "bd84094f0619586a4d449105b94ef20b",
     "packages": [
         {
             "name": "amphp/amp",
@@ -7824,6 +7824,80 @@
                 "source": "https://github.com/revoltphp/event-loop/tree/v1.0.7"
             },
             "time": "2025-01-25T19:27:39+00:00"
+        },
+        {
+            "name": "rmsramos/activitylog",
+            "version": "v2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/rmsramos/activitylog.git",
+                "reference": "05b2e2f32c0866d2e914dec08911aaeb214ed54c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rmsramos/activitylog/zipball/05b2e2f32c0866d2e914dec08911aaeb214ed54c",
+                "reference": "05b2e2f32c0866d2e914dec08911aaeb214ed54c",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/contracts": "^10.0||^11.0||^12.0",
+                "php": "^8.2",
+                "spatie/laravel-activitylog": "^4.8",
+                "spatie/laravel-package-tools": "^1.16"
+            },
+            "require-dev": {
+                "filament/filament": "^3.3",
+                "larastan/larastan": "^2.9",
+                "laravel/pint": "^1.16",
+                "nunomaduro/collision": "^8.1.1||^7.10.0",
+                "orchestra/testbench": "^9.0.0||^8.22.0",
+                "pestphp/pest": "^2.34",
+                "pestphp/pest-plugin-arch": "^2.7",
+                "pestphp/pest-plugin-laravel": "^2.3",
+                "phpstan/extension-installer": "^1.3",
+                "phpstan/phpstan-deprecation-rules": "^1.1",
+                "phpstan/phpstan-phpunit": "^1.3"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "Activitylog": "Rmsramos\\Activitylog\\Facades\\Activitylog"
+                    },
+                    "providers": [
+                        "Rmsramos\\Activitylog\\ActivitylogServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Rmsramos\\Activitylog\\": "src/",
+                    "Rmsramos\\Activitylog\\Database\\Factories\\": "database/factories/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Rômulo Ramos",
+                    "email": "rmsramos@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "This is my package activitylog",
+            "homepage": "https://github.com/rmsramos/activitylog",
+            "keywords": [
+                "Rmsramos",
+                "activitylog",
+                "laravel"
+            ],
+            "support": {
+                "issues": "https://github.com/rmsramos/activitylog/issues",
+                "source": "https://github.com/rmsramos/activitylog/tree/v2.0.0"
+            },
+            "time": "2025-08-16T17:20:00+00:00"
         },
         {
             "name": "ryangjchandler/blade-capture-directive",

@@ -27,7 +27,7 @@ class PagePublishedNotification extends Notification implements ShouldQueue
      *
      * @return array<int, string>
      */
-    public function via(object $notifiable): array
+    public function via(): array
     {
         return ['mail'];
     }
@@ -35,9 +35,9 @@ class PagePublishedNotification extends Notification implements ShouldQueue
     /**
      * Get the mail representation of the notification.
      */
-    public function toMail(object $notifiable): MailMessage
+    public function toMail(): MailMessage
     {
-        return (new MailMessage)
+        return (new MailMessage())
             ->subject(__('page::messages.published_title'))
             ->greeting(__('page::messages.greeting'))
             ->line(__('page::messages.published_body', ['title' => $this->page->title]))
@@ -50,7 +50,7 @@ class PagePublishedNotification extends Notification implements ShouldQueue
      *
      * @return array<string, mixed>
      */
-    public function toArray(object $notifiable): array
+    public function toArray(): array
     {
         return [
             'title' => $this->page->title,

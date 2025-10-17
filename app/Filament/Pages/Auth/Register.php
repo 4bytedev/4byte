@@ -41,7 +41,7 @@ class Register extends BaseRegister
 
             // $data = $this->mutateFormDataBeforeRegister($data);
 
-            if (! empty($securitySettings->allowed_emails)) {
+            if (isset($securitySettings->allowed_emails) && $securitySettings->allowed_emails) {
                 $allowed = false;
                 foreach ($securitySettings->allowed_emails as $allowedEmail) {
                     if (str_contains($data['email'], $allowedEmail)) {

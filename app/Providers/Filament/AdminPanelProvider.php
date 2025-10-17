@@ -33,6 +33,7 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Jeffgreco13\FilamentBreezy\BreezyCore;
 use Kenepa\Banner\BannerPlugin;
 use MarcoGermani87\FilamentCookieConsent\FilamentCookieConsent;
+use Rmsramos\Activitylog\ActivitylogPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -57,7 +58,7 @@ class AdminPanelProvider extends PanelProvider
                     ->locales($this->siteSettings->available_languages ?? []);
             });
         } catch (\Throwable $th) {
-            // throw $th;
+            logger()->error('Admin panel provider settings configuration error, please migrate and configure settings', ['e' => $th]);
         }
     }
 
@@ -125,7 +126,7 @@ class AdminPanelProvider extends PanelProvider
 
     protected function getPlugins(): array
     {
-        $plugins = [
+        return [
             BreezyCore::make()
                 ->customMyProfilePage(MyProfile::class)
                 ->enableTwoFactorAuthentication($this->securitySettings->two_factor_authentication_enabled ?? true)
@@ -142,8 +143,7 @@ class AdminPanelProvider extends PanelProvider
                 ->persistsBannersInDatabase()
                 ->bannerManagerAccessPermission('banner-manager'),
             FilamentShieldPlugin::make(),
+            ActivitylogPlugin::make()
         ];
-
-        return $plugins;
     }
 }

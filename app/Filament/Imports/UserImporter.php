@@ -35,14 +35,16 @@ class UserImporter extends Importer
         //     'email' => $this->data['email'],
         // ]);
 
-        return new User;
+        return new User();
     }
 
     public static function getCompletedNotificationBody(Import $import): string
     {
         $body = 'Your user import has completed and '.number_format($import->successful_rows).' '.str('row')->plural($import->successful_rows).' imported.';
 
-        if ($failedRowsCount = $import->getFailedRowsCount()) {
+        $failedRowsCount = $import->getFailedRowsCount();
+
+        if ($failedRowsCount > 0) {
             $body .= ' '.number_format($failedRowsCount).' '.str('row')->plural($failedRowsCount).' failed to import.';
         }
 

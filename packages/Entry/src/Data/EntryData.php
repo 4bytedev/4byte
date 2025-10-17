@@ -28,7 +28,8 @@ class EntryData extends Data
         public bool $canDelete,
         public ?DateTime $published_at,
         public string $type = 'entry'
-    ) {}
+    ) {
+    }
 
     public static function fromModel(Entry $entry, UserData $user, bool $setId = false, bool $setPublished = true): self
     {
@@ -41,12 +42,12 @@ class EntryData extends Data
             content: $entry->content,
             media: $entry->getContentImages(),
             user: $user,
-            likes: $entryService->getLikesCount($entry->id),
-            dislikes: $entryService->getDislikesCount($entry->id),
-            comments: $entryService->getCommentsCount($entry->id),
-            isLiked: $entryService->checkLiked($entry->id, $userId),
-            isDisliked: $entryService->checkDisliked($entry->id, $userId),
-            isSaved: $entryService->checkSaved($entry->id, $userId),
+            likes: $entry->likesCount(),
+            dislikes: $entry->dislikesCount(),
+            comments: $entry->commentsCount(),
+            isLiked: $entry->isLikedBy($userId),
+            isDisliked: $entry->isDislikedBy($userId),
+            isSaved: $entry->isSavedBy($userId),
             canUpdate: Gate::allows('update', $entry),
             canDelete: Gate::allows('delete', $entry),
             published_at: $setPublished ? $entry->created_at : null,

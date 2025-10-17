@@ -15,6 +15,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Rmsramos\Activitylog\RelationManagers\ActivitylogRelationManager;
 use STS\FilamentImpersonate\Tables\Actions\Impersonate;
 
 class UserResource extends Resource
@@ -39,38 +40,44 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Section::make(
-                    __('User Information')
-                )->schema([
-                    Forms\Components\SpatieMediaLibraryFileUpload::make('avatar')
-                        ->collection('avatar')
-                        ->label(__('Avatar'))
-                        ->image()
-                        ->imageEditor()
-                        ->avatar()
-                        ->circleCropper(),
-                    Forms\Components\TextInput::make('name')
-                        ->required()
-                        ->label(__('Name')),
-                    Forms\Components\TextInput::make('email')
-                        ->required()
-                        ->unique(User::class, 'email', fn ($record) => $record)
-                        ->label(__('Email')),
-                    Forms\Components\TextInput::make('username')
-                        ->required()
-                        ->unique(User::class, 'username', fn ($record) => $record)
-                        ->label(__('Username')),
-                    Forms\Components\TextInput::make('password')
-                        ->required()
-                        ->label(__('Password')),
-                    Forms\Components\Select::make('role')
-                        ->required()
-                        ->label(__('Roles'))
-                        ->relationship('roles', 'name')
-                        ->multiple()
-                        ->optionsLimit(10),
-                ]),
+                Forms\Components\Section::make(__('User Information'))
+                    ->schema([
+                        Forms\Components\SpatieMediaLibraryFileUpload::make('avatar')
+                            ->collection('avatar')
+                            ->label(__('Avatar'))
+                            ->image()
+                            ->imageEditor()
+                            ->avatar()
+                            ->circleCropper(),
+                        Forms\Components\TextInput::make('name')
+                            ->required()
+                            ->label(__('Name')),
+                        Forms\Components\TextInput::make('email')
+                            ->required()
+                            ->unique(User::class, 'email', fn ($record) => $record)
+                            ->label(__('Email')),
+                        Forms\Components\TextInput::make('username')
+                            ->required()
+                            ->unique(User::class, 'username', fn ($record) => $record)
+                            ->label(__('Username')),
+                        Forms\Components\Placeholder::make('password_placeholder')
+                            ->label(__('Password'))
+                            ->content(__('Password cannot be changed from admin panel.')),
+                        Forms\Components\Select::make('role')
+                            ->required()
+                            ->label(__('Roles'))
+                            ->relationship('roles', 'name')
+                            ->multiple()
+                            ->optionsLimit(10),
+                    ]),
             ]);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            ActivitylogRelationManager::class,
+        ];
     }
 
     public static function table(Table $table): Table
@@ -140,13 +147,6 @@ class UserResource extends Resource
                 Tables\Actions\ExportBulkAction::make()
                     ->exporter(UserExporter::class),
             ]);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
     }
 
     public static function getPages(): array

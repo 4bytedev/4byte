@@ -6,24 +6,13 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Packages\Category\Models\Category;
-use Packages\Category\Models\CategoryFollow;
 use Packages\Category\Models\CategoryProfile;
-use Packages\Category\Observers\CategoryFollowObserver;
 use Packages\Category\Observers\CategoryObserver;
 use Packages\Category\Observers\CategoryProfileObserver;
-use Packages\Category\Policies\CategoryFollowPolicy;
 use Packages\Category\Policies\CategoryPolicy;
 
 class CategoryProvider extends ServiceProvider
 {
-    /**
-     * Register services.
-     */
-    public function register(): void
-    {
-        //
-    }
-
     /**
      * Bootstrap services.
      */
@@ -40,13 +29,11 @@ class CategoryProvider extends ServiceProvider
     public function loadPolicies()
     {
         Gate::policy(Category::class, CategoryPolicy::class);
-        Gate::policy(CategoryFollow::class, CategoryFollowPolicy::class);
     }
 
     public function loadObservers()
     {
         Category::observe(CategoryObserver::class);
-        CategoryFollow::observe(CategoryFollowObserver::class);
         CategoryProfile::observe(CategoryProfileObserver::class);
     }
 

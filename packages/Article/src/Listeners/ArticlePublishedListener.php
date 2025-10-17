@@ -14,14 +14,6 @@ class ArticlePublishedListener implements ShouldQueue
     use Queueable;
 
     /**
-     * Create the event listener.
-     */
-    public function __construct()
-    {
-        //
-    }
-
-    /**
      * Handle the event.
      */
     public function handle(ArticlePublishedEvent $event): void

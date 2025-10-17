@@ -10,7 +10,8 @@ use Spatie\Activitylog\Traits\LogsActivity;
 
 class CategoryProfile extends Model
 {
-    use HasFactory, LogsActivity;
+    use HasFactory;
+    use LogsActivity;
 
     protected $fillable = ['description', 'color', 'category_id'];
 

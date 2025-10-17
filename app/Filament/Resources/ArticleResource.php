@@ -13,6 +13,7 @@ use Filament\Tables\Table;
 use Illuminate\Support\Carbon;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Packages\Article\Models\Article;
+use Rmsramos\Activitylog\RelationManagers\ActivitylogRelationManager;
 
 class ArticleResource extends Resource
 {
@@ -153,6 +154,13 @@ class ArticleResource extends Resource
             ]);
     }
 
+    public static function getRelations(): array
+    {
+        return [
+            ActivitylogRelationManager::class,
+        ];
+    }
+
     public static function table(Table $table): Table
     {
         return $table
@@ -203,13 +211,6 @@ class ArticleResource extends Resource
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
     }
 
     public static function getPages(): array

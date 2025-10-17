@@ -16,7 +16,7 @@ class FeedController extends Controller
         $this->feedService = app(FeedService::class);
     }
 
-    public function data(Request $request)
+    public function data()
     {
         $topCategories = $this->feedService->categories();
 
@@ -55,11 +55,18 @@ class FeedController extends Controller
         }
 
         $filters = $this->feedService->buildFilters($request);
-
-        $recommendations = $this->feedService->getRecommendations($userId, $filters, $limit, ($page - 1) * $limit);
+        $recommendations = [];
+        if (Auth::check()) {
+            $recommendations = $this->feedService->getPersonalizedRecommendations($userId, $filters, $limit, ($page - 1) * $limit);
+        }else {
+            $recommendations = $this->feedService->getNonPersonalizedRecommendations("trending", $filters, $limit, ($page - 1) * $limit);
+        }
+        if (!$recommendations) {
+            return response()->json([]);
+        }
 
         $contents = $this->feedService->resolveContents($recommendations);
 
-        return response()->json($contents)->header('Cache-Control', 'public, max-age=600, immutable');
+        return response()->json($contents);
     }
 }
