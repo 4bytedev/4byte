@@ -5,7 +5,7 @@ namespace Packages\Entry\Observers;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Packages\Entry\Models\Entry;
-use Packages\Recommend\Services\GorseItem;
+use Packages\Recommend\Classes\GorseItem;
 use Packages\Recommend\Services\GorseService;
 
 class EntryObserver

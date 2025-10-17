@@ -4,7 +4,7 @@ namespace Packages\React\Observers;
 
 use Carbon\Carbon;
 use Packages\React\Models\Dislike;
-use Packages\Recommend\Services\Feedback;
+use Packages\Recommend\Classes\GorseFeedback;
 use Packages\Recommend\Services\GorseService;
 
 class DislikeObserver
@@ -18,7 +18,7 @@ class DislikeObserver
 
     public function created(Dislike $dislike)
     {
-        $feedback = new Feedback('dislike', (string) $dislike->user_id, strtolower(class_basename($dislike->dislikeable)).':'.$dislike->dislikeable->id, '', Carbon::now());
+        $feedback = new GorseFeedback('dislike', (string) $dislike->user_id, strtolower(class_basename($dislike->dislikeable)).':'.$dislike->dislikeable->id, '', Carbon::now());
         $this->gorse->insertFeedback($feedback);
     }
 

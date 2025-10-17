@@ -6,6 +6,6 @@ trait HasCacheKey
 {
     private function getCacheKey(): string
     {
-        return strtolower(class_basename($this)).":".$this->id;
+        return strtolower(class_basename($this)).':'.$this->id;
     }
 }

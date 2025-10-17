@@ -20,6 +20,8 @@ class EntryResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-globe-asia-australia';
 
+    protected static ?int $navigationSort = 3;
+
     public static function getNavigationGroup(): string
     {
         return __('CMS');
@@ -29,8 +31,6 @@ class EntryResource extends Resource
     {
         return __('Entries');
     }
-
-    protected static ?int $navigationSort = 3;
 
     public static function form(Form $form): Form
     {

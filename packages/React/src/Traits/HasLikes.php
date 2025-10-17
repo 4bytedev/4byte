@@ -30,7 +30,7 @@ trait HasLikes
     {
         if (! $this->isLikedBy($userId)) {
             $this->likes()->create(['user_id' => $userId]);
-            Cache::increment($this->getCacheKey().":likes");
+            Cache::increment($this->getCacheKey().':likes');
             Cache::forever($this->getCacheKey().":{$userId}:liked", true);
         }
     }
@@ -39,7 +39,7 @@ trait HasLikes
     {
         $deleted = $this->likes()->where('user_id', $userId)->delete();
         if ($deleted) {
-            Cache::decrement($this->getCacheKey().":likes");
+            Cache::decrement($this->getCacheKey().':likes');
             Cache::forget($this->getCacheKey().":{$userId}:liked");
         }
     }
@@ -53,7 +53,7 @@ trait HasLikes
 
     public function likesCount(): int
     {
-        return Cache::rememberForever($this->getCacheKey().":likes", function () {
+        return Cache::rememberForever($this->getCacheKey().':likes', function () {
             return $this->likes()->count();
         });
     }

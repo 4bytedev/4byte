@@ -14,7 +14,8 @@ class CategoryData extends Data
         public string $slug,
         public int $followers,
         public bool $isFollowing
-    ) {}
+    ) {
+    }
 
     public static function fromModel(Category $category, bool $setId = false): self
     {

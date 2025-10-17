@@ -23,8 +23,9 @@ class CommentData extends Data
         public ?string $content_type = null,
         public ?string $content_title = null,
         public ?string $content_slug = null,
-        public string $type = "comment"
-    ) {}
+        public string $type = 'comment'
+    ) {
+    }
 
     public static function fromModel(Comment $comment, bool $setId = true, bool $setParent = true, bool $setReplies = true, bool $setLikes = true, bool $setLiked = true, bool $setContent = false): self
     {

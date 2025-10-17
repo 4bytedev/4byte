@@ -23,22 +23,6 @@ class Settings extends Page implements HasForms
     use HasPageShield;
     use InteractsWithForms;
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
-
-    protected static string $view = 'filament.pages.settings';
-
-    public static function getNavigationGroup(): string
-    {
-        return __('Settings');
-    }
-
-    public static function getNavigationLabel(): string
-    {
-        return __('Settings');
-    }
-
-    protected static ?int $navigationSort = 0;
-
     public array $siteSettings = [];
 
     public array $seoSettings = [];
@@ -50,6 +34,22 @@ class Settings extends Page implements HasForms
     public array $imageSettings = [];
 
     public array $fileManagerSettings = [];
+
+    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+
+    protected static string $view = 'filament.pages.settings';
+
+    protected static ?int $navigationSort = 0;
+
+    public static function getNavigationGroup(): string
+    {
+        return __('Settings');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('Settings');
+    }
 
     public function mount(): void
     {
@@ -108,6 +108,61 @@ class Settings extends Page implements HasForms
         }
 
         return $data;
+    }
+
+    public function generateSitemap(): void
+    {
+        GenerateSitemapJob::dispatch(Auth::id());
+
+        Notification::make()
+            ->title(__('Sitemap generation queued'))
+            ->success()
+            ->send();
+    }
+
+    public function clearCache(): void
+    {
+        Artisan::call('optimize:clear');
+        Artisan::call('filament:optimize-clear');
+        Cache::forget('widget-image-models');
+        Cache::forget('chat-settings');
+        Cache::forget('image-settings');
+        Cache::forget('file-manager-settings');
+        Cache::forget('chat-models');
+
+        Notification::make()
+            ->title(__('Cache successfully cleared'))
+            ->success()
+            ->send();
+    }
+
+    public function optimizeSite(): void
+    {
+        // Artisan::call('filament:optimize');
+        Artisan::call('icons:cache');
+        Artisan::call('config:cache');
+        Artisan::call('event:cache');
+        Artisan::call('route:cache');
+        Artisan::call('view:cache');
+        Artisan::call('optimize');
+
+        Notification::make()
+            ->title(__('Site successfully optimized'))
+            ->success()
+            ->send();
+    }
+
+    public function getFormSchema(): array
+    {
+        return [
+            Forms\Components\Tabs::make()
+                ->tabs([
+                    PartSettings\SiteSettings::get(),
+                    PartSettings\SeoSettings::get(),
+                    PartSettings\SecuritySettings::get(),
+                ]),
+
+        ];
     }
 
     protected function mutateFormDataBeforeFill()
@@ -239,61 +294,6 @@ class Settings extends Page implements HasForms
                 ->action(fn () => $this->optimizeSite())
                 ->requiresConfirmation()
                 ->successNotificationTitle(__('Site successfully optimized')),
-        ];
-    }
-
-    public function generateSitemap(): void
-    {
-        GenerateSitemapJob::dispatch(Auth::id());
-
-        Notification::make()
-            ->title(__('Sitemap generation queued'))
-            ->success()
-            ->send();
-    }
-
-    public function clearCache(): void
-    {
-        Artisan::call('optimize:clear');
-        Artisan::call('filament:optimize-clear');
-        Cache::forget('widget-image-models');
-        Cache::forget('chat-settings');
-        Cache::forget('image-settings');
-        Cache::forget('file-manager-settings');
-        Cache::forget('chat-models');
-
-        Notification::make()
-            ->title(__('Cache successfully cleared'))
-            ->success()
-            ->send();
-    }
-
-    public function optimizeSite(): void
-    {
-        // Artisan::call('filament:optimize');
-        Artisan::call('icons:cache');
-        Artisan::call('config:cache');
-        Artisan::call('event:cache');
-        Artisan::call('route:cache');
-        Artisan::call('view:cache');
-        Artisan::call('optimize');
-
-        Notification::make()
-            ->title(__('Site successfully optimized'))
-            ->success()
-            ->send();
-    }
-
-    public function getFormSchema(): array
-    {
-        return [
-            Forms\Components\Tabs::make()
-                ->tabs([
-                    PartSettings\SiteSettings::get(),
-                    PartSettings\SeoSettings::get(),
-                    PartSettings\SecuritySettings::get(),
-                ]),
-
         ];
     }
 }

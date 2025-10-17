@@ -42,7 +42,7 @@ class ReactController extends Controller
 
         $itemId = 0;
 
-        if ($serviceClass === "self") {
+        if ($serviceClass === 'self') {
             $itemId = $request->slug;
         } else {
             $service = app($serviceClass);
@@ -271,7 +271,7 @@ class ReactController extends Controller
             return response()->json(['error' => 'Invalid type'], 400);
         }
 
-        if ($serviceClass === "self") {
+        if ($serviceClass === 'self') {
             $itemId = $request->slug;
         } else {
             $service = app($serviceClass);

@@ -2,132 +2,12 @@
 
 namespace Packages\Recommend\Services;
 
-use Carbon\Carbon;
 use GuzzleHttp;
 use GuzzleHttp\Exception\GuzzleException;
-use JsonSerializable;
-
-class GorseUser implements JsonSerializable
-{
-    public string $userId;
-
-    public array $labels;
-
-    public string $comment;
-
-    public array $subscribe;
-
-    public function __construct(string $userId, array $labels, array $subscribe, string $comment)
-    {
-        $this->userId = $userId;
-        $this->labels = $labels;
-        $this->subscribe = $subscribe;
-        $this->comment = $comment;
-    }
-
-    public function jsonSerialize(): array
-    {
-        return [
-            'UserId' => $this->userId,
-            'Labels' => $this->labels,
-            'Subscribe' => $this->subscribe,
-            'Comment' => $this->comment,
-        ];
-    }
-
-    public static function fromJSON($json): GorseUser
-    {
-        return new GorseUser($json['UserId'], $json['Labels'], $json['Subscribe'], $json['Comment']);
-    }
-}
-
-class GorseItem implements JsonSerializable
-{
-    public string $itemId;
-
-    public array $labels;
-
-    public array $categories;
-
-    public string $comment;
-
-    public bool $isHidden;
-
-    public string $timestamp;
-
-    public function __construct(string $itemId, array $labels, array $categories, string $comment, bool $isHidden, ?string $timestamp = null)
-    {
-        $this->itemId = $itemId;
-        $this->labels = $labels;
-        $this->categories = $categories;
-        $this->comment = $comment;
-        $this->isHidden = $isHidden;
-        $this->timestamp = $timestamp ?? Carbon::now()->toDateTimeString();
-    }
-
-    public function jsonSerialize(): array
-    {
-        return [
-            'ItemId' => $this->itemId,
-            'Labels' => $this->labels,
-            'Categories' => $this->categories,
-            'Comment' => $this->comment,
-            'IsHidden' => $this->isHidden,
-            'Timestamp' => $this->timestamp,
-        ];
-    }
-
-    public static function fromJSON($json): GorseItem
-    {
-        return new GorseItem($json['ItemId'], $json['Labels'], $json['Categories'], $json['Comment'], $json['IsHidden'], $json['Timestamp']);
-    }
-}
-
-class Feedback implements JsonSerializable
-{
-    public string $feedbackType;
-
-    public string $userId;
-
-    public string $itemId;
-
-    public string $comment;
-
-    public string $timestamp;
-
-    public function __construct(string $feedbackType, string $userId, string $itemId, string $comment, string $timestamp)
-    {
-        $this->feedbackType = $feedbackType;
-        $this->userId = $userId;
-        $this->itemId = $itemId;
-        $this->comment = $comment;
-        $this->timestamp = $timestamp;
-    }
-
-    public function jsonSerialize(): array
-    {
-        return [
-            'FeedbackType' => $this->feedbackType,
-            'UserId' => $this->userId,
-            'ItemId' => $this->itemId,
-            'Comment' => $this->comment,
-            'Timestamp' => $this->timestamp,
-        ];
-    }
-}
-
-class RowAffected
-{
-    public int $rowAffected;
-
-    public static function fromJSON($json): RowAffected
-    {
-        $rowAffected = new RowAffected;
-        $rowAffected->rowAffected = $json['RowAffected'];
-
-        return $rowAffected;
-    }
-}
+use Packages\Recommend\Classes\GorseFeedback;
+use Packages\Recommend\Classes\GorseItem;
+use Packages\Recommend\Classes\GorseUser;
+use Packages\Recommend\Classes\RowAffected;
 
 final class GorseService
 {
@@ -154,7 +34,7 @@ final class GorseService
      */
     public function updateUser(GorseUser $user): RowAffected
     {
-        $path = '/api/user/'.rawurlencode($user->userId);
+        $path = '/api/user/'.rawurlencode($user->getUserId());
 
         return RowAffected::fromJSON($this->request('PATCH', $path, $user));
     }
@@ -192,7 +72,7 @@ final class GorseService
      */
     public function updateItem(GorseItem $item): RowAffected
     {
-        $path = '/api/item/'.rawurlencode($item->itemId);
+        $path = '/api/item/'.rawurlencode($item->getItemId());
 
         return RowAffected::fromJSON($this->request('PATCH', $path, $item));
     }
@@ -248,7 +128,7 @@ final class GorseService
     /**
      * @throws GuzzleException
      */
-    public function insertFeedback(Feedback $feedback): RowAffected
+    public function insertFeedback(GorseFeedback $feedback): RowAffected
     {
         return RowAffected::fromJSON($this->request('POST', '/api/feedback', [$feedback]));
     }
@@ -349,7 +229,7 @@ final class GorseService
             if ($this->apiKey) {
                 $options[GuzzleHttp\RequestOptions::HEADERS] = ['X-API-Key' => $this->apiKey];
             }
-            if ($body != null) {
+            if ($body !== null) {
                 $options[GuzzleHttp\RequestOptions::JSON] = $body;
             }
 

@@ -37,7 +37,7 @@ class ArticlePublishedNotification extends Notification implements ShouldQueue
      */
     public function toMail(): MailMessage
     {
-        return (new MailMessage)
+        return (new MailMessage())
             ->subject(__('article::messages.published_title'))
             ->greeting(__('article::messages.greeting'))
             ->line(__('article::messages.published_body', ['title' => $this->article->title]))

@@ -36,7 +36,8 @@ class ArticleData extends Data
         public bool $canUpdate,
         public bool $canDelete,
         public string $type = 'article'
-    ) {}
+    ) {
+    }
 
     public static function fromModel(Article $article, UserData $user, bool $setId = false): self
     {

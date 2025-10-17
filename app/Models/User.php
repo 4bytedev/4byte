@@ -56,19 +56,6 @@ class User extends Authenticatable implements FilamentUser, HasMedia
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
-    }
-
     public function profile(): HasOne
     {
         return $this->hasOne(UserProfile::class);
@@ -130,8 +117,22 @@ class User extends Authenticatable implements FilamentUser, HasMedia
             ->dontSubmitEmptyLogs();
     }
 
+    /** @phpstan-ignore-next-line */
     public function canAccessPanel(\Filament\Panel $panel): bool
     {
         return $this->can('view-panel');
+    }
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+        ];
     }
 }

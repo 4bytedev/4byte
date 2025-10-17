@@ -22,6 +22,8 @@ class NewsResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-newspaper';
 
+    protected static ?int $navigationSort = 3;
+
     public static function getNavigationGroup(): string
     {
         return __('CMS');
@@ -31,8 +33,6 @@ class NewsResource extends Resource
     {
         return __('News');
     }
-
-    protected static ?int $navigationSort = 3;
 
     public static function form(Form $form): Form
     {
@@ -112,7 +112,7 @@ class NewsResource extends Resource
                                                     ->default('DRAFT')
                                                     ->live()
                                                     ->afterStateUpdated(function (string $state, callable $set) {
-                                                        if ($state == 'PUBLISHED') {
+                                                        if ($state === 'PUBLISHED') {
                                                             $set('published_at', Carbon::now());
                                                         } else {
                                                             $set('published_at', null);

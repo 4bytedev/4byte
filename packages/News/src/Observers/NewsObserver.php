@@ -6,7 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Packages\News\Models\News;
-use Packages\Recommend\Services\GorseItem;
+use Packages\Recommend\Classes\GorseItem;
 use Packages\Recommend\Services\GorseService;
 
 class NewsObserver

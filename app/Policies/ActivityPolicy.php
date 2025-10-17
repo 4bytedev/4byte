@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
-use Spatie\Activitylog\Models\Activity;
 
 class ActivityPolicy
 {
@@ -21,7 +20,7 @@ class ActivityPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Activity $activity): bool
+    public function view(User $user): bool
     {
         return $user->can('view_activitylog');
     }
@@ -37,7 +36,7 @@ class ActivityPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Activity $activity): bool
+    public function update(User $user): bool
     {
         return $user->can('update_activitylog');
     }
@@ -45,7 +44,7 @@ class ActivityPolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Activity $activity): bool
+    public function delete(User $user): bool
     {
         return $user->can('delete_activitylog');
     }
@@ -61,7 +60,7 @@ class ActivityPolicy
     /**
      * Determine whether the user can permanently delete.
      */
-    public function forceDelete(User $user, Activity $activity): bool
+    public function forceDelete(User $user): bool
     {
         return $user->can('force_delete_activitylog');
     }
@@ -77,7 +76,7 @@ class ActivityPolicy
     /**
      * Determine whether the user can restore.
      */
-    public function restore(User $user, Activity $activity): bool
+    public function restore(User $user): bool
     {
         return $user->can('restore_activitylog');
     }
@@ -93,7 +92,7 @@ class ActivityPolicy
     /**
      * Determine whether the user can replicate.
      */
-    public function replicate(User $user, Activity $activity): bool
+    public function replicate(User $user): bool
     {
         return $user->can('replicate_activitylog');
     }

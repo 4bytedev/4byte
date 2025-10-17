@@ -4,7 +4,7 @@ namespace Packages\React\Observers;
 
 use Carbon\Carbon;
 use Packages\React\Models\Save;
-use Packages\Recommend\Services\Feedback;
+use Packages\Recommend\Classes\GorseFeedback;
 use Packages\Recommend\Services\GorseService;
 
 class SaveObserver
@@ -18,7 +18,7 @@ class SaveObserver
 
     public function created(Save $save)
     {
-        $feedback = new Feedback('save', (string) $save->user_id, strtolower(class_basename($save->saveable)).':'.$save->saveable->id, '', Carbon::now());
+        $feedback = new GorseFeedback('save', (string) $save->user_id, strtolower(class_basename($save->saveable)).':'.$save->saveable->id, '', Carbon::now());
         $this->gorse->insertFeedback($feedback);
     }
 

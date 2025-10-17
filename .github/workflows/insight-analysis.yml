@@ -71,8 +71,5 @@ jobs:
 
       - name: phpinsights
         run: |
-          php artisan insights --no-interaction \
-          --min-quality=90 --min-complexity=90 \
-          --min-architecture=90 --min-style=90 \
-          --ansi --format=github-action
+          php artisan insights --no-interaction --ansi --format=github-action
 

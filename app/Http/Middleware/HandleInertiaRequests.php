@@ -27,12 +27,12 @@ class HandleInertiaRequests extends Middleware
         $siteSettings = SettingsService::getSiteSettings();
         $securitySettings = SettingsService::getSecuritySettings();
         $user = null;
-        if ($request->user() != null) {
+        if ($request->user() !== null) {
             $user = [
                 'name' => $request->user()->name,
                 'username' => $request->user()->username,
                 'avatar' => $request->user()->getAvatarImage(),
-                'verified' => $request->user()->email_verified_at != null,
+                'verified' => $request->user()->email_verified_at !== null,
             ];
         }
 

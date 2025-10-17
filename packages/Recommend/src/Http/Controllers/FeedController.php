@@ -3,8 +3,8 @@
 namespace Packages\Recommend\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Packages\Recommend\Http\Requests\FeedRequest;
 use Packages\Recommend\Services\FeedService;
 
 class FeedController extends Controller
@@ -31,18 +31,8 @@ class FeedController extends Controller
         ])->header('Cache-Control', 'public, max-age=86400, immutable');
     }
 
-    public function feed(Request $request)
+    public function feed(FeedRequest $request)
     {
-        $request->validate([
-            'page' => 'sometimes|integer|min:1',
-            'tab' => 'sometimes|string',
-            'tag' => 'sometimes|string',
-            'category' => 'sometimes|string',
-            'article' => 'sometimes|string',
-            'entry' => 'sometimes|string',
-            'user' => 'sometimes|string',
-        ]);
-
         $userId = Auth::id() ?? null;
         $page = $request->get('page', 1);
         $limit = $request->get('limit', 10);
@@ -59,7 +49,7 @@ class FeedController extends Controller
         if (Auth::check()) {
             $recommendations = $this->feedService->getPersonalizedRecommendations($userId, $filters, $limit, ($page - 1) * $limit);
         } else {
-            $recommendations = $this->feedService->getNonPersonalizedRecommendations("trending", $filters, $limit, ($page - 1) * $limit);
+            $recommendations = $this->feedService->getNonPersonalizedRecommendations('trending', $filters, $limit, ($page - 1) * $limit);
         }
         if (! $recommendations) {
             return response()->json([]);

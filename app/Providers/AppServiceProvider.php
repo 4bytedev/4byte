@@ -8,6 +8,7 @@ use App\Observers\BannerObserver;
 use App\Observers\UserObserver;
 use App\Observers\UserProfileObserver;
 use App\Services\SettingsService;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 use Kenepa\Banner\Models\Banner;
@@ -39,55 +40,91 @@ class AppServiceProvider extends ServiceProvider
             }
         });
 
-        User::observe(UserObserver::class);
-        UserProfile::observe(UserProfileObserver::class);
-        Banner::observe(BannerObserver::class);
+        $this->loadObservers();
+        $this->loadMacros();
 
         try {
             $siteSettings = SettingsService::getSiteSettings();
             $seoSettings = SettingsService::getSeoSettings();
-            if ($siteSettings->terms_and_conditions_url) {
-                config([
-                    'filament-cookie-consent.privacy_policy_button.enabled' => true,
-                    'filament-cookie-consent.privacy_policy_button.href' => $siteSettings->terms_and_conditions_url,
-                ]);
-
-                config([
-                    'honeystone-seo.generators.Honeystone\Seo\Generators\MetaGenerator.title' => $siteSettings->title,
-                    'honeystone-seo.generators.Honeystone\Seo\Generators\MetaGenerator.titleTemplate' => $seoSettings->meta_titleTemplate,
-                    'honeystone-seo.generators.Honeystone\Seo\Generators\MetaGenerator.description' => $seoSettings->meta_description,
-                    'honeystone-seo.generators.Honeystone\Seo\Generators\MetaGenerator.keywords' => $seoSettings->meta_keywords,
-                    'honeystone-seo.generators.Honeystone\Seo\Generators\MetaGenerator.canonicalEnabled' => $seoSettings->meta_canonicalEnabled,
-                    'honeystone-seo.generators.Honeystone\Seo\Generators\MetaGenerator.robots' => $seoSettings->meta_robots,
-                    'honeystone-seo.generators.Honeystone\Seo\Generators\MetaGenerator.custom' => [$seoSettings->meta_custom],
-
-                    'honeystone-seo.generators.Honeystone\Seo\Generators\TwitterGenerator.enabled' => $seoSettings->twitter_enabled,
-                    'honeystone-seo.generators.Honeystone\Seo\Generators\TwitterGenerator.site' => $seoSettings->twitter_site,
-                    'honeystone-seo.generators.Honeystone\Seo\Generators\TwitterGenerator.card' => $seoSettings->twitter_card,
-                    'honeystone-seo.generators.Honeystone\Seo\Generators\TwitterGenerator.title' => $seoSettings->twitter_title,
-                    'honeystone-seo.generators.Honeystone\Seo\Generators\TwitterGenerator.description' => $seoSettings->twitter_description,
-                    'honeystone-seo.generators.Honeystone\Seo\Generators\TwitterGenerator.image' => $seoSettings->twitter_image,
-                    'honeystone-seo.generators.Honeystone\Seo\Generators\TwitterGenerator.imageAlt' => $seoSettings->twitter_imageAlt,
-
-                    'honeystone-seo.generators.Honeystone\Seo\Generators\OpenGraphGenerator.enabled' => $seoSettings->og_enabled,
-                    'honeystone-seo.generators.Honeystone\Seo\Generators\OpenGraphGenerator.site' => $seoSettings->og_site,
-                    'honeystone-seo.generators.Honeystone\Seo\Generators\OpenGraphGenerator.type' => $seoSettings->og_type,
-                    'honeystone-seo.generators.Honeystone\Seo\Generators\OpenGraphGenerator.title' => $seoSettings->og_title,
-                    'honeystone-seo.generators.Honeystone\Seo\Generators\OpenGraphGenerator.description' => $seoSettings->og_description,
-                    'honeystone-seo.generators.Honeystone\Seo\Generators\OpenGraphGenerator.images' => $seoSettings->og_images,
-                    'honeystone-seo.generators.Honeystone\Seo\Generators\OpenGraphGenerator.determiner' => $seoSettings->og_determiner,
-
-                    'honeystone-seo.generators.Honeystone\Seo\Generators\JsonLdGenerator.enabled' => $seoSettings->jld_enabled,
-                    'honeystone-seo.generators.Honeystone\Seo\Generators\JsonLdGenerator.pretty' => $seoSettings->jld_pretty,
-                    'honeystone-seo.generators.Honeystone\Seo\Generators\JsonLdGenerator.type' => $seoSettings->jld_type,
-                    'honeystone-seo.generators.Honeystone\Seo\Generators\JsonLdGenerator.name' => $seoSettings->jld_name,
-                    'honeystone-seo.generators.Honeystone\Seo\Generators\JsonLdGenerator.description' => $seoSettings->jld_description,
-                    'honeystone-seo.generators.Honeystone\Seo\Generators\JsonLdGenerator.images' => $seoSettings->jld_images,
-                    'honeystone-seo.generators.Honeystone\Seo\Generators\JsonLdGenerator.custom' => [$seoSettings->jld_custom],
-                ]);
-            }
+            $this->loadSiteConfig($siteSettings);
+            $this->loadSeoConfig($siteSettings, $seoSettings);
         } catch (\Throwable $th) {
             logger()->error('Service provider settings configuration error, please migrate and configure settings', ['e' => $th]);
         }
+    }
+
+    public function loadSeoConfig($siteSettings, $seoSettings)
+    {
+        $generators = [
+            'MetaGenerator' => [
+                'title' => $siteSettings->title,
+                'titleTemplate' => $seoSettings->meta_titleTemplate,
+                'description' => $seoSettings->meta_description,
+                'keywords' => $seoSettings->meta_keywords,
+                'canonicalEnabled' => $seoSettings->meta_canonicalEnabled,
+                'robots' => $seoSettings->meta_robots,
+                'custom' => [$seoSettings->meta_custom],
+            ],
+            'TwitterGenerator' => [
+                'enabled' => $seoSettings->twitter_enabled,
+                'site' => $seoSettings->twitter_site,
+                'card' => $seoSettings->twitter_card,
+                'title' => $seoSettings->twitter_title,
+                'description' => $seoSettings->twitter_description,
+                'image' => $seoSettings->twitter_image,
+                'imageAlt' => $seoSettings->twitter_imageAlt,
+            ],
+            'OpenGraphGenerator' => [
+                'enabled' => $seoSettings->og_enabled,
+                'site' => $seoSettings->og_site,
+                'type' => $seoSettings->og_type,
+                'title' => $seoSettings->og_title,
+                'description' => $seoSettings->og_description,
+                'images' => $seoSettings->og_images,
+                'determiner' => $seoSettings->og_determiner,
+            ],
+            'JsonLdGenerator' => [
+                'enabled' => $seoSettings->jld_enabled,
+                'pretty' => $seoSettings->jld_pretty,
+                'type' => $seoSettings->jld_type,
+                'name' => $seoSettings->jld_name,
+                'description' => $seoSettings->jld_description,
+                'images' => $seoSettings->jld_images,
+                'custom' => [$seoSettings->jld_custom],
+            ],
+        ];
+
+        foreach ($generators as $generator => $values) {
+            foreach ($values as $key => $value) {
+                config(["honeystone-seo.generators.Honeystone\Seo\Generators\\{$generator}.{$key}" => $value]);
+            }
+        }
+    }
+
+    public function loadSiteConfig($siteSettings)
+    {
+        if ($siteSettings->terms_and_conditions_url) {
+            config([
+                'filament-cookie-consent.privacy_policy_button.enabled' => true,
+                'filament-cookie-consent.privacy_policy_button.href' => $siteSettings->terms_and_conditions_url,
+            ]);
+        }
+    }
+
+    protected function loadObservers()
+    {
+        User::observe(UserObserver::class);
+        UserProfile::observe(UserProfileObserver::class);
+        Banner::observe(BannerObserver::class);
+    }
+
+    protected function loadMacros()
+    {
+        Builder::macro('existsOrFail', function ($message = '') {
+            if (! $this->exists()) {
+                throw new \Illuminate\Database\RecordNotFoundException($message);
+            }
+            return $this;
+        });
     }
 }

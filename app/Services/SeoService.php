@@ -31,50 +31,6 @@ class SeoService
         $this->seoSettings = SettingsService::getSeoSettings();
     }
 
-    private function buildSeo(array $data)
-    {
-        $seo = seo();
-
-        if (isset($data['title']) && $data['title']) {
-            $seo->title($data['title'])
-                ->metaTitle($data['title'])
-                ->twitterTitle($data['title'])
-                ->openGraphTitle($data['title'])
-                ->jsonLdName($data['title']);
-        }
-
-        if (isset($data['description']) && $data['description']) {
-            $seo->description($data['description'])
-                ->metaDescription($data['description'])
-                ->twitterDescription($data['description'])
-                ->openGraphDescription($data['description'])
-                ->jsonLdDescription($data['description']);
-        }
-
-        if (isset($data['url']) && $data['url']) {
-            $seo->url($data['url'])
-                ->canonical($data['url'])
-                ->metaCanonical($data['url'])
-                ->openGraphUrl($data['url'])
-                ->jsonLdUrl($data['url']);
-        }
-
-        if (isset($data['image']) && $data['image']) {
-            $seo->images($data['image'])
-                ->twitterImage($data['image'])
-                ->openGraphImage($data['image'])
-                ->jsonLdImage($data['image']);
-        }
-
-        if (isset($data['openGraphType']) && $data['openGraphType']) {
-            $seo->openGraphType($data['openGraphType']);
-        }
-
-        // $seo->openGraphProperty("og:logo", $this->siteSettings->getLightLogoUrlAttribute());
-
-        return $seo;
-    }
-
     public function getHomeSEO()
     {
         $schema = Schema::webPage()
@@ -332,5 +288,49 @@ class SeoService
             'url' => route('category.view', ['slug' => $category->slug]),
             'image' => null,
         ])->jsonLdImport($schema);
+    }
+
+    private function buildSeo(array $data)
+    {
+        $seo = seo();
+
+        if (isset($data['title']) && $data['title']) {
+            $seo->title($data['title'])
+                ->metaTitle($data['title'])
+                ->twitterTitle($data['title'])
+                ->openGraphTitle($data['title'])
+                ->jsonLdName($data['title']);
+        }
+
+        if (isset($data['description']) && $data['description']) {
+            $seo->description($data['description'])
+                ->metaDescription($data['description'])
+                ->twitterDescription($data['description'])
+                ->openGraphDescription($data['description'])
+                ->jsonLdDescription($data['description']);
+        }
+
+        if (isset($data['url']) && $data['url']) {
+            $seo->url($data['url'])
+                ->canonical($data['url'])
+                ->metaCanonical($data['url'])
+                ->openGraphUrl($data['url'])
+                ->jsonLdUrl($data['url']);
+        }
+
+        if (isset($data['image']) && $data['image']) {
+            $seo->images($data['image'])
+                ->twitterImage($data['image'])
+                ->openGraphImage($data['image'])
+                ->jsonLdImage($data['image']);
+        }
+
+        if (isset($data['openGraphType']) && $data['openGraphType']) {
+            $seo->openGraphType($data['openGraphType']);
+        }
+
+        // $seo->openGraphProperty("og:logo", $this->siteSettings->getLightLogoUrlAttribute());
+
+        return $seo;
     }
 }

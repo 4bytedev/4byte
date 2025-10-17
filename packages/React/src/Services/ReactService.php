@@ -148,16 +148,13 @@ class ReactService
         if (! $parentId) {
             Cache::increment($this->cacheKey($commentableType, $commentableId, 'comments'));
         } else {
-            $parent = Comment::where('id', $parentId)
+            Comment::where('id', $parentId)
                 ->where('commentable_id', $commentableId)
                 ->where('commentable_type', $commentableType)
-                ->exists();
-            if (! $parent) {
-                throw new \RuntimeException('System Exception.', 500);
-            }
+                ->existsOrFail();
             Cache::increment($this->cacheKey($commentableType, $commentableId, 'comments'));
-            Cache::increment($this->cacheKey($commentableType, $commentableId, 'comment', $parentId, "replies"));
-            Cache::forever($this->cacheKey($commentableType, $commentableId, $userId, "commented"), true);
+            Cache::increment($this->cacheKey($commentableType, $commentableId, 'comment', $parentId, 'replies'));
+            Cache::forever($this->cacheKey($commentableType, $commentableId, $userId, 'commented'), true);
         }
         $comment = Comment::create([
             'content' => $content,
@@ -180,7 +177,7 @@ class ReactService
 
     public function getComment(int $commentId)
     {
-        $comment = Cache::rememberForever($this->cacheKey(Comment::class, $commentId, "comment", $commentId), function () use ($commentId) {
+        $comment = Cache::rememberForever($this->cacheKey(Comment::class, $commentId, 'comment', $commentId), function () use ($commentId) {
             return Comment::where('id', $commentId)->first();
         });
 
@@ -207,7 +204,7 @@ class ReactService
         }
 
         return Cache::rememberForever(
-            $this->cacheKey($commentableType, $commentableId, 'comment', $parentId, "replies"),
+            $this->cacheKey($commentableType, $commentableId, 'comment', $parentId, 'replies'),
             fn () => Comment::where('commentable_id', $commentableId)
                 ->where('commentable_type', $commentableType)
                 ->where('parent_id', $parentId)

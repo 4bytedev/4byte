@@ -15,7 +15,7 @@ trait CanFollow
 
     public function followingsCount(): int
     {
-        return Cache::rememberForever($this->getCacheKey().":followings", function () {
+        return Cache::rememberForever($this->getCacheKey().':followings', function () {
             return $this->followings()->count();
         });
     }
@@ -25,11 +25,11 @@ trait CanFollow
         if (! $this->isFollowing($target)) {
             $this->followings()->create([
                 'followable_id' => $target->id,
-                'followable_type' => get_class($target),
+                'followable_type' => $target::class,
             ]);
 
-            Cache::increment($target->getCacheKey().":followers");
-            Cache::increment($this->getCacheKey().":followings");
+            Cache::increment($target->getCacheKey().':followers');
+            Cache::increment($this->getCacheKey().':followings');
             Cache::forever($target->getCacheKey().":{$this->id}:followed", true);
         }
     }
@@ -38,11 +38,11 @@ trait CanFollow
     {
         $this->followings()
             ->where('followable_id', $target->id)
-            ->where('followable_type', get_class($target))
+            ->where('followable_type', $target::class)
             ->delete();
 
-        Cache::decrement($target->getCacheKey().":followers");
-        Cache::decrement($this->getCacheKey().":followings");
+        Cache::decrement($target->getCacheKey().':followers');
+        Cache::decrement($this->getCacheKey().':followings');
         Cache::forget($target->getCacheKey().":{$this->id}:followed");
     }
 
@@ -53,7 +53,7 @@ trait CanFollow
             function () use ($target) {
                 return $this->followings()
                     ->where('followable_id', $target->id)
-                    ->where('followable_type', get_class($target))
+                    ->where('followable_type', $target::class)
                     ->exists();
             }
         );
