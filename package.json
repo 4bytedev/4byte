@@ -40,7 +40,7 @@
     "cmdk": "^1.1.1",
     "hast-util-find-and-replace": "^5.0.1",
     "highlight.js": "^11.11.1",
-    "html-react-parser": "^5.2.6",
+    "html-react-parser": "^5.2.7",
     "i": "^0.3.7",
     "i18next": "^25.5.2",
     "lucide-react": "^0.539.0",
