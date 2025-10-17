@@ -25,8 +25,8 @@ class CreateRequest extends FormRequest
             'content' => [
                 'nullable',
                 'string',
-                /** @phpstan-ignore-next-line */
-                function ($_attribute, $value, $fail) {
+
+                function ($_attribute, $value, $fail) { /** @phpstan-ignore-line */
                     if (! $this->has('media') && strlen($value ?? '') < 50) {
                         $fail(__('validation.min.string', ['min' => 50]));
                     }

@@ -5,8 +5,8 @@ namespace App\Observers;
 use App\Models\User;
 use App\Services\SettingsService;
 use Illuminate\Support\Facades\Cache;
+use Packages\Recommend\Classes\GorseUser;
 use Packages\Recommend\Services\GorseService;
-use Packages\Recommend\Services\GorseUser;
 
 class UserObserver
 {

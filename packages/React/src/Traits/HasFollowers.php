@@ -15,7 +15,7 @@ trait HasFollowers
 
     public function followersCount(): int
     {
-        return Cache::rememberForever($this->getCacheKey().":followers", function () {
+        return Cache::rememberForever($this->getCacheKey().':followers', function () {
             return $this->followers()->count();
         });
     }

@@ -7,7 +7,6 @@ use DateTime;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Packages\Entry\Models\Entry;
-use Packages\Entry\Services\EntryService;
 use Spatie\LaravelData\Data;
 
 class EntryData extends Data
@@ -28,11 +27,11 @@ class EntryData extends Data
         public bool $canDelete,
         public ?DateTime $published_at,
         public string $type = 'entry'
-    ) {}
+    ) {
+    }
 
     public static function fromModel(Entry $entry, UserData $user, bool $setId = false, bool $setPublished = true): self
     {
-        $entryService = app(EntryService::class);
         $userId = Auth::id();
 
         return new self(

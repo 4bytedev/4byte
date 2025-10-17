@@ -23,6 +23,8 @@ class PageResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-document';
 
+    protected static ?int $navigationSort = 3;
+
     public static function getNavigationGroup(): string
     {
         return __('CMS');
@@ -32,8 +34,6 @@ class PageResource extends Resource
     {
         return __('Pages');
     }
-
-    protected static ?int $navigationSort = 3;
 
     public static function form(Form $form): Form
     {
@@ -111,7 +111,7 @@ class PageResource extends Resource
                                                     ->default('DRAFT')
                                                     ->live()
                                                     ->afterStateUpdated(function (string $state, callable $set) {
-                                                        if ($state == 'PUBLISHED') {
+                                                        if ($state === 'PUBLISHED') {
                                                             $set('published_at', Carbon::now());
                                                         } else {
                                                             $set('published_at', null);

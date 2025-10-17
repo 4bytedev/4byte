@@ -101,7 +101,7 @@ class ArticleCrudController extends Controller
                 'content' => $article->content,
                 'categories' => $article->categories->pluck('slug'),
                 'tags' => $article->tags->pluck('slug'),
-                'published' => $article->status == 'PUBLISHED',
+                'published' => $article->status === 'PUBLISHED',
                 'image' => $article->getCoverImage()['image'],
             ],
         ]);

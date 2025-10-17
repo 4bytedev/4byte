@@ -5,7 +5,7 @@ namespace Packages\Article\Observers;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Packages\Article\Models\Article;
-use Packages\Recommend\Services\GorseItem;
+use Packages\Recommend\Classes\GorseItem;
 use Packages\Recommend\Services\GorseService;
 
 class ArticleObserver

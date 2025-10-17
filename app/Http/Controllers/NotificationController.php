@@ -37,7 +37,7 @@ class NotificationController extends Controller
         }
     }
 
-    public function markAllAsRead(Request $request)
+    public function markAllAsRead()
     {
         auth()->user()->unreadNotifications->markAsRead();
     }

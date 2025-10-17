@@ -22,6 +22,29 @@ class SessionService
         };
     }
 
+    public static function logoutOtherSessions(string $password): bool
+    {
+        if (! Hash::check($password, Auth::user()->password)) {
+            return false;
+        }
+
+        Auth::guard()->logoutOtherDevices($password);
+
+        $driver = config('session.driver');
+
+        if ($driver === 'database') {
+            self::deleteDatabaseSessions();
+        } elseif ($driver === 'redis') {
+            self::deleteRedisSessions();
+        }
+
+        request()->session()->put([
+            'password_hash_'.Auth::getDefaultDriver() => Auth::user()->getAuthPassword(),
+        ]);
+
+        return true;
+    }
+
     protected static function getDatabaseSessions(): array
     {
         $sessions = DB::connection(config('session.connection'))->table(config('session.table'))
@@ -87,30 +110,7 @@ class SessionService
 
     protected static function createAgent(string $userAgent): Agent
     {
-        return tap(new Agent, fn ($agent) => $agent->setUserAgent($userAgent));
-    }
-
-    public static function logoutOtherSessions(string $password): bool
-    {
-        if (! Hash::check($password, Auth::user()->password)) {
-            return false;
-        }
-
-        Auth::guard()->logoutOtherDevices($password);
-
-        $driver = config('session.driver');
-
-        if ($driver === 'database') {
-            self::deleteDatabaseSessions();
-        } elseif ($driver === 'redis') {
-            self::deleteRedisSessions();
-        }
-
-        request()->session()->put([
-            'password_hash_'.Auth::getDefaultDriver() => Auth::user()->getAuthPassword(),
-        ]);
-
-        return true;
+        return tap(new Agent(), fn ($agent) => $agent->setUserAgent($userAgent));
     }
 
     protected static function deleteDatabaseSessions(): void

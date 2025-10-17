@@ -12,13 +12,14 @@ class Follow extends Model
 {
     use HasFactory;
 
+    /** @phpstan-ignore-next-line */
+    public $timestamps = false;
+
     protected $fillable = [
         'follower_id',
         'followable_id',
         'followable_type',
     ];
-
-    public $timestamps = false;
 
     public function followable(): MorphTo
     {

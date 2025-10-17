@@ -37,7 +37,7 @@ class PagePublishedNotification extends Notification implements ShouldQueue
      */
     public function toMail(): MailMessage
     {
-        return (new MailMessage)
+        return (new MailMessage())
             ->subject(__('page::messages.published_title'))
             ->greeting(__('page::messages.greeting'))
             ->line(__('page::messages.published_body', ['title' => $this->page->title]))

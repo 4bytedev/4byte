@@ -28,21 +28,26 @@ class FollowedListener implements ShouldQueue
         $followable = $follow->followable;
 
         if (in_array(Notifiable::class, class_uses_recursive($followable))) {
-            $followable->notify(
-                Notification::make()
-                    ->title(__('You have a new follower!'))
-                    ->success()
-                    ->body(__('user_follow', ['username' => $follow->follower->username]))
-                    ->actions([
-                        Action::make('view')
-                            ->label(__('View Profile'))
-                            ->url(route('user.view', ['username' => $follow->follower->username]))
-                            ->markAsRead()
-                            ->openUrlInNewTab()
-                            ->button(),
-                    ])
-                    ->toDatabase()
-            );
+            $this->sendNotification($follow, $followable);
         }
+    }
+
+    protected function sendNotification($follow, $followable)
+    {
+        $followable->notify(
+            Notification::make()
+                ->title(__('You have a new follower!'))
+                ->success()
+                ->body(__('user_follow', ['username' => $follow->follower->username]))
+                ->actions([
+                    Action::make('view')
+                        ->label(__('View Profile'))
+                        ->url(route('user.view', ['username' => $follow->follower->username]))
+                        ->markAsRead()
+                        ->openUrlInNewTab()
+                        ->button(),
+                ])
+                ->toDatabase()
+        );
     }
 }

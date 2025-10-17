@@ -4,7 +4,7 @@ namespace Packages\React\Observers;
 
 use Carbon\Carbon;
 use Packages\React\Models\Like;
-use Packages\Recommend\Services\Feedback;
+use Packages\Recommend\Classes\GorseFeedback;
 use Packages\Recommend\Services\GorseService;
 
 class LikeObserver
@@ -18,7 +18,7 @@ class LikeObserver
 
     public function created(Like $like)
     {
-        $feedback = new Feedback('like', (string) $like->user_id, strtolower(class_basename($like->likeable)).':'.$like->likeable->id, '', Carbon::now());
+        $feedback = new GorseFeedback('like', (string) $like->user_id, strtolower(class_basename($like->likeable)).':'.$like->likeable->id, '', Carbon::now());
         $this->gorse->insertFeedback($feedback);
     }
 

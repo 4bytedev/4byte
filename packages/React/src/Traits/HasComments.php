@@ -32,14 +32,14 @@ trait HasComments
         if (isset($parentId)) {
             Cache::increment($this->getCacheKey().":comment:{$parentId}:replies");
         } else {
-            Cache::increment($this->getCacheKey().":comments");
+            Cache::increment($this->getCacheKey().':comments');
         }
         Cache::forever($this->getCacheKey().":{$userId}:commented", true);
     }
 
     public function commentsCount(): int
     {
-        return Cache::rememberForever($this->getCacheKey().":comments", function () {
+        return Cache::rememberForever($this->getCacheKey().':comments', function () {
             return $this->comments()->count();
         });
     }

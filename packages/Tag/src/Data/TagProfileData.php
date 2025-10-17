@@ -14,7 +14,8 @@ class TagProfileData extends Data
         public string $description,
         public string $color,
         public CategoryData $category,
-    ) {}
+    ) {
+    }
 
     public static function fromModel(TagProfile $tagProfile, bool $setId = false): self
     {

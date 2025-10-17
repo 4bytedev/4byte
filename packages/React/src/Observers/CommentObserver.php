@@ -4,7 +4,7 @@ namespace Packages\React\Observers;
 
 use Carbon\Carbon;
 use Packages\React\Models\Comment;
-use Packages\Recommend\Services\Feedback;
+use Packages\Recommend\Classes\GorseFeedback;
 use Packages\Recommend\Services\GorseService;
 
 class CommentObserver
@@ -18,7 +18,7 @@ class CommentObserver
 
     public function created(Comment $comment)
     {
-        $feedback = new Feedback('comment', (string) $comment->user_id, strtolower(class_basename($comment->commentable)).':'.$comment->commentable->id, '', Carbon::now());
+        $feedback = new GorseFeedback('comment', (string) $comment->user_id, strtolower(class_basename($comment->commentable)).':'.$comment->commentable->id, '', Carbon::now());
         $this->gorse->insertFeedback($feedback);
     }
 

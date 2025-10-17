@@ -30,7 +30,7 @@ trait HasDislikes
     {
         if (! $this->isDislikedBy($userId)) {
             $this->dislikes()->create(['user_id' => $userId]);
-            Cache::increment($this->getCacheKey().":dislikes");
+            Cache::increment($this->getCacheKey().':dislikes');
             Cache::forever($this->getCacheKey().":{$userId}:disliked", true);
         }
     }
@@ -39,7 +39,7 @@ trait HasDislikes
     {
         $deleted = $this->dislikes()->where('user_id', $userId)->delete();
         if ($deleted) {
-            Cache::decrement($this->getCacheKey().":dislikes");
+            Cache::decrement($this->getCacheKey().':dislikes');
             Cache::forget($this->getCacheKey().":{$userId}:disliked");
         }
     }
@@ -53,7 +53,7 @@ trait HasDislikes
 
     public function dislikesCount(): int
     {
-        return Cache::rememberForever($this->getCacheKey().":dislikes", function () {
+        return Cache::rememberForever($this->getCacheKey().':dislikes', function () {
             return $this->dislikes()->count();
         });
     }

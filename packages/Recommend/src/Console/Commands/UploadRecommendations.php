@@ -12,128 +12,109 @@ use Packages\React\Models\Dislike;
 use Packages\React\Models\Follow;
 use Packages\React\Models\Like;
 use Packages\React\Models\Save;
-use Packages\Recommend\Services\Feedback;
-use Packages\Recommend\Services\GorseItem;
+use Packages\Recommend\Classes\GorseFeedback;
+use Packages\Recommend\Classes\GorseItem;
+use Packages\Recommend\Classes\GorseUser;
 use Packages\Recommend\Services\GorseService;
-use Packages\Recommend\Services\GorseUser;
 
 class UploadRecommendations extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
     protected $signature = 'recommendation:upload';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
     protected $description = 'Upload items and reactions to recommendation engine';
+    protected GorseService $gorseService;
 
-    /**
-     * Execute the console command.
-     */
     public function handle()
     {
-        $gorseService = app(GorseService::class);
+        $this->gorseService = app(GorseService::class);
 
-        $users = User::all();
-
-        foreach ($users as $user) {
-            $gorseUser = new GorseUser((string) $user->id, ['article', 'entry', 'news'], [], $user->username);
-            $gorseService->insertUser($gorseUser);
-        }
-
-        $this->info('✅ Users uploaded successfully!');
-
-        $articles = Article::all();
-
-        foreach ($articles as $article) {
-            $gorseItem = new GorseItem(
-                'article:'.$article->id,
-                ['article', "user:{$article->user_id}"],
-                $article->tags->pluck('id')
-                    ->map(fn ($id) => 'tag:'.$id)
-                    ->merge(
-                        $article->categories->pluck('id')
-                            ->map(fn ($id) => 'category:'.$id)
-                    )
-                    ->merge(['article', "user:{$article->user_id}"])
-                    ->all(),
-                $article->slug,
-                $article->status != 'PUBLISHED',
-                Carbon::parse($article->published_at)->toDateTimeString()
-            );
-            $gorseService->insertItem($gorseItem);
-        }
-
-        $this->info('✅ Articles uploaded successfully!');
-
-        $entries = Entry::all();
-
-        foreach ($entries as $entry) {
-            $gorseItem = new GorseItem(
-                'entry:'.$entry->id,
-                ['entry', "user:{$entry->user_id}"],
-                [],
-                '',
-                false,
-                Carbon::now()->toDateTimeString()
-            );
-            $gorseService->insertItem($gorseItem);
-        }
-
-        $this->info('✅ Entries uploaded successfully!');
-
-        $likes = Like::all();
-
-        foreach ($likes as $like) {
-            $feedback = new Feedback('like', (string) $like->user_id, strtolower(class_basename($like->likeable)).':'.$like->likeable->id, '', Carbon::now());
-            $gorseService->insertFeedback($feedback);
-        }
-
-        $this->info('✅ Likes uploaded successfully!');
-
-        $dislikes = Dislike::all();
-
-        foreach ($dislikes as $dislike) {
-            $feedback = new Feedback('dislike', (string) $dislike->user_id, strtolower(class_basename($dislike->dislikeable)).':'.$dislike->dislikeable->id, '', Carbon::now());
-            $gorseService->insertFeedback($feedback);
-        }
-
-        $this->info('✅ Dislikes uploaded successfully!');
-
-        $comments = Comment::all();
-
-        foreach ($comments as $comment) {
-            $feedback = new Feedback('comment', (string) $comment->user_id, strtolower(class_basename($comment->commentable)).':'.$comment->commentable->id, '', Carbon::now());
-            $gorseService->insertFeedback($feedback);
-        }
-
-        $this->info('✅ Comments uploaded successfully!');
-
-        $saves = Save::all();
-
-        foreach ($saves as $save) {
-            $feedback = new Feedback('save', (string) $save->user_id, strtolower(class_basename($save->saveable)).':'.$save->saveable->id, '', Carbon::now());
-            $gorseService->insertFeedback($feedback);
-        }
-
-        $this->info('✅ Saves uploaded successfully!');
-
-        $follows = Follow::all();
-
-        foreach ($follows as $follow) {
-            $gorseUser = $gorseService->getUser((string) $follow->follower_id);
-            $gorseUser->labels[] = strtolower(class_basename($follow->followable)).':'.$follow->followable->id;
-            $gorseService->updateUser($gorseUser);
-        }
-
-        $this->info('✅ Follows uploaded successfully!');
+        $this->uploadUsers();
+        $this->uploadArticles();
+        $this->uploadEntries();
+        $this->uploadReactions();
+        $this->uploadFollows();
 
         $this->info('✅ All recommendations uploaded successfully!');
+    }
+
+    protected function uploadUsers()
+    {
+        User::all()->each(function ($user) {
+            $this->gorseService->insertUser(
+                new GorseUser((string) $user->id, ['article', 'entry', 'news'], [], $user->username)
+            );
+        });
+        $this->info('✅ Users uploaded successfully!');
+    }
+
+    protected function uploadArticles()
+    {
+        Article::all()->each(function ($article) {
+            $tags = $article->tags->pluck('id')->map(fn ($id) => 'tag:'.$id);
+            $categories = $article->categories->pluck('id')->map(fn ($id) => 'category:'.$id);
+
+            $this->gorseService->insertItem(
+                new GorseItem(
+                    'article:'.$article->id,
+                    ['article', "user:{$article->user_id}"],
+                    $tags->merge($categories)->merge(['article', "user:{$article->user_id}"])->all(),
+                    $article->slug,
+                    $article->status !== 'PUBLISHED',
+                    Carbon::parse($article->published_at)->toDateTimeString()
+                )
+            );
+        });
+        $this->info('✅ Articles uploaded successfully!');
+    }
+
+    protected function uploadEntries()
+    {
+        Entry::all()->each(function ($entry) {
+            $this->gorseService->insertItem(
+                new GorseItem(
+                    'entry:'.$entry->id,
+                    ['entry', "user:{$entry->user_id}"],
+                    [],
+                    '',
+                    false,
+                    Carbon::now()->toDateTimeString()
+                )
+            );
+        });
+        $this->info('✅ Entries uploaded successfully!');
+    }
+
+    protected function uploadReactions()
+    {
+        $reactionTypes = [
+            'like' => Like::class,
+            'dislike' => Dislike::class,
+            'comment' => Comment::class,
+            'save' => Save::class,
+        ];
+
+        foreach ($reactionTypes as $type => $model) {
+            $model::all()->each(function ($item) use ($type) {
+                $this->gorseService->insertFeedback(
+                    new GorseFeedback(
+                        $type,
+                        (string) $item->user_id,
+                        strtolower(class_basename($item->{$type === 'like' ? 'likeable' : ($type === 'dislike' ? 'dislikeable' : ($type === 'comment' ? 'commentable' : 'saveable'))})) . ':' . $item->{$type === 'like' ? 'likeable' : ($type === 'dislike' ? 'dislikeable' : ($type === 'comment' ? 'commentable' : 'saveable'))}->id,
+                        '',
+                        Carbon::now()
+                    )
+                );
+            });
+            $this->info('✅ ' . ucfirst($type) . 's uploaded successfully!');
+        }
+    }
+
+    protected function uploadFollows()
+    {
+        Follow::all()->each(function ($follow) {
+            $gorseUser = $this->gorseService->getUser((string) $follow->follower_id);
+            $gorseUser->addLabel(strtolower(class_basename($follow->followable)) . ':' . $follow->followable->id);
+            $this->gorseService->updateUser($gorseUser);
+        });
+        $this->info('✅ Follows uploaded successfully!');
     }
 }

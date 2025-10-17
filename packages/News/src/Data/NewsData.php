@@ -26,7 +26,8 @@ class NewsData extends Data
         /** @var array<TagData> */
         public array $tags,
         public string $type = 'news'
-    ) {}
+    ) {
+    }
 
     public static function fromModel(News $news, bool $setId = false): self
     {

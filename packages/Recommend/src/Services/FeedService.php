@@ -132,25 +132,6 @@ class FeedService
         return $filters;
     }
 
-    private function getTotals(string $type)
-    {
-        $articleCounts = DB::table('article_'.$type)
-            ->select($type.'_id', DB::raw('COUNT(*) as count'))
-            ->groupBy($type.'_id');
-
-        $newsCounts = DB::table('news_'.$type)
-            ->select($type.'_id', DB::raw('COUNT(*) as count'))
-            ->groupBy($type.'_id');
-
-        return DB::query()
-            ->fromSub($articleCounts->unionAll($newsCounts), $type.'_counts')
-            ->select($type.'_id', DB::raw('SUM(count) as total'))
-            ->groupBy($type.'_id')
-            ->orderByDesc('total')
-            ->limit(7)
-            ->get();
-    }
-
     public function getTabContents(string $tab, ?int $userId): array
     {
         if ($tab === 'drafts' && $userId) {
@@ -201,9 +182,9 @@ class FeedService
         $contents = [];
 
         foreach ($recommendations as $recommend) {
-            $recommendId = "";
+            $recommendId = '';
             if (is_array($recommend)) {
-                $recommendId = $recommend["Id"];
+                $recommendId = $recommend['Id'];
             } else {
                 $recommendId = $recommend;
             }
@@ -216,21 +197,51 @@ class FeedService
             $type = trim(substr($recommendId, 0, $pos));
             $id = trim(substr($recommendId, $pos + 1));
 
-            try {
-                if ($type === 'article') {
-                    $contents[] = $this->articleService->getData((int) $id);
-                } elseif ($type === 'news') {
-                    $contents[] = $this->newsService->getData((int) $id);
-                } elseif ($type === 'entry') {
-                    $contents[] = $this->entryService->getData((int) $id);
-                } elseif ($type === 'comment') {
-                    $contents[] = $this->reactService->getComment((int) $id);
-                }
-            } catch (\Throwable $th) {
-                logger()->error('Invalid recommended content', ['type' => $type, 'id' => $id, 'th' => $th]);
+            $content = $this->getContent($type, $id);
+            if ($content !== null) {
+                $contents[] = $content;
             }
         }
 
         return $contents;
+    }
+
+    private function getContent(string $type, int $id)
+    {
+        try {
+            return match ($type) {
+                'article' => $this->articleService->getData($id),
+                'news' => $this->newsService->getData($id),
+                'entry' => $this->entryService->getData($id),
+                'comment' => $this->reactService->getComment($id),
+                default => null,
+            };
+        } catch (\Throwable $th) {
+            logger()->error('Invalid recommended content', [
+                'type' => $type,
+                'id' => $id,
+                'th' => $th,
+            ]);
+            return null;
+        }
+    }
+
+    private function getTotals(string $type)
+    {
+        $articleCounts = DB::table('article_'.$type)
+            ->select($type.'_id', DB::raw('COUNT(*) as count'))
+            ->groupBy($type.'_id');
+
+        $newsCounts = DB::table('news_'.$type)
+            ->select($type.'_id', DB::raw('COUNT(*) as count'))
+            ->groupBy($type.'_id');
+
+        return DB::query()
+            ->fromSub($articleCounts->unionAll($newsCounts), $type.'_counts')
+            ->select($type.'_id', DB::raw('SUM(count) as total'))
+            ->groupBy($type.'_id')
+            ->orderByDesc('total')
+            ->limit(7)
+            ->get();
     }
 }

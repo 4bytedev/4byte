@@ -12,13 +12,14 @@ class Save extends Model
 {
     use HasFactory;
 
+    /** @phpstan-ignore-next-line */
+    public $timestamps = false;
+
     protected $fillable = [
         'user_id',
         'saveable_type',
         'saveable_id',
     ];
-
-    public $timestamps = false;
 
     public function saveable(): MorphTo
     {

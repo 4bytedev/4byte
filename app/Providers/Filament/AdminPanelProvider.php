@@ -90,8 +90,8 @@ class AdminPanelProvider extends PanelProvider
                 ->colors([
                     'primary' => Color::Amber,
                 ])
-                ->defaultThemeMode($this->siteSettings->theme_mode ?? $this->siteSettings->theme_mode == 'dark' ? ThemeMode::Dark :
-                    ($this->siteSettings->theme_mode ?? $this->siteSettings->theme_mode == 'light' ? ThemeMode::Light : ThemeMode::System))
+                ->defaultThemeMode($this->siteSettings->theme_mode ?? $this->siteSettings->theme_mode === 'dark' ? ThemeMode::Dark :
+                    ($this->siteSettings->theme_mode ?? $this->siteSettings->theme_mode === 'light' ? ThemeMode::Light : ThemeMode::System))
                 ->darkMode($this->siteSettings->dark_mode_enabled ?? true)
 
                 ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
