@@ -82,20 +82,23 @@ class GenerateSitemapJob implements ShouldQueue
 
         $sitemap->writeToFile(public_path('sitemap.xml'));
 
+        /** @var array<\Filament\Notifications\Actions\Action> $actions */
+        $actions = [
+            Action::make('view')
+                ->label('View Sitemap')
+                ->url(url('/sitemap.xml'))
+                ->openUrlInNewTab()
+                ->button()
+                ->shouldMarkAsRead(),
+        ];
+
         $user = User::find($this->userId);
         $user->notify(
             Notification::make()
                 ->title('Sitemap Generated!')
                 ->success()
                 ->body("Sitemap successfully generated. Totally \"{$totalItems}\" urls generated.")
-                ->actions([
-                    Action::make('view')
-                        ->label('View Sitemap')
-                        ->url(url('/sitemap.xml'))
-                        ->openUrlInNewTab()
-                        ->button()
-                        ->shouldMarkAsRead(),
-                ])
+                ->actions($actions)
                 ->toDatabase()
         );
     }

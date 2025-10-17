@@ -59,7 +59,8 @@ class CreateRequest extends FormRequest
                 ->when($ignoreId, fn ($q) => $q->where('id', '!=', $ignoreId))
                 ->exists()
         ) {
-            $slug = $baseSlug.'-'.$counter++;
+            $slug = $baseSlug.'-'.$counter;
+            $counter++;
         }
 
         return $slug;

@@ -29,7 +29,9 @@ class UserExporter extends Exporter
     {
         $body = 'Your user export has completed and '.number_format($export->successful_rows).' '.str('row')->plural($export->successful_rows).' exported.';
 
-        if ($failedRowsCount = $export->getFailedRowsCount()) {
+        $failedRowsCount = $export->getFailedRowsCount();
+
+        if ($failedRowsCount > 0) {
             $body .= ' '.number_format($failedRowsCount).' '.str('row')->plural($failedRowsCount).' failed to export.';
         }
 

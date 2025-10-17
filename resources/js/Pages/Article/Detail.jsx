@@ -9,10 +9,6 @@ import {
 	ThumbsUp,
 	ThumbsDown,
 	Check,
-	MessageCircle,
-	Heart,
-	ArrowDown,
-	ArrowUp,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/Components/Ui/Avatar";
 import { Button } from "@/Components/Ui/Button";
@@ -25,11 +21,10 @@ import MarkdownRenderer from "@/Components/Ui/MarkdownRenderer";
 import Feed from "@/Components/Layout/Feed";
 import { useAuthStore } from "@/Stores/AuthStore";
 import { Card, CardContent } from "@/Components/Ui/Card";
-import { Textarea } from "@/Components/Ui/Textarea";
-import { Trans, useTranslation } from "react-i18next";
-import { useTimeAgo } from "@/Lib/TimeAgo";
+import { useTranslation } from "react-i18next";
 import { toast } from "@/Hooks/useToast";
 import TableOfContents from "@/Components/Ui/TableOfContents";
+import { Comments } from "@/Components/Content/Comments";
 
 export default function ArticlePage({ article }) {
 	const [isLiked, setIsLiked] = useState(article.isLiked);
@@ -38,29 +33,18 @@ export default function ArticlePage({ article }) {
 	const [dislikes, setDislikes] = useState(Number(article.dislikes));
 	const [isSaved, setIsSaved] = useState(article.isSaved);
 
-	const [commentsCount, setCommentsCount] = useState(Number(article.comments));
 	const [isCopied, setIsCopied] = useState(false);
 	const [isFeedVisible, setIsFeedVisible] = useState(false);
 	const [isFeedLoading, setIsFeedLoading] = useState(false);
 	const [isCommentsVisible, setIsCommentsVisible] = useState(false);
-	const [isCommentsLoading, setIsCommentsLoading] = useState(false);
-	const [comment, setComment] = useState("");
-	const [comments, setComments] = useState([]);
-	const [showReplies, setShowReplies] = useState({});
-	const [showRepliesTextarea, setshowRepliesTextarea] = useState({});
-	const [isRepliesLoading, setIsRepliesLoading] = useState({});
-	const [repliesComments, setRepliesComments] = useState({});
-	const [replies, setReplies] = useState({});
 	const feedTriggerRef = useRef(null);
 	const commentsTriggerRef = useRef(null);
 	const authStore = useAuthStore();
-	const [errors, setErrors] = useState({});
 	const { t } = useTranslation();
-	const timeAgo = useTimeAgo();
 
 	const handleLike = () => {
 		if (!authStore.isAuthenticated) return;
-		ApiService.fetchJson(route("api.article.like", { slug: article.slug }))
+		ApiService.fetchJson(route("api.react.like", { type: "article", slug: article.slug }))
 			.then(() => {
 				if (isLiked) {
 					setIsLiked(false);
@@ -85,7 +69,7 @@ export default function ArticlePage({ article }) {
 
 	const handleDislike = () => {
 		if (!authStore.isAuthenticated) return;
-		ApiService.fetchJson(route("api.article.dislike", { slug: article.slug }))
+		ApiService.fetchJson(route("api.react.dislike", { type: "article", slug: article.slug }))
 			.then(() => {
 				if (isDisliked) {
 					setIsDisliked(false);
@@ -110,9 +94,11 @@ export default function ArticlePage({ article }) {
 
 	const handleSave = () => {
 		if (!authStore.isAuthenticated) return;
-		ApiService.fetchJson(route("api.article.save", { slug: article.slug })).then(() => {
-			setIsSaved(!isSaved);
-		});
+		ApiService.fetchJson(route("api.react.save", { type: "article", slug: article.slug })).then(
+			() => {
+				setIsSaved(!isSaved);
+			},
+		);
 	};
 
 	const handleShare = () => {
@@ -127,142 +113,6 @@ export default function ArticlePage({ article }) {
 				setIsCopied(false);
 			}, 1500);
 		}
-	};
-
-	const validateComment = () => {
-		const newErrors = {};
-
-		if (!comment) newErrors.comment = t("Comment is required");
-		else if (comment.length < 20)
-			newErrors.comment = t("Comment must be at least 20 characters");
-
-		setErrors(newErrors);
-		return Object.keys(newErrors).length === 0;
-	};
-
-	const validateReply = (commentId) => {
-		const newErrors = {};
-
-		if (!repliesComments[commentId]) newErrors[commentId] = t("Comment is required");
-		else if (repliesComments[commentId].length < 20)
-			newErrors[commentId] = t("Comment must be at least 20 characters");
-
-		setErrors(newErrors);
-
-		return Object.keys(newErrors).length === 0;
-	};
-
-	const handleComment = () => {
-		setErrors({});
-
-		if (!validateComment()) return;
-
-		const data = {
-			content: comment,
-			parent: null,
-		};
-
-		ApiService.fetchJson(route("api.article.comment", { slug: article.slug }), data).then(
-			(response) => {
-				setComment("");
-				setCommentsCount(commentsCount + 1);
-				setComments([response, ...comments]);
-			},
-		);
-	};
-
-	const handleReply = (parentId) => {
-		setErrors({});
-
-		if (!parentId) return;
-		if (!validateReply(parentId)) return;
-
-		const data = {
-			content: repliesComments[parentId],
-			parent: parentId,
-		};
-
-		ApiService.fetchJson(route("api.article.comment", { slug: article.slug }), data).then(
-			(response) => {
-				setRepliesComments({ ...repliesComments, [parentId]: "" });
-				setCommentsCount(commentsCount + 1);
-				if (!parentId) {
-					setComments([response, ...comments]);
-				} else {
-					setReplies({ ...replies, [parentId]: [response, ...replies[parentId]] });
-					setComments((prev) =>
-						prev.map((c) => (c.id === parentId ? { ...c, replies: c.replies + 1 } : c)),
-					);
-				}
-			},
-		);
-	};
-
-	const toggleReplyTextarea = (commentId) => {
-		setshowRepliesTextarea({
-			...showRepliesTextarea,
-			[commentId]: !showRepliesTextarea[commentId],
-		});
-	};
-
-	const toggleReplies = (commentId) => {
-		if (showReplies[commentId]) {
-			setShowReplies({ ...showReplies, [commentId]: false });
-		} else {
-			if (!replies[commentId]) {
-				setIsRepliesLoading({ ...isRepliesLoading, [commentId]: true });
-				ApiService.fetchJson(
-					route("api.article.comment.replies", {
-						slug: article.slug,
-						comment: commentId,
-					}),
-				).then((response) => {
-					setReplies({ ...replies, [commentId]: response });
-					setShowReplies({ ...showReplies, [commentId]: true });
-					setIsRepliesLoading({ ...isRepliesLoading, [commentId]: false });
-				});
-			} else {
-				setShowReplies({ ...showReplies, [commentId]: true });
-			}
-		}
-	};
-
-	const handleCommentLike = (commentId, parentId) => {
-		if (!authStore.isAuthenticated) return;
-		ApiService.fetchJson(
-			route("api.article.comment.like", { slug: article.slug, comment: commentId }),
-		)
-			.then(() => {
-				if (!parentId) {
-					setComments((prev) =>
-						prev.map((c) =>
-							c.id === commentId
-								? { ...c, likes: c.likes + (c.liked ? -1 : +1), liked: !c.liked }
-								: c,
-						),
-					);
-				} else {
-					setReplies((prevReplies) => ({
-						...prevReplies,
-						[parentId]: prevReplies[parentId].map((reply) =>
-							reply.id === commentId
-								? {
-										...reply,
-										likes: reply.likes + (reply.liked ? -1 : 1),
-										liked: !reply.liked,
-									}
-								: reply,
-						),
-					}));
-				}
-			})
-			.catch(() => {
-				toast({
-					title: t("Error"),
-					description: t("You can react to the same comment once a day"),
-					variant: "destructive",
-				});
-			});
 	};
 
 	useEffect(() => {
@@ -295,15 +145,7 @@ export default function ArticlePage({ article }) {
 		const observer = new IntersectionObserver(
 			([intersect]) => {
 				if (intersect.isIntersecting) {
-					ApiService.fetchJson(route("api.article.comment.list", { slug: article.slug }))
-						.then((response) => {
-							setIsCommentsVisible(true);
-							setIsCommentsLoading(false);
-							setComments(response);
-						})
-						.finally(() => {
-							observer.disconnect();
-						});
+					setIsCommentsVisible(true);
 				}
 			},
 			{
@@ -312,7 +154,6 @@ export default function ArticlePage({ article }) {
 		);
 
 		if (commentsTriggerRef.current) {
-			setIsCommentsLoading(true);
 			observer.observe(commentsTriggerRef.current);
 		}
 
@@ -489,247 +330,15 @@ export default function ArticlePage({ article }) {
 					<Separator className="mb-4 mt-8" />
 				)}
 
-				{isCommentsLoading && (
-					<div className="flex justify-center py-8">
-						<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-					</div>
-				)}
-
 				<div ref={commentsTriggerRef} className="h-10"></div>
 
-				{/* Comments Section */}
-				<div className="mb-8">
-					<h3 className="text-xl font-semibold mb-6 flex items-center">
-						<MessageCircle className="h-5 w-5 mr-2" />
-						<Trans
-							i18nKey="comments"
-							values={{ count: commentsCount }}
-							components={{ strong: <strong /> }}
-						/>
-					</h3>
-
-					{authStore.isAuthenticated && (
-						<Card className="mb-6">
-							<CardContent className="p-4">
-								<Textarea
-									placeholder={t("Share your thoughts...")}
-									value={comment}
-									onChange={(e) => setComment(e.target.value)}
-									className="mb-4"
-									rows={3}
-								/>
-								{errors.comment && (
-									<p className="text-sm text-red-500">{errors.comment}</p>
-								)}
-								<div className="flex justify-end">
-									<Button onClick={() => handleComment()}>Post Comment</Button>
-								</div>
-							</CardContent>
-						</Card>
-					)}
-
-					{isCommentsVisible && comments.length > 0 && (
-						<div className="space-y-6">
-							<Card>
-								<CardContent className="p-6">
-									{comments.map((comment) => (
-										<div
-											key={comment.id}
-											className="flex items-start space-x-4 mb-3"
-										>
-											<UserProfileHover username={comment.user.username}>
-												<Avatar className="h-10 w-10 cursor-pointer">
-													<AvatarImage
-														src={
-															comment.user.avatar ||
-															"/placeholder-avatar.jpg"
-														}
-														alt={comment.user.name || "User"}
-													/>
-													<AvatarFallback>
-														{comment.user.name
-															.split(" ")
-															.map((n) => n[0])
-															.join("") || "U"}
-													</AvatarFallback>
-												</Avatar>
-											</UserProfileHover>
-
-											<div className="flex-1">
-												<div className="flex items-center space-x-2 mb-2">
-													<span className="font-medium">
-														{comment.user.name}
-													</span>
-													<span className="text-sm text-muted-foreground">
-														{timeAgo(comment.created_at)}
-													</span>
-												</div>
-												<div className="text-muted-foreground">
-													<MarkdownRenderer content={comment.content} />
-												</div>
-												<div className="flex items-center space-x-4">
-													<Button
-														variant="ghost"
-														size="sm"
-														disabled={!authStore.isAuthenticated}
-														onClick={() => {
-															handleCommentLike(comment.id);
-														}}
-													>
-														<Heart
-															className={`h-4 w-4 mr-1 ${comment.isLiked ? "fill-red-900" : ""}`}
-														/>{" "}
-														{comment.likes}
-													</Button>
-													{authStore.isAuthenticated && (
-														<Button
-															onClick={() =>
-																toggleReplyTextarea(comment.id)
-															}
-															variant="ghost"
-															size="sm"
-														>
-															{t("Reply")}
-														</Button>
-													)}
-													{comment.replies > 0 && (
-														<Button
-															onClick={() =>
-																toggleReplies(comment.id)
-															}
-															variant="ghost"
-															size="sm"
-														>
-															{showReplies[comment.id] ? (
-																<ArrowUp className="h-4 w-4 mr-1" />
-															) : (
-																<ArrowDown className="h-4 w-4 mr-1" />
-															)}
-															<Trans
-																i18nKey="replies"
-																values={{ count: comment.replies }}
-															/>
-														</Button>
-													)}
-												</div>
-
-												<div className="mt-4 pl-4 border-l-2 border-muted space-y-4">
-													{showRepliesTextarea[comment.id] && (
-														<Card className="mb-6 animate-fade-in-up">
-															<CardContent className="p-4">
-																<Textarea
-																	placeholder={t(
-																		"Share your thoughts...",
-																	)}
-																	value={
-																		repliesComments[comment.id]
-																	}
-																	onChange={(e) =>
-																		setRepliesComments({
-																			...repliesComments,
-																			[comment.id]:
-																				e.target.value,
-																		})
-																	}
-																	className="mb-4"
-																	rows={3}
-																/>
-																{errors[comment.id] && (
-																	<p className="text-sm text-red-500">
-																		{errors[comment.id]}
-																	</p>
-																)}
-																<div className="flex justify-end">
-																	<Button
-																		onClick={() =>
-																			handleReply(comment.id)
-																		}
-																	>
-																		Post Comment
-																	</Button>
-																</div>
-															</CardContent>
-														</Card>
-													)}
-													{isRepliesLoading[comment.id] && (
-														<div className="flex justify-center py-8">
-															<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-														</div>
-													)}
-													{showReplies[comment.id] &&
-														replies[comment.id].map((reply) => (
-															<div
-																key={reply.id}
-																className="flex items-start space-x-3"
-															>
-																<UserProfileHover
-																	username={reply.user.username}
-																>
-																	<Avatar className="h-10 w-10 cursor-pointer">
-																		<AvatarImage
-																			src={
-																				reply.user.avatar ||
-																				"/placeholder-avatar.jpg"
-																			}
-																			alt={
-																				reply.user.name ||
-																				"User"
-																			}
-																		/>
-																		<AvatarFallback>
-																			{reply.user.name
-																				.split(" ")
-																				.map((n) => n[0])
-																				.join("") || "U"}
-																		</AvatarFallback>
-																	</Avatar>
-																</UserProfileHover>
-																<div className="flex-1">
-																	<div className="flex items-center space-x-2 mb-1">
-																		<span className="font-medium">
-																			{reply.user.name}
-																		</span>
-																		<span className="text-sm text-muted-foreground">
-																			{timeAgo(
-																				reply.created_at,
-																			)}
-																		</span>
-																	</div>
-																	<div className="text-sm text-muted-foreground mb-2">
-																		<MarkdownRenderer
-																			content={reply.content}
-																		/>
-																	</div>
-																	<Button
-																		variant="ghost"
-																		size="sm"
-																		disabled={
-																			!authStore.isAuthenticated
-																		}
-																		onClick={() => {
-																			handleCommentLike(
-																				reply.id,
-																				comment.id,
-																			);
-																		}}
-																	>
-																		<Heart
-																			className={`h-4 w-4 mr-1 ${reply.liked ? "fill-red-900" : ""}`}
-																		/>{" "}
-																		{reply.likes}
-																	</Button>
-																</div>
-															</div>
-														))}
-												</div>
-											</div>
-										</div>
-									))}
-								</CardContent>
-							</Card>
-						</div>
-					)}
-				</div>
+				{isCommentsVisible && (
+					<Comments
+						commentsCounts={article.comments}
+						type="article"
+						slug={article.slug}
+					/>
+				)}
 
 				{isFeedLoading && (
 					<div className="flex justify-center py-8">

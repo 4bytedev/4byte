@@ -35,7 +35,7 @@ class SeoService
     {
         $seo = seo();
 
-        if (isset($data['title'])) {
+        if (isset($data['title']) && $data['title']) {
             $seo->title($data['title'])
                 ->metaTitle($data['title'])
                 ->twitterTitle($data['title'])
@@ -43,7 +43,7 @@ class SeoService
                 ->jsonLdName($data['title']);
         }
 
-        if (isset($data['description'])) {
+        if (isset($data['description']) && $data['description']) {
             $seo->description($data['description'])
                 ->metaDescription($data['description'])
                 ->twitterDescription($data['description'])
@@ -51,7 +51,7 @@ class SeoService
                 ->jsonLdDescription($data['description']);
         }
 
-        if (isset($data['url'])) {
+        if (isset($data['url']) && $data['url']) {
             $seo->url($data['url'])
                 ->canonical($data['url'])
                 ->metaCanonical($data['url'])
@@ -59,14 +59,14 @@ class SeoService
                 ->jsonLdUrl($data['url']);
         }
 
-        if (! empty($data['image'])) {
+        if (isset($data['image']) && $data['image']) {
             $seo->images($data['image'])
                 ->twitterImage($data['image'])
                 ->openGraphImage($data['image'])
                 ->jsonLdImage($data['image']);
         }
 
-        if (! empty($data['openGraphType'])) {
+        if (isset($data['openGraphType']) && $data['openGraphType']) {
             $seo->openGraphType($data['openGraphType']);
         }
 

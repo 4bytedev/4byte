@@ -3,10 +3,8 @@
 namespace App\Providers;
 
 use App\Models\User;
-use App\Models\UserFollow;
 use App\Models\UserProfile;
 use App\Observers\BannerObserver;
-use App\Observers\UserFollowObserver;
 use App\Observers\UserObserver;
 use App\Observers\UserProfileObserver;
 use App\Services\SettingsService;
@@ -43,7 +41,6 @@ class AppServiceProvider extends ServiceProvider
 
         User::observe(UserObserver::class);
         UserProfile::observe(UserProfileObserver::class);
-        UserFollow::observe(UserFollowObserver::class);
         Banner::observe(BannerObserver::class);
 
         try {
@@ -90,7 +87,7 @@ class AppServiceProvider extends ServiceProvider
                 ]);
             }
         } catch (\Throwable $th) {
-            // throw $th;
+            logger()->error('Service provider settings configuration error, please migrate and configure settings', ['e' => $th]);
         }
     }
 }

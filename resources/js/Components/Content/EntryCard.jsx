@@ -31,6 +31,7 @@ export function EntryCard({
 	isSaved: initialIsSaved,
 	likes: initialLikes,
 	dislikes: initialDislikes,
+	comments,
 	canDelete,
 	published_at,
 }) {
@@ -46,7 +47,7 @@ export function EntryCard({
 
 	const handleLike = () => {
 		if (!authStore.isAuthenticated) return;
-		ApiService.fetchJson(route("api.entry.like", { slug: slug }))
+		ApiService.fetchJson(route("api.react.like", { type: "entry", slug: slug }))
 			.then(() => {
 				if (isLiked) {
 					setIsLiked(false);
@@ -71,7 +72,7 @@ export function EntryCard({
 
 	const handleDislike = () => {
 		if (!authStore.isAuthenticated) return;
-		ApiService.fetchJson(route("api.entry.dislike", { slug: slug }))
+		ApiService.fetchJson(route("api.react.dislike", { type: "entry", slug: slug }))
 			.then(() => {
 				if (isDisliked) {
 					setIsDisliked(false);
@@ -96,7 +97,7 @@ export function EntryCard({
 
 	const handleSave = () => {
 		if (!authStore.isAuthenticated) return;
-		ApiService.fetchJson(route("api.entry.save", { slug: slug })).then(() => {
+		ApiService.fetchJson(route("api.react.save", { type: "entry", slug: slug })).then(() => {
 			setIsSaved(!isSaved);
 		});
 	};
@@ -193,7 +194,7 @@ export function EntryCard({
 				<Button variant="ghost" size="sm">
 					<Link href={route("entry.view", { slug: slug })} className="flex items-center">
 						<MessageCircle className="h-4 w-4 mr-1" />
-						{dislikes}
+						{comments}
 					</Link>
 				</Button>
 				<Button

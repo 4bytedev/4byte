@@ -1,4 +1,5 @@
 import { ArticleCard } from "./ArticleCard";
+import { CommentCard } from "./CommentCard";
 import { DraftCard } from "./DraftCard";
 import { EntryCard } from "./EntryCard";
 
@@ -12,6 +13,8 @@ export function ContentCard(props) {
 			return <DraftCard {...props} />;
 		case "entry":
 			return <EntryCard {...props} />;
+		case "comment":
+			return <CommentCard {...props} />;
 		default:
 			return <ArticleCard {...props} />;
 	}

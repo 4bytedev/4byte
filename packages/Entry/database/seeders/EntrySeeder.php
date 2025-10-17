@@ -4,26 +4,20 @@ namespace Packages\Entry\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Packages\Entry\Models\Entry;
-use Packages\Entry\Models\EntryComment;
-use Packages\Entry\Models\EntryCommentLike;
-use Packages\Entry\Models\EntryDislike;
-use Packages\Entry\Models\EntryLike;
-use Packages\Entry\Models\EntrySave;
+use Packages\React\Models\Comment;
+use Packages\React\Models\Dislike;
+use Packages\React\Models\Like;
+use Packages\React\Models\Save;
 
 class EntrySeeder extends Seeder
 {
     public function run(): void
     {
-        Entry::factory(20)->create();
-
-        EntryComment::factory(50)->create();
-
-        EntryLike::factory(50)->create();
-
-        EntryCommentLike::factory(30)->create();
-
-        EntryDislike::factory(20)->create();
-
-        EntrySave::factory(20)->create();
+        Entry::factory(20)->create()->each(function (Entry $entry) {
+            Like::factory(3)->forModel($entry)->create();
+            Dislike::factory(3)->forModel($entry)->create();
+            Save::factory(3)->forModel($entry)->create();
+            Comment::factory(5)->forModel($entry)->create();
+        });
     }
 }

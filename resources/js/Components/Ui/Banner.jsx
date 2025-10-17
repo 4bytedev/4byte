@@ -167,7 +167,7 @@ const BannerAction = React.forwardRef(({ className, children, ...props }, ref) =
 });
 BannerAction.displayName = "BannerAction";
 
-const BannerMap = React.forwardRef(({ banners }) => {
+const BannerMap = React.forwardRef(({ banners }, ref) => {
 	return (
 		<>
 			{banners.map((banner) => {
@@ -176,6 +176,7 @@ const BannerMap = React.forwardRef(({ banners }) => {
 					<Banner
 						id={data.id}
 						key={data.id}
+						ref={ref}
 						linkActive={
 							data.link_active && data.link_click_action == "clickable_banner"
 						}

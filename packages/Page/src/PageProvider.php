@@ -16,14 +16,6 @@ use Packages\Page\Policies\PagePolicy;
 class PageProvider extends ServiceProvider
 {
     /**
-     * Register services.
-     */
-    public function register(): void
-    {
-        //
-    }
-
-    /**
      * Bootstrap services.
      */
     public function boot(): void
@@ -36,6 +28,7 @@ class PageProvider extends ServiceProvider
         $this->loadFactories();
         $this->loadSeeders();
         $this->loadTranslations();
+        $this->loadMigrations();
     }
 
     public function loadPolicies(): void
@@ -89,5 +82,10 @@ class PageProvider extends ServiceProvider
     protected function loadMigrations(): void
     {
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+        if ($this->app->runningInConsole()) {
+            $this->publishes([
+                __DIR__.'/../database/migrations' => database_path('migrations/'),
+            ], 'migrations');
+        }
     }
 }

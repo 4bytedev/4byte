@@ -19,12 +19,10 @@ class PageService
     public function getData(int $pageId)
     {
         $page = Cache::rememberForever("page:{$pageId}", function () use ($pageId) {
-            $page = Page::query()
+            return Page::query()
                 ->where('status', 'PUBLISHED')
                 ->select(['id', 'title', 'slug', 'content', 'excerpt', 'image', 'published_at', 'user_id'])
                 ->findOrFail($pageId);
-
-            return $page;
         });
 
         $user = $this->userService->getData($page->user_id);
@@ -38,7 +36,7 @@ class PageService
             return Page::where('status', 'PUBLISHED')
                 ->where('slug', $slug)
                 ->select(['id'])
-                ->firstOrFail()?->id;
+                ->firstOrFail()->id;
         });
     }
 }

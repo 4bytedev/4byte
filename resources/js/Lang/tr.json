@@ -58,7 +58,7 @@
     "Password Strength": "Şifre Gücü",
     "Confirm Password": "Şifreyi Onayla",
     "Confirm your password": "Şifreni onayla",
-    "agreement": "<0>Hizmet Şartları</0>'nı ve <1>Gizlilik Politikası</1>'nı kabul ediyorum.",
+    "agreement": "<termsLink>Hizmet Şartları</termsLink>'nı ve <privacyLink>Gizlilik Politikası</privacyLink>'nı kabul ediyorum.",
     "Creating Account...": "Hesap Oluşturuluyor...",
     "Create My Account": "Hesabımı Oluştur",
     "Already have an account?": "Zaten hesabın var mı?",
@@ -234,5 +234,8 @@
     "Successfully!": "Başarılı!",
     "Your entry is live! It might take a moment to show up, thanks for your patience.": "Girdiğiniz içerik yayında! Görünmesi biraz zaman alabilir, sabrınız için teşekkürler.",
 
-    "You can react to the same entry once a day": "Aynı içeriğe günde bir kez tepki verebilirsiniz"
+    "You can react to the same entry once a day": "Aynı içeriğe günde bir kez tepki verebilirsiniz",
+
+    "Replying to comment": "Yoruma yanıt",
+    "In response to:": "Şuna yanıt olarak:"
 }

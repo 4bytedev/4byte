@@ -7,7 +7,6 @@ use App\Http\Middleware\HandleInertiaRequests;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware([HandleInertiaRequests::class])->group(function () {
-
     Route::get('/', [HomeController::class, 'view'])->name('home.view');
 
     Route::get('/@{username}', [UserController::class, 'view'])->name('user.view');

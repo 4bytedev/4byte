@@ -7,11 +7,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Packages\Article\Models\Article;
-use Packages\Article\Models\ArticleSave;
 use Packages\Article\Services\ArticleService;
 use Packages\Category\Models\Category;
 use Packages\Category\Services\CategoryService;
+use Packages\Entry\Services\EntryService;
 use Packages\News\Services\NewsService;
+use Packages\React\Models\Save;
+use Packages\React\Services\ReactService;
 use Packages\Tag\Models\Tag;
 use Packages\Tag\Services\TagService;
 
@@ -22,6 +24,10 @@ class FeedService
     protected ArticleService $articleService;
 
     protected NewsService $newsService;
+
+    protected EntryService $entryService;
+
+    protected ReactService $reactService;
 
     protected UserService $userService;
 
@@ -34,6 +40,8 @@ class FeedService
         $this->gorseService = app(GorseService::class);
         $this->articleService = app(ArticleService::class);
         $this->newsService = app(NewsService::class);
+        $this->entryService = app(EntryService::class);
+        $this->reactService = app(ReactService::class);
         $this->userService = app(UserService::class);
         $this->tagService = app(TagService::class);
         $this->categoryService = app(CategoryService::class);
@@ -42,14 +50,13 @@ class FeedService
     public function articles()
     {
         return Cache::remember('feed:articles', 60 * 60 * 24, function () {
-            $articles = Article::select('id', 'title', 'slug', 'excerpt', 'user_id')
-                ->with('user:id,name,username')
-                ->withCount('likes')
+            return Article::select('id', 'title', 'slug', 'excerpt', 'user_id')
+                ->with('user:id,name,username')->withCount('likes')
                 ->where('status', 'PUBLISHED')
                 ->orderBy('likes_count', 'desc')
                 ->take(7)
-                ->get()
-                ->map(function ($article) {
+                ->get()->map(function (Article $article) {
+                    /** @var \App\Models\User $article->user */
                     return [
                         'title' => $article->title,
                         'slug' => $article->slug,
@@ -62,8 +69,6 @@ class FeedService
                         ],
                     ];
                 });
-
-            return $articles;
         });
     }
 
@@ -74,15 +79,13 @@ class FeedService
 
             $categoryDetails = Category::whereIn('id', $categoryTotals->pluck('category_id'))->get()->keyBy('id');
 
-            $topCategories = $categoryTotals->map(function ($cat) use ($categoryDetails) {
+            return $categoryTotals->map(function ($cat) use ($categoryDetails) {
                 return [
                     'name' => $categoryDetails[$cat->category_id]->name ?? 'Unknown',
                     'slug' => $categoryDetails[$cat->category_id]->slug ?? null,
                     'total' => $cat->total,
                 ];
             });
-
-            return $topCategories;
         });
     }
 
@@ -93,16 +96,40 @@ class FeedService
 
             $tagDetails = Tag::whereIn('id', $tagTotals->pluck('tag_id'))->get()->keyBy('id');
 
-            $topTags = $tagTotals->map(function ($tag) use ($tagDetails) {
+            return $tagTotals->map(function ($tag) use ($tagDetails) {
                 return [
                     'name' => $tagDetails[$tag->tag_id]->name ?? 'Unknown',
                     'slug' => $tagDetails[$tag->tag_id]->slug ?? null,
                     'total' => $tag->total,
                 ];
             });
-
-            return $topTags;
         });
+    }
+
+    public function buildFilters(Request $request): array
+    {
+        $filters = [];
+
+        if ($request->tab && $request->tab !== 'all') {
+            $filters[] = $request->tab;
+        }
+
+        $tagId = $request->tag && $request->tag !== 'all' ? $this->tagService->getId($request->tag) : null;
+        if ($tagId) {
+            $filters[] = "tag:{$tagId}";
+        }
+
+        $categoryId = $request->category && $request->category !== 'all' ? $this->categoryService->getId($request->category) : null;
+        if ($categoryId) {
+            $filters[] = "category:{$categoryId}";
+        }
+
+        $userId = $request->user && $request->user !== 'all' ? $this->userService->getId($request->user) : null;
+        if ($userId) {
+            $filters[] = "user:{$userId}";
+        }
+
+        return $filters;
     }
 
     private function getTotals(string $type)
@@ -115,44 +142,13 @@ class FeedService
             ->select($type.'_id', DB::raw('COUNT(*) as count'))
             ->groupBy($type.'_id');
 
-        $totals = DB::query()
+        return DB::query()
             ->fromSub($articleCounts->unionAll($newsCounts), $type.'_counts')
             ->select($type.'_id', DB::raw('SUM(count) as total'))
             ->groupBy($type.'_id')
             ->orderByDesc('total')
             ->limit(7)
             ->get();
-
-        return $totals;
-    }
-
-    public function buildFilters(Request $request): array
-    {
-        $filters = [];
-
-        if ($request->tab && $request->tab !== 'all') {
-            $filters[] = $request->tab;
-        }
-
-        if ($request->tag && $request->tag !== 'all') {
-            if ($tagId = $this->tagService->getId($request->tag)) {
-                $filters[] = "tag:{$tagId}";
-            }
-        }
-
-        if ($request->category && $request->category !== 'all') {
-            if ($categoryId = $this->categoryService->getId($request->category)) {
-                $filters[] = "category:{$categoryId}";
-            }
-        }
-
-        if ($request->user && $request->user !== 'all') {
-            if ($userId = $this->userService->getId($request->user)) {
-                $filters[] = "user:{$userId}";
-            }
-        }
-
-        return $filters;
     }
 
     public function getTabContents(string $tab, ?int $userId): array
@@ -161,19 +157,19 @@ class FeedService
             return Article::where('status', 'DRAFT')
                 ->where('user_id', $userId)
                 ->select(['title', 'slug'])
-                ->get()
-                ->map(fn ($article) => [
+                ->get()->map(fn ($article) => [
                     'title' => $article->title,
                     'slug' => $article->slug,
                     'type' => 'draft',
-                ])
-                ->toArray();
+                ])->toArray();
         }
 
         if ($tab === 'saves' && $userId) {
             return Article::whereIn(
                 'id',
-                ArticleSave::where('user_id', $userId)->pluck('article_id')
+                Save::where('user_id', $userId)
+                    ->where('saveable_type', Article::class)
+                    ->pluck('saveable_id')
             )->get()
                 ->map(fn ($article) => $this->articleService->getData($article->id))
                 ->toArray();
@@ -182,13 +178,22 @@ class FeedService
         return [];
     }
 
-    public function getRecommendations(?int $userId, array $filters, int $limit, int $offset): array
+    public function getPersonalizedRecommendations(?int $userId, array $filters, int $limit, int $offset): array|null
     {
-        if (empty($filters)) {
-            return $this->gorseService->getRecommend($userId ?? 'guest', $limit, $offset);
+        if (! isset($filters) || count($filters) === 0) {
+            return $this->gorseService->getRecommend($userId, $limit, $offset);
         }
 
-        return $this->gorseService->getRecommendByCategory($userId ?? 'guest', $limit, $offset, $filters);
+        return $this->gorseService->getRecommendByCategory($userId, $limit, $offset, $filters);
+    }
+
+    public function getNonPersonalizedRecommendations(string $name, array $filters, int $limit, int $offset): array|null
+    {
+        if (! isset($filters) || count($filters) === 0) {
+            return $this->gorseService->getNonPersonalizedRecommend($name, $limit, $offset);
+        }
+
+        return $this->gorseService->getNonPersonalizedRecommendByCategory($name, $limit, $offset, $filters);
     }
 
     public function resolveContents(array $recommendations): array
@@ -196,19 +201,30 @@ class FeedService
         $contents = [];
 
         foreach ($recommendations as $recommend) {
-            $pos = strpos($recommend, ':');
+            $recommendId = "";
+            if (is_array($recommend)) {
+                $recommendId = $recommend["Id"];
+            }else {
+                $recommendId = $recommend;
+            }
+
+            $pos = strpos($recommendId, ':');
             if ($pos === false) {
                 continue;
             }
 
-            $type = trim(substr($recommend, 0, $pos));
-            $id = trim(substr($recommend, $pos + 1));
+            $type = trim(substr($recommendId, 0, $pos));
+            $id = trim(substr($recommendId, $pos + 1));
 
             try {
                 if ($type === 'article') {
-                    $contents[] = $this->articleService->getData($id);
+                    $contents[] = $this->articleService->getData((int) $id);
                 } elseif ($type === 'news') {
-                    $contents[] = $this->newsService->getData($id);
+                    $contents[] = $this->newsService->getData((int) $id);
+                } elseif ($type === 'entry') {
+                    $contents[] = $this->entryService->getData((int) $id);
+                } elseif ($type === 'comment') {
+                    $contents[] = $this->reactService->getComment((int) $id);
                 }
             } catch (\Throwable $th) {
                 logger()->error('Invalid recommended content', ['type' => $type, 'id' => $id, 'th' => $th]);

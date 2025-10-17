@@ -7,12 +7,17 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Packages\Article\Models\Article;
+use Packages\React\Traits\HasCacheKey;
+use Packages\React\Traits\HasFollowers;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 class Category extends Model
 {
-    use HasFactory, LogsActivity;
+    use HasCacheKey;
+    use HasFactory;
+    use HasFollowers;
+    use LogsActivity;
 
     protected $fillable = ['name', 'slug'];
 
