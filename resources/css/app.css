@@ -117,8 +117,12 @@ html {
   width: 100px !important;
 }
 
-body .w-md-editor-text-pre > code,
-body .w-md-editor-text-input {
+.wmde-markdown {
+  background-color: transparent !important;
+}
+
+.w-md-editor-text-pre > code,
+.w-md-editor-text-input {
   font-size: 20px !important;
   line-height: 21px !important;
 }

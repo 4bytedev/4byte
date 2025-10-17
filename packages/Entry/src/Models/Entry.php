@@ -6,7 +6,11 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Packages\React\Traits\HasCacheKey;
+use Packages\React\Traits\HasComments;
+use Packages\React\Traits\HasDislikes;
+use Packages\React\Traits\HasLikes;
+use Packages\React\Traits\HasSaves;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\MediaLibrary\HasMedia;
@@ -15,7 +19,14 @@ use Spatie\MediaLibrary\MediaCollections\File;
 
 class Entry extends Model implements HasMedia
 {
-    use HasFactory, InteractsWithMedia, LogsActivity;
+    use HasCacheKey;
+    use HasComments;
+    use HasDislikes;
+    use HasFactory;
+    use HasLikes;
+    use HasSaves;
+    use InteractsWithMedia;
+    use LogsActivity;
 
     protected $fillable = [
         'slug',
@@ -26,21 +37,6 @@ class Entry extends Model implements HasMedia
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
-    }
-
-    public function likes(): HasMany
-    {
-        return $this->hasMany(EntryLike::class);
-    }
-
-    public function dislikes(): HasMany
-    {
-        return $this->hasMany(EntryDislike::class);
-    }
-
-    public function saves(): HasMany
-    {
-        return $this->hasMany(EntrySave::class);
     }
 
     public function getContentImages()

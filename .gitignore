@@ -1,9 +1,8 @@
 *.log
 .DS_Store
-.env
-.env.backup
-.env.production
-.env.development
+.env*
+!.env.example
+!.env.ci
 .phpactor.json
 .phpunit.result.cache
 /.fleet
@@ -25,3 +24,4 @@ Homestead.yaml
 Thumbs.db
 docker-compose.local.yml
 public/sitemap.xml
+.php-cs-fixer.cache

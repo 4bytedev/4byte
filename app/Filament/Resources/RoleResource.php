@@ -114,9 +114,6 @@ class RoleResource extends Resource implements HasShieldPermissions
                     ->label(__('filament-shield::filament-shield.column.updated_at'))
                     ->dateTime(),
             ])
-            ->filters([
-                //
-            ])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
@@ -124,13 +121,6 @@ class RoleResource extends Resource implements HasShieldPermissions
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
     }
 
     public static function getPages(): array

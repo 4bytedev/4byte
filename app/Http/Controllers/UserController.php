@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Data\UserProfileData;
-use App\Events\UserFollowEvent;
 use App\Jobs\DeleteAccountJob;
 use App\Services\SeoService;
 use App\Services\SessionService;
@@ -18,7 +17,6 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
@@ -47,16 +45,10 @@ class UserController extends Controller
         $userId = $this->userService->getId($username);
         $user = $this->userService->getData($userId);
         $profile = $this->userService->getProfileData($userId);
-        $followers = $this->userService->getFollowersCount($userId);
-        $following = $this->userService->getFollowingCount($userId);
-        $isFollowing = $this->userService->checkFollowing(Auth::id(), $userId);
 
         return Inertia::render('User/Profile', [
             'user' => $user,
             'profile' => $profile,
-            'followers' => $followers,
-            'following' => $following,
-            'isFollowing' => $isFollowing,
         ])->withViewData(['seo' => $this->seoService->getUserSEO($user, $profile)]);
     }
 
@@ -66,16 +58,10 @@ class UserController extends Controller
         $userId = $this->userService->getId($username);
         $user = $this->userService->getData($userId);
         $profile = $this->userService->getProfileData($userId);
-        $followers = $this->userService->getFollowersCount($userId);
-        $following = $this->userService->getFollowingCount($userId);
-        $isFollowing = $this->userService->checkFollowing(Auth::id(), $userId);
 
         return response()->json([
             'user' => $user,
             'profile' => $profile,
-            'followers' => $followers,
-            'following' => $following,
-            'isFollowing' => $isFollowing,
         ]);
     }
 
@@ -97,10 +83,15 @@ class UserController extends Controller
             $this->rateLimit($this->securitySettings->max_email_verification_attempts, $this->securitySettings->max_email_verification_attempts_seconds);
         } catch (TooManyRequestsException $exception) {
             throw ValidationException::withMessages([
-                'email' => [__('filament-panels::pages/auth/login.notifications.throttled.title', [
-                    'seconds' => $exception->secondsUntilAvailable,
-                    'minutes' => $exception->minutesUntilAvailable,
-                ])],
+                'email' => [
+                    __(
+                        'filament-panels::pages/auth/login.notifications.throttled.title',
+                        [
+                            'seconds' => $exception->secondsUntilAvailable,
+                            'minutes' => $exception->minutesUntilAvailable,
+                        ]
+                    ),
+                ],
             ]);
         }
         $user = $request->user();
@@ -123,13 +114,15 @@ class UserController extends Controller
     public function settingsView(Request $request)
     {
         $user = $request->user();
+        /** @var \App\Models\UserProfile $profileModel */
+        $profileModel = $user->profile;
         $account = [
             'name' => $user->name,
             'username' => $user->username,
             'email' => $user->email,
             'avatar' => $user->getAvatarImage(),
         ];
-        $profile = UserProfileData::fromModel($user->profile);
+        $profile = UserProfileData::fromModel($profileModel);
         $sessions = SessionService::getUserSessions();
 
         return Inertia::render('User/Settings', [
@@ -171,6 +164,7 @@ class UserController extends Controller
         ]);
 
         $user = $request->user();
+        /** @var \App\Models\UserProfile $profile */
         $profile = $user->profile;
 
         if ($request->hasFile('cover')) {
@@ -237,38 +231,6 @@ class UserController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-
-        return response()->noContent(200);
-    }
-
-    public function follow(Request $request)
-    {
-        $username = $request->route('username');
-        $currentUser = Auth::user();
-
-        if ($username == $currentUser->username) {
-            throw ValidationException::withMessages([
-                'general' => ['You cannot follow yourself.'],
-            ]);
-        }
-
-        $executed = RateLimiter::attempt(
-            key: "{$currentUser->username}:{$username}:follow",
-            maxAttempts: 1,
-            decaySeconds: 60 * 60 * 24,
-            callback: function () use ($currentUser, $username) {
-                $userId = $this->userService->getId($username);
-
-                if (! $this->userService->deleteFollow($currentUser->id, $userId)) {
-                    $this->userService->insertFollow($currentUser->id, $userId);
-                    event(new UserFollowEvent($currentUser, $userId));
-                }
-            }
-        );
-
-        if (! $executed) {
-            return response()->noContent(429);
-        }
 
         return response()->noContent(200);
     }

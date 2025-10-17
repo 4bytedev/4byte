@@ -11,14 +11,6 @@ use Packages\News\Policies\NewsPolicy;
 class NewsProvider extends ServiceProvider
 {
     /**
-     * Register services.
-     */
-    public function register(): void
-    {
-        //
-    }
-
-    /**
      * Bootstrap services.
      */
     public function boot(): void
@@ -51,5 +43,10 @@ class NewsProvider extends ServiceProvider
     protected function loadMigrations(): void
     {
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+        if ($this->app->runningInConsole()) {
+            $this->publishes([
+                __DIR__.'/../database/migrations' => database_path('migrations/'),
+            ], 'migrations');
+        }
     }
 }

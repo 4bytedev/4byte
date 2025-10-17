@@ -21,7 +21,6 @@ return new class extends Migration
             $table->timestamp('two_factor_confirmed_at')->nullable();
             $table->timestamps();
         });
-
     }
 
     public function down()

@@ -8,11 +8,12 @@ import ApiService from "@/Services/ApiService";
 import { Link } from "@inertiajs/react";
 import { useAuthStore } from "@/Stores/AuthStore";
 import { Trans, useTranslation } from "react-i18next";
+import { toast } from "@/Hooks/useToast";
 
 export function UserProfileHover({ username, children }) {
 	const [isFollowing, setIsFollowing] = useState(false);
 	const [followers, setFollowers] = useState(0);
-	const [following, setFollowing] = useState(0);
+	const [followings, setFollowings] = useState(0);
 	const [user, setUser] = useState({});
 	const [profile, setProfile] = useState({});
 	const [isLoading, setIsLoading] = useState(true);
@@ -35,9 +36,9 @@ export function UserProfileHover({ username, children }) {
 			).then((response) => {
 				setUser(response.user);
 				setProfile(response.profile);
-				setFollowers(Number(response.followers));
-				setFollowing(Number(response.following));
-				setIsFollowing(response.isFollowing);
+				setFollowers(Number(response.user.followers));
+				setFollowings(Number(response.user.followings));
+				setIsFollowing(response.user.isFollowing);
 				setIsLoading(false);
 				setHasFetched(true);
 			});
@@ -65,15 +66,21 @@ export function UserProfileHover({ username, children }) {
 
 	const handleFollow = async () => {
 		ApiService.fetchJson(
-			route(isFollowing ? "api.user.unfollow" : "api.user.follow", {
-				username: user.username,
-			}),
+			route("api.react.follow", { type: "user", slug: user.username }),
 			{},
 			{ method: "POST" },
-		).then(() => {
-			setIsFollowing(!isFollowing);
-			setFollowers(isFollowing ? followers - 1 : followers + 1);
-		});
+		)
+			.then(() => {
+				setIsFollowing(!isFollowing);
+				setFollowers(isFollowing ? followers - 1 : followers + 1);
+			})
+			.catch(() => {
+				toast({
+					title: t("Error"),
+					description: t("You can react to the same user once a day"),
+					variant: "destructive",
+				});
+			});
 	};
 
 	return (
@@ -159,7 +166,7 @@ export function UserProfileHover({ username, children }) {
 										<span>
 											<Trans
 												i18nKey="followings"
-												values={{ count: following.toLocaleString() }}
+												values={{ count: followings.toLocaleString() }}
 												components={{ strong: <strong /> }}
 											/>
 										</span>

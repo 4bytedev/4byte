@@ -10,22 +10,14 @@ import Feed from "@/Components/Layout/Feed";
 import { toast } from "@/Hooks/useToast";
 import { useTranslation } from "react-i18next";
 
-export default function TagDetailPage({
-	category,
-	profile,
-	articles,
-	news,
-	tags,
-	followers: initialFollowers,
-	isFollowing: initialIsFollowing,
-}) {
-	const [isFollowing, setIsFollowing] = useState(initialIsFollowing);
-	const [followers, setFollowers] = useState(Number(initialFollowers));
+export default function TagDetailPage({ category, profile, articles, news, tags }) {
+	const [isFollowing, setIsFollowing] = useState(category.isFollowing);
+	const [followers, setFollowers] = useState(Number(category.followers));
 	const authStore = useAuthStore();
 	const { t } = useTranslation();
 
 	const handleFollow = async () => {
-		ApiService.fetchJson(route("api.category.follow", { slug: category.slug }))
+		ApiService.fetchJson(route("api.react.follow", { type: "category", slug: category.slug }))
 			.then(() => {
 				setIsFollowing(!isFollowing);
 				setFollowers(isFollowing ? followers - 1 : followers + 1);
@@ -42,7 +34,6 @@ export default function TagDetailPage({
 	return (
 		<div className="container mx-auto px-4 py-8">
 			<div className="max-w-6xl mx-auto">
-				{/* Category Header */}
 				<div className="mb-8">
 					<div className="flex items-center space-x-4 mb-6">
 						<div
@@ -77,7 +68,6 @@ export default function TagDetailPage({
 						</div>
 					</div>
 
-					{/* Category Stats */}
 					<div className="grid grid-cols-2 md:grid-cols-6 gap-4 mb-6">
 						<Card>
 							<CardContent className="p-4 text-center">
@@ -119,7 +109,6 @@ export default function TagDetailPage({
 						</Card>
 					</div>
 
-					{/* Related Tags */}
 					<div className="mb-6">
 						<h3 className="text-sm font-medium mb-3">Related Tags</h3>
 						<div className="flex flex-wrap gap-2">

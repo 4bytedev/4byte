@@ -10,7 +10,9 @@ use Packages\Page\Models\Page;
 
 class PagePublishedEvent
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
+    use Dispatchable;
+    use InteractsWithSockets;
+    use SerializesModels;
 
     public $page;
 

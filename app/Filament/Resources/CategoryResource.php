@@ -10,6 +10,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Packages\Category\Models\Category;
+use Rmsramos\Activitylog\RelationManagers\ActivitylogRelationManager;
 
 class CategoryResource extends Resource
 {
@@ -67,6 +68,13 @@ class CategoryResource extends Resource
             ]);
     }
 
+    public static function getRelations(): array
+    {
+        return [
+            ActivitylogRelationManager::class,
+        ];
+    }
+
     public static function table(Table $table): Table
     {
         return $table
@@ -82,9 +90,6 @@ class CategoryResource extends Resource
                 Tables\Columns\ColorColumn::make('profile.color')
                     ->label(__('Color')),
             ])
-            ->filters([
-                //
-            ])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
@@ -92,13 +97,6 @@ class CategoryResource extends Resource
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
     }
 
     public static function getPages(): array

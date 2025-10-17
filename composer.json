@@ -11,7 +11,6 @@
     "require": {
         "php": "^8.2",
         "aws/aws-sdk-php": "^3.356",
-        "bezhansalleh/filament-google-analytics": "^2.1",
         "bezhansalleh/filament-language-switch": "^3.1",
         "bezhansalleh/filament-shield": "^3.3",
         "filament/filament": "^3.3",
@@ -27,10 +26,9 @@
         "laravel/tinker": "^2.10.1",
         "league/flysystem-aws-s3-v3": "^3.0",
         "marcogermani87/filament-cookie-consent": "^1.1",
+        "rmsramos/activitylog": "^2.0",
         "sentry/sentry-laravel": "^4.16",
-        "shuvroroy/filament-spatie-laravel-backup": "^2.2",
         "spatie/laravel-activitylog": "^4.10",
-        "spatie/laravel-analytics": "^5.6",
         "spatie/laravel-data": "^4.17",
         "spatie/laravel-medialibrary": "^11.15",
         "spatie/laravel-settings": "^3.4",
@@ -42,6 +40,7 @@
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.16",
         "fakerphp/faker": "^1.23",
+        "larastan/larastan": "^3.0",
         "laravel/breeze": "^2.3",
         "laravel/pail": "^1.2.2",
         "laravel/pint": "^1.13",
@@ -49,6 +48,8 @@
         "laravel/telescope": "^5.13",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.6",
+        "nunomaduro/phpinsights": "^2.13",
+        "phpstan/phpstan": "^2.1",
         "phpunit/phpunit": "^11.5.3"
     },
     "autoload": {
@@ -62,7 +63,8 @@
             "Packages\\Page\\": "packages/Page/src/",
             "Packages\\News\\": "packages/News/src/",
             "Packages\\Recommend\\": "packages/Recommend/src/",
-            "Packages\\Entry\\": "packages/Entry/src/"
+            "Packages\\Entry\\": "packages/Entry/src/",
+            "Packages\\React\\": "packages/React/src/"
         }
     },
     "autoload-dev": {
@@ -113,6 +115,7 @@
         "preferred-install": "dist",
         "sort-packages": true,
         "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true,
             "pestphp/pest-plugin": true,
             "php-http/discovery": true
         }

@@ -13,6 +13,7 @@ use Filament\Tables\Table;
 use Illuminate\Support\Carbon;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Packages\Article\Models\Article;
+use Rmsramos\Activitylog\RelationManagers\ActivitylogRelationManager;
 
 class ArticleResource extends Resource
 {
@@ -86,7 +87,9 @@ class ArticleResource extends Resource
                                             ->label(__('Content'))
                                             ->extraAttributes(['style' => 'min-height: 790px;'])
                                             ->saveUploadedFileAttachmentsUsing(function (TemporaryUploadedFile $file) use ($form) {
+                                                /** @var \Packages\Article\Models\Article|null $record */
                                                 $record = $form->getRecord();
+
                                                 if ($record) {
                                                     $media = $record->addMedia($file)->toMediaCollection('content');
 
@@ -151,6 +154,13 @@ class ArticleResource extends Resource
             ]);
     }
 
+    public static function getRelations(): array
+    {
+        return [
+            ActivitylogRelationManager::class,
+        ];
+    }
+
     public static function table(Table $table): Table
     {
         return $table
@@ -201,13 +211,6 @@ class ArticleResource extends Resource
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
     }
 
     public static function getPages(): array

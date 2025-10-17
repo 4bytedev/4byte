@@ -2,6 +2,7 @@
 
 namespace Packages\Category\Data;
 
+use Illuminate\Support\Facades\Auth;
 use Packages\Category\Models\Category;
 use Spatie\LaravelData\Data;
 
@@ -11,6 +12,8 @@ class CategoryData extends Data
         public ?int $id,
         public string $name,
         public string $slug,
+        public int $followers,
+        public bool $isFollowing
     ) {}
 
     public static function fromModel(Category $category, bool $setId = false): self
@@ -19,6 +22,8 @@ class CategoryData extends Data
             id: $setId ? $category->id : 0,
             name: $category->name,
             slug: $category->slug,
+            followers: $category->followersCount(),
+            isFollowing: $category->isFollowedBy(Auth::id())
         );
     }
 }

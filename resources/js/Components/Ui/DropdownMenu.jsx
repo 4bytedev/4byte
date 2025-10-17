@@ -41,11 +41,17 @@ const DropdownMenu = ({ onClick, children, ...props }) => {
 };
 
 const DropdownMenuTrigger = React.forwardRef(
-	({ className, children, onClick, asChild, ...props }, ref) => {
+	({ className, children, onClick, asChild, isOpen, ...props }, ref) => {
 		const Comp = asChild ? "span" : "button";
 
 		return (
-			<Comp ref={ref} className={className} onClick={onClick} {...props}>
+			<Comp
+				ref={ref}
+				data-is-open={isOpen}
+				className={className}
+				onClick={onClick}
+				{...props}
+			>
 				{children}
 			</Comp>
 		);

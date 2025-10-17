@@ -9,6 +9,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Jeffgreco13\FilamentBreezy\Traits\TwoFactorAuthenticatable;
+use Packages\React\Traits\CanFollow;
+use Packages\React\Traits\HasCacheKey;
+use Packages\React\Traits\HasFollowers;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\MediaLibrary\HasMedia;
@@ -19,7 +22,17 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable implements FilamentUser, HasMedia
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, HasRoles, InteractsWithMedia, LogsActivity, Notifiable, SoftDeletes, TwoFactorAuthenticatable;
+    use CanFollow;
+
+    use HasCacheKey;
+    use HasFactory;
+    use HasFollowers;
+    use HasRoles;
+    use InteractsWithMedia;
+    use LogsActivity;
+    use Notifiable;
+    use SoftDeletes;
+    use TwoFactorAuthenticatable;
 
     /**
      * The attributes that are mass assignable.
@@ -66,16 +79,6 @@ class User extends Authenticatable implements FilamentUser, HasMedia
         return $this->getAvatarImage();
     }
 
-    public function followers()
-    {
-        return $this->hasMany(UserFollow::class, 'following_id');
-    }
-
-    public function following()
-    {
-        return $this->hasMany(UserFollow::class, 'follower_id');
-    }
-
     public function getFollowersCountAttribute()
     {
         return $this->followers()->count();
@@ -94,9 +97,7 @@ class User extends Authenticatable implements FilamentUser, HasMedia
             return '';
         }
 
-        $imageUrl = $media->getFullUrl();
-
-        return $imageUrl;
+        return $media->getFullUrl();
     }
 
     public function registerMediaCollections(): void

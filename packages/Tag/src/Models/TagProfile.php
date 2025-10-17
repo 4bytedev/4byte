@@ -11,7 +11,8 @@ use Spatie\Activitylog\Traits\LogsActivity;
 
 class TagProfile extends Model
 {
-    use HasFactory, LogsActivity;
+    use HasFactory;
+    use LogsActivity;
 
     protected $fillable = ['description', 'color', 'category_id', 'tag_id'];
 

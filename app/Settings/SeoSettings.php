@@ -76,11 +76,6 @@ class SeoSettings extends Settings
 
     public ?string $bing_webmaster_tools_id;
 
-    public static function group(): string
-    {
-        return 'SeoSettings';
-    }
-
     protected $casts = [
         'meta_keywords' => 'array',
         'meta_robots' => 'array',
@@ -100,4 +95,9 @@ class SeoSettings extends Settings
         'sync_urlCanonical' => 'boolean',
         'sync_keywordsTags' => 'boolean',
     ];
+
+    public static function group(): string
+    {
+        return 'SeoSettings';
+    }
 }

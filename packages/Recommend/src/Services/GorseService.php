@@ -222,7 +222,8 @@ final class GorseService
      */
     public function insertItemCategory(string $item_id, string $category_id): RowAffected
     {
-        $path = sprintf('/api/item/%s/category/%s',
+        $path = sprintf(
+            '/api/item/%s/category/%s',
             rawurlencode($item_id),
             rawurlencode($category_id)
         );
@@ -235,7 +236,8 @@ final class GorseService
      */
     public function deleteItemCategory(string $item_id, string $category_id): RowAffected
     {
-        $path = sprintf('/api/item/%s/category/%s',
+        $path = sprintf(
+            '/api/item/%s/category/%s',
             rawurlencode($item_id),
             rawurlencode($category_id)
         );
@@ -256,7 +258,8 @@ final class GorseService
      */
     public function deleteFeedback(string $type, string $user_id, string $item_id): RowAffected
     {
-        $path = sprintf('/api/feedback/%s/%s/%s',
+        $path = sprintf(
+            '/api/feedback/%s/%s/%s',
             rawurlencode($type),
             rawurlencode($user_id),
             rawurlencode($item_id)
@@ -296,6 +299,41 @@ final class GorseService
         }
 
         $path = sprintf('/api/recommend/%s?%s', rawurlencode($user_id), $queryString);
+
+        return $this->request('GET', $path, null);
+    }
+
+    /**
+     * @throws GuzzleException
+     */
+    public function getNonPersonalizedRecommend(string $name, int $n, int $offset)
+    {
+        $query = [
+            'n' => $n,
+            'offset' => $offset,
+        ];
+
+        $path = sprintf('/api/non-personalized/%s?%s', rawurlencode($name), http_build_query($query));
+
+        return $this->request('GET', $path, null);
+    }
+
+    /**
+     * @throws GuzzleException
+     */
+    public function getNonPersonalizedRecommendByCategory(string $name, int $n, int $offset, array $categories)
+    {
+        $query = [
+            'n' => $n,
+            'offset' => $offset,
+        ];
+
+        $queryString = http_build_query($query);
+        foreach ($categories as $category) {
+            $queryString .= '&category='.rawurlencode($category);
+        }
+
+        $path = sprintf('/api/non-personalized/%s?%s', rawurlencode($name), $queryString);
 
         return $this->request('GET', $path, null);
     }

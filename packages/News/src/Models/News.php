@@ -15,7 +15,8 @@ use Spatie\Activitylog\Traits\LogsActivity;
 
 class News extends Model
 {
-    use HasFactory, LogsActivity;
+    use HasFactory;
+    use LogsActivity;
 
     protected $fillable = [
         'title', 'slug', 'excerpt', 'content', 'image', 'status', 'published_at', 'user_id',

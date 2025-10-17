@@ -11,9 +11,6 @@ use Jenssegers\Agent\Agent;
 
 class SessionService
 {
-    /**
-     * Kullanıcının tüm oturumlarını getirir.
-     */
     public static function getUserSessions(): array
     {
         $driver = config('session.driver');
@@ -25,9 +22,6 @@ class SessionService
         };
     }
 
-    /**
-     * Database sessionlarını getir.
-     */
     protected static function getDatabaseSessions(): array
     {
         $sessions = DB::connection(config('session.connection'))->table(config('session.table'))
@@ -38,9 +32,6 @@ class SessionService
         return $sessions->map(fn ($session) => self::formatSession($session))->toArray();
     }
 
-    /**
-     * Redis sessionlarını getir.
-     */
     protected static function getRedisSessions(): array
     {
         $prefix = config('session.prefix', 'laravel:session:');
@@ -48,7 +39,15 @@ class SessionService
         $sessions = [];
 
         foreach ($keys as $key) {
-            $data = @unserialize(Redis::get($key));
+            $dataRaw = Redis::get($key);
+            $data = [];
+            try {
+                $data = unserialize($dataRaw);
+            } catch (\Throwable $e) {
+                logger()->error('Redis session error', ['e' => $e]);
+
+                continue;
+            }
             if (! is_array($data) || ($data['login_web'] ?? null) !== Auth::id()) {
                 continue;
             }
@@ -66,9 +65,6 @@ class SessionService
         return $sessions;
     }
 
-    /**
-     * Session objesini standard formata çevirir.
-     */
     protected static function formatSession(object $session): object
     {
         $agent = self::createAgent($session->user_agent ?? '');
@@ -89,17 +85,11 @@ class SessionService
         ];
     }
 
-    /**
-     * Agent objesi oluştur.
-     */
     protected static function createAgent(string $userAgent): Agent
     {
         return tap(new Agent, fn ($agent) => $agent->setUserAgent($userAgent));
     }
 
-    /**
-     * Diğer oturumları kapat.
-     */
     public static function logoutOtherSessions(string $password): bool
     {
         if (! Hash::check($password, Auth::user()->password)) {
@@ -137,7 +127,15 @@ class SessionService
         $keys = Redis::keys($prefix.'*');
 
         foreach ($keys as $key) {
-            $data = @unserialize(Redis::get($key));
+            $dataRaw = Redis::get($key);
+            $data = [];
+            try {
+                $data = unserialize($dataRaw);
+            } catch (\Throwable $e) {
+                logger()->error('Redis session error', ['e' => $e]);
+
+                continue;
+            }
             if (($data['login_web'] ?? null) === Auth::id() && $key !== request()->session()->getId()) {
                 Redis::del($key);
             }

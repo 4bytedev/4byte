@@ -2,9 +2,9 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { Grid, List } from "lucide-react";
 import { Button } from "@/Components/Ui/Button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/Ui/Tabs";
-import { ContentCard } from "@/Components/Content/ContentCard";
 import { useTranslation } from "react-i18next";
 import { CreatorCard } from "./CreatorCard";
+import { ContentCard } from "./ContentCard";
 
 const ContentScroll = ({
 	endpoint,
@@ -121,7 +121,6 @@ const ContentScroll = ({
 	return (
 		<main className="flex-1 p-3 sm:6-6">
 			<div className="max-w-6xl mx-auto">
-				{/* Header */}
 				{(title || description) && (
 					<div className="mb-8">
 						{title && <h1 className="text-3xl font-bold mb-2">{title}</h1>}
@@ -135,7 +134,6 @@ const ContentScroll = ({
 					</>
 				)}
 
-				{/* Controls */}
 				<div className="flex items-center justify-between mb-6">
 					<Tabs
 						defaultValue={initialTab}

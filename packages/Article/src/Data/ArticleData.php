@@ -7,7 +7,6 @@ use DateTime;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Packages\Article\Models\Article;
-use Packages\Article\Services\ArticleService;
 use Packages\Category\Data\CategoryData;
 use Packages\Tag\Data\TagData;
 use Spatie\LaravelData\Data;
@@ -23,9 +22,9 @@ class ArticleData extends Data
         public array $image,
         public ?DateTime $published_at,
         public UserData $user,
-        /** @var CategoryData[] */
+        /** @var array<CategoryData> */
         public array $categories,
-        /** @var TagData[] */
+        /** @var array<TagData> */
         public array $tags,
         public ?array $sources,
         public int $likes,
@@ -41,7 +40,6 @@ class ArticleData extends Data
 
     public static function fromModel(Article $article, UserData $user, bool $setId = false): self
     {
-        $articleService = app(ArticleService::class);
         $userId = Auth::id();
 
         return new self(
@@ -56,15 +54,15 @@ class ArticleData extends Data
             categories: CategoryData::collect($article->categories)->all(),
             tags: TagData::collect($article->tags)->all(),
             sources: $article->sources,
-            likes: $articleService->getLikesCount($article->id),
-            dislikes: $articleService->getDislikesCount($article->id),
-            comments: $articleService->getCommentsCount($article->id),
-            isLiked: $articleService->checkLiked($article->id, $userId),
-            isDisliked: $articleService->checkDisliked($article->id, $userId),
-            isSaved: $articleService->checkSaved($article->id, $userId),
+            likes: $article->likesCount(),
+            dislikes: $article->dislikesCount(),
+            comments: $article->commentsCount(),
+            isLiked: $article->isLikedBy($userId),
+            isDisliked: $article->isDislikedBy($userId),
+            isSaved: $article->isSavedBy($userId),
             canUpdate: Gate::allows('update', $article),
             canDelete: Gate::allows('delete', $article),
-            type: $article->status && $article->status == 'PUBLISHED' ? 'article' : 'draft'
+            type: $article->status === 'PUBLISHED' ? 'article' : 'draft'
         );
     }
 }

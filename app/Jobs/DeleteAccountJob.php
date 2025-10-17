@@ -10,7 +10,9 @@ use Illuminate\Queue\SerializesModels;
 
 class DeleteAccountJob implements ShouldQueue
 {
-    use InteractsWithQueue, Queueable, SerializesModels;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     protected $user;
 

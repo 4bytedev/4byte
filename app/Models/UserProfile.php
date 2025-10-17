@@ -13,7 +13,9 @@ use Spatie\MediaLibrary\MediaCollections\File;
 
 class UserProfile extends Model implements HasMedia
 {
-    use HasFactory, InteractsWithMedia, LogsActivity;
+    use HasFactory;
+    use InteractsWithMedia;
+    use LogsActivity;
 
     protected $fillable = [
         'role',

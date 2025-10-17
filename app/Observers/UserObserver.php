@@ -32,7 +32,7 @@ class UserObserver
         ]);
         // }
 
-        $gorseUser = new GorseUser($user->id, ['article', 'news'], [], $user->username);
+        $gorseUser = new GorseUser((string) $user->id, ['article', 'entry', 'news'], [], $user->username);
         $this->gorse->insertUser($gorseUser);
     }
 
@@ -55,7 +55,7 @@ class UserObserver
 
     public function deleted(User $user)
     {
-        $this->gorse->deleteUser($user->id);
+        $this->gorse->deleteUser((string) $user->id);
         Cache::forget("user:{$user->username}:id");
         Cache::forget("user:{$user->id}");
         Cache::forget("user:{$user->id}:followers");

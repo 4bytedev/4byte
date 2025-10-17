@@ -3,16 +3,15 @@
 namespace App\Observers;
 
 use Illuminate\Support\Facades\Cache;
-use Packages\Article\Models\ArticleSave;
 
 class BannerObserver
 {
-    public function saved(ArticleSave $articleSave)
+    public function saved()
     {
         Cache::forget('banners');
     }
 
-    public function deleted(ArticleSave $articleSave)
+    public function deleted()
     {
         Cache::forget('banners');
     }

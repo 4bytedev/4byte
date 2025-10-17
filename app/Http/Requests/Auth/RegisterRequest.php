@@ -95,7 +95,7 @@ class RegisterRequest extends FormRequest
         return response()->json([
             'name' => $user->name,
             'username' => $user->username,
-            'avatar' => $user->avatar_url,
+            'avatar' => $user->getAvatarImage(),
             'verified' => false,
         ]);
     }
@@ -107,7 +107,7 @@ class RegisterRequest extends FormRequest
      */
     public function ensureEmailExtensionAllowed(): void
     {
-        if (empty($this->securitySettings->allowed_emails)) {
+        if (isset($this->securitySettings->allowed_emails) && $this->securitySettings->allowed_emails) {
             return;
         }
         $email = $this->input('email');

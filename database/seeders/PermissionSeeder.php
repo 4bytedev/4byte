@@ -12,8 +12,6 @@ class PermissionSeeder extends Seeder
      */
     public function run(): void
     {
-        Permission::firstOrCreate(['name' => 'download-backup']);
-        Permission::firstOrCreate(['name' => 'delete-backup']);
         Permission::firstOrCreate(['name' => 'banner-manager']);
         Permission::firstOrCreate(['name' => 'view-creator-card']);
         Permission::firstOrCreate(['name' => 'update-account']);

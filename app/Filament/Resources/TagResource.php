@@ -10,6 +10,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Packages\Tag\Models\Tag;
+use Rmsramos\Activitylog\RelationManagers\ActivitylogRelationManager;
 
 class TagResource extends Resource
 {
@@ -72,6 +73,13 @@ class TagResource extends Resource
             ]);
     }
 
+    public static function getRelations(): array
+    {
+        return [
+            ActivitylogRelationManager::class,
+        ];
+    }
+
     public static function table(Table $table): Table
     {
         return $table
@@ -90,9 +98,6 @@ class TagResource extends Resource
                 Tables\Columns\TextColumn::make('profile.category.name')
                     ->label(__('Category')),
             ])
-            ->filters([
-                //
-            ])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
@@ -100,13 +105,6 @@ class TagResource extends Resource
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
     }
 
     public static function getPages(): array

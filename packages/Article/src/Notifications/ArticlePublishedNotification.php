@@ -1,6 +1,6 @@
 <?php
 
-namespace PAckages\Article\Notifications;
+namespace Packages\Article\Notifications;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -27,7 +27,7 @@ class ArticlePublishedNotification extends Notification implements ShouldQueue
      *
      * @return array<int, string>
      */
-    public function via(object $notifiable): array
+    public function via(): array
     {
         return ['mail'];
     }
@@ -35,7 +35,7 @@ class ArticlePublishedNotification extends Notification implements ShouldQueue
     /**
      * Get the mail representation of the notification.
      */
-    public function toMail(object $notifiable): MailMessage
+    public function toMail(): MailMessage
     {
         return (new MailMessage)
             ->subject(__('article::messages.published_title'))
@@ -50,7 +50,7 @@ class ArticlePublishedNotification extends Notification implements ShouldQueue
      *
      * @return array<string, mixed>
      */
-    public function toArray(object $notifiable): array
+    public function toArray(): array
     {
         return [
             'title' => $this->article->title,
