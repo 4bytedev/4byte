@@ -143,7 +143,7 @@ class AdminPanelProvider extends PanelProvider
                 ->persistsBannersInDatabase()
                 ->bannerManagerAccessPermission('banner-manager'),
             FilamentShieldPlugin::make(),
-            ActivitylogPlugin::make()
+            ActivitylogPlugin::make(),
         ];
     }
 }

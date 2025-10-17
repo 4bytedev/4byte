@@ -1,10 +1,11 @@
-<?php 
+<?php
 
 namespace Packages\Recommend\Console\Commands;
 
 use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
+use Packages\Article\Models\Article;
 use Packages\Entry\Models\Entry;
 use Packages\React\Models\Comment;
 use Packages\React\Models\Dislike;
@@ -14,7 +15,6 @@ use Packages\React\Models\Save;
 use Packages\Recommend\Services\Feedback;
 use Packages\Recommend\Services\GorseItem;
 use Packages\Recommend\Services\GorseService;
-use Packages\Article\Models\Article;
 use Packages\Recommend\Services\GorseUser;
 
 class UploadRecommendations extends Command

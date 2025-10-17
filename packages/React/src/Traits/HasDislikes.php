@@ -15,7 +15,9 @@ trait HasDislikes
 
     public function isDislikedBy(?int $userId): bool
     {
-        if (!$userId) return false;
+        if (! $userId) {
+            return false;
+        }
 
         return Cache::rememberForever($this->getCacheKey().":{$userId}:disliked", function () use ($userId) {
             return $this->dislikes()

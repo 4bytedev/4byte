@@ -15,7 +15,10 @@ trait HasComments
 
     public function isCommentedBy(?int $userId): bool
     {
-        if (!$userId) return false;
+        if (! $userId) {
+            return false;
+        }
+
         return Cache::rememberForever($this->getCacheKey().":{$userId}:commented", function () use ($userId) {
             return $this->comments()
                 ->where('user_id', $userId)

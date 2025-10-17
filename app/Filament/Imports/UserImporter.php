@@ -35,7 +35,7 @@ class UserImporter extends Importer
         //     'email' => $this->data['email'],
         // ]);
 
-        return new User();
+        return new User;
     }
 
     public static function getCompletedNotificationBody(Import $import): string

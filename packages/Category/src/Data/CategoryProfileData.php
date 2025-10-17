@@ -11,8 +11,7 @@ class CategoryProfileData extends Data
         public ?int $id,
         public string $description,
         public string $color,
-    ) {
-    }
+    ) {}
 
     public static function fromModel(CategoryProfile $categoryProfile, bool $setId = false): self
     {

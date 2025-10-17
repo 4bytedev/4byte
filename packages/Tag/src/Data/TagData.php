@@ -14,8 +14,7 @@ class TagData extends Data
         public string $slug,
         public int $followers,
         public bool $isFollowing
-    ) {
-    }
+    ) {}
 
     public static function fromModel(Tag $tag, bool $setId = false): self
     {

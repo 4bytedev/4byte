@@ -18,8 +18,7 @@ class UserData extends Data
         public int $followings,
         public bool $isFollowing,
         public DateTime $created_at
-    ) {
-    }
+    ) {}
 
     public static function fromModel(User $user, bool $setId = false): self
     {

@@ -23,6 +23,7 @@ class User extends Authenticatable implements FilamentUser, HasMedia
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use CanFollow;
+
     use HasCacheKey;
     use HasFactory;
     use HasFollowers;

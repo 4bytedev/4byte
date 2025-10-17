@@ -15,7 +15,9 @@ trait HasLikes
 
     public function isLikedBy(?int $userId): bool
     {
-        if (!$userId) return false;
+        if (! $userId) {
+            return false;
+        }
 
         return Cache::rememberForever($this->getCacheKey().":{$userId}:liked", function () use ($userId) {
             return $this->likes()

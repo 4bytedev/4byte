@@ -28,8 +28,7 @@ class EntryData extends Data
         public bool $canDelete,
         public ?DateTime $published_at,
         public string $type = 'entry'
-    ) {
-    }
+    ) {}
 
     public static function fromModel(Entry $entry, UserData $user, bool $setId = false, bool $setPublished = true): self
     {

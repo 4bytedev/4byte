@@ -87,7 +87,7 @@ class SessionService
 
     protected static function createAgent(string $userAgent): Agent
     {
-        return tap(new Agent(), fn ($agent) => $agent->setUserAgent($userAgent));
+        return tap(new Agent, fn ($agent) => $agent->setUserAgent($userAgent));
     }
 
     public static function logoutOtherSessions(string $password): bool

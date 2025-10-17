@@ -15,8 +15,7 @@ class UserProfileData extends Data
         public ?string $website,
         public ?array $socials,
         public array $cover,
-    ) {
-    }
+    ) {}
 
     public static function fromModel(UserProfile $userProfile, bool $setId = false): self
     {

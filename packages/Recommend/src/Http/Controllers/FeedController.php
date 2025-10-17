@@ -58,10 +58,10 @@ class FeedController extends Controller
         $recommendations = [];
         if (Auth::check()) {
             $recommendations = $this->feedService->getPersonalizedRecommendations($userId, $filters, $limit, ($page - 1) * $limit);
-        }else {
+        } else {
             $recommendations = $this->feedService->getNonPersonalizedRecommendations("trending", $filters, $limit, ($page - 1) * $limit);
         }
-        if (!$recommendations) {
+        if (! $recommendations) {
             return response()->json([]);
         }
 

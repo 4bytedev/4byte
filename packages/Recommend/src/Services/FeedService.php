@@ -178,7 +178,7 @@ class FeedService
         return [];
     }
 
-    public function getPersonalizedRecommendations(?int $userId, array $filters, int $limit, int $offset): array|null
+    public function getPersonalizedRecommendations(?int $userId, array $filters, int $limit, int $offset): ?array
     {
         if (! isset($filters) || count($filters) === 0) {
             return $this->gorseService->getRecommend($userId, $limit, $offset);
@@ -187,7 +187,7 @@ class FeedService
         return $this->gorseService->getRecommendByCategory($userId, $limit, $offset, $filters);
     }
 
-    public function getNonPersonalizedRecommendations(string $name, array $filters, int $limit, int $offset): array|null
+    public function getNonPersonalizedRecommendations(string $name, array $filters, int $limit, int $offset): ?array
     {
         if (! isset($filters) || count($filters) === 0) {
             return $this->gorseService->getNonPersonalizedRecommend($name, $limit, $offset);
@@ -204,7 +204,7 @@ class FeedService
             $recommendId = "";
             if (is_array($recommend)) {
                 $recommendId = $recommend["Id"];
-            }else {
+            } else {
                 $recommendId = $recommend;
             }
 

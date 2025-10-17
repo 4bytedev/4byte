@@ -22,8 +22,7 @@ class PageData extends Data
         public bool $canDelete,
         public ?DateTime $published_at,
         public string $type = 'page'
-    ) {
-    }
+    ) {}
 
     public static function fromModel(Page $page, UserData $user, bool $setId = false): self
     {

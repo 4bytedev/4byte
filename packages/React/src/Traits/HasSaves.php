@@ -15,7 +15,10 @@ trait HasSaves
 
     public function isSavedBy(?int $userId): bool
     {
-        if (!$userId) return false;
+        if (! $userId) {
+            return false;
+        }
+
         return Cache::rememberForever($this->getCacheKey().":{$userId}:saved", function () use ($userId) {
             return $this->saves()
                 ->where('user_id', $userId)

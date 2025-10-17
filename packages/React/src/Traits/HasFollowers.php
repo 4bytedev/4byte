@@ -22,7 +22,9 @@ trait HasFollowers
 
     public function isFollowedBy(?int $userId): bool
     {
-        if (!$userId) return false;
+        if (! $userId) {
+            return false;
+        }
 
         return Cache::rememberForever($this->getCacheKey().":{$userId}:followed", function () use ($userId) {
             return $this->followers()->where('follower_id', $userId)->exists();
