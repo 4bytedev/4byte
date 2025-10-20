@@ -21,7 +21,8 @@ use Spatie\Activitylog\Traits\LogsActivity;
  * @property-read int|null $activities_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Category> $categories
  * @property-read int|null $categories_count
- * @property-read \Packages\Tag\Models\Tag $tag
+ * @property-read Tag $tag
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TagProfile newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TagProfile newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TagProfile query()
@@ -31,6 +32,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TagProfile whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TagProfile whereTagId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TagProfile whereUpdatedAt($value)
+ *
  * @mixin \Eloquent
  */
 class TagProfile extends Model

@@ -12,14 +12,16 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @property int $user_id
  * @property string $saveable_type
  * @property int $saveable_id
- * @property-read \Illuminate\Database\Eloquent\Model $saveable
+ * @property-read Model $saveable
  * @property-read User $user
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Save newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Save newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Save query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Save whereSaveableId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Save whereSaveableType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Save whereUserId($value)
+ *
  * @mixin \Eloquent
  */
 class Save extends Model
