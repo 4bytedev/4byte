@@ -1,0 +1,47 @@
+name: Generate PHP Docs to GitHub Pages
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: [8.4]
+        node: [20]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          tools: composer
+          extensions: apcu, mbstring, bcmath, pdo_pgsql, opcache, exif, zip, intl, gd, redis, swoole
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Install dependencies
+        run: |
+          composer install -q --no-ansi \
+          --no-interaction --no-scripts --no-progress
+
+      - name: Download phpDocumentor.phar
+        run: |
+          curl -L https://www.phpdoc.org/phpDocumentor.phar -o phpDocumentor.phar
+          chmod +x phpDocumentor.phar
+
+      - name: Generate PHPDocs
+        run: |
+          php phpDocumentor.phar -d app,packages -t docs

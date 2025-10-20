@@ -1,0 +1,16 @@
+#!/bin/sh
+set -e
+
+php artisan migrate --force
+php artisan route:clear
+php artisan cache:clear
+
+php artisan vendor:publish --tag=migrations
+php artisan vendor:publish --force --tag=livewire:assets
+php artisan app:upload-assets --clean
+php artisan app:upload-front-end
+
+php artisan filament:optimize
+php artisan optimize
+
+exec /usr/bin/supervisord -n -c /etc/supervisord.conf

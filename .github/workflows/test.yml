@@ -1,0 +1,86 @@
+name: Run tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: [8.4]
+
+    services:
+      pgsql:
+          image: postgres:16.0
+          ports:
+              - 5432:5432
+          env:
+              POSTGRES_PASSWORD: 4byte
+              POSTGRES_USER: 4byte
+              POSTGRES_DB: 4byte
+          options: >-
+            --health-cmd pg_isready
+            --health-interval 10s
+            --health-timeout 5s
+            --health-retries 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          tools: composer
+          extensions: apcu, mbstring, bcmath, pdo_pgsql, opcache, exif, zip, intl, gd, redis, swoole
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Copy .env file
+        run: |
+          cp .env.ci .env
+
+      - name: Install dependencies
+        run: |
+          composer install -q --no-ansi \
+          --no-interaction --no-scripts --no-progress
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+          cache: "npm"
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Build Front-end
+        run: npm run build
+
+      - name: Generate application key
+        run: |
+          php artisan key:generate
+
+      - name: Directory permissions
+        run: |
+          sudo chown -R $USER:$USER storage bootstrap/cache
+          chmod -R 775 storage bootstrap/cache
+
+      - name: Run tests
+        run: |
+          php artisan test
