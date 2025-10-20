@@ -23,7 +23,8 @@ use Spatie\Activitylog\Traits\LogsActivity;
  * @property-read int|null $articles_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Packages\React\Models\Follow> $followers
  * @property-read int|null $followers_count
- * @property-read \Packages\Category\Models\CategoryProfile|null $profile
+ * @property-read CategoryProfile|null $profile
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Category newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Category newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Category query()
@@ -32,6 +33,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Category whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Category whereSlug($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Category whereUpdatedAt($value)
+ *
  * @mixin \Eloquent
  */
 class Category extends Model

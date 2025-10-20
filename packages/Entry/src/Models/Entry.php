@@ -36,6 +36,7 @@ use Spatie\MediaLibrary\MediaCollections\File;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Packages\React\Models\Save> $saves
  * @property-read int|null $saves_count
  * @property-read User $user
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Entry newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Entry newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Entry query()
@@ -45,6 +46,7 @@ use Spatie\MediaLibrary\MediaCollections\File;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Entry whereSlug($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Entry whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Entry whereUserId($value)
+ *
  * @mixin \Eloquent
  */
 class Entry extends Model implements HasMedia

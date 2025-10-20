@@ -25,7 +25,8 @@ use Spatie\MediaLibrary\MediaCollections\File;
  * @property-read int|null $activities_count
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
  * @property-read int|null $media_count
- * @property-read \App\Models\User $user
+ * @property-read User $user
+ *
  * @method static \Database\Factories\UserProfileFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|UserProfile newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|UserProfile newQuery()
@@ -39,6 +40,7 @@ use Spatie\MediaLibrary\MediaCollections\File;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|UserProfile whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|UserProfile whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|UserProfile whereWebsite($value)
+ *
  * @mixin \Eloquent
  */
 class UserProfile extends Model implements HasMedia
