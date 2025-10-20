@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@tailwind variants;
+@import '../../../../vendor/filament/filament/resources/css/base.css';
+
+@source '../../../../vendor/bezhansalleh/filament-google-analytics/resources/views/**/*';
+@source '../../../../vendor/bezhansalleh/filament-google-analytics/src/{Widgets,Support}/*';
+
+@config 'tailwind.config.js';

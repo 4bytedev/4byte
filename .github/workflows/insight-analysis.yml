@@ -1,0 +1,47 @@
+name: Insight Analysis
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  insight:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: [8.4]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          tools: composer
+          extensions: apcu, mbstring, bcmath, pdo_pgsql, opcache, exif, zip, intl, gd, redis, swoole
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Install dependencies
+        run: |
+          composer install -q --no-ansi \
+          --no-interaction --no-scripts --no-progress
+
+      - name: phpinsights
+        run: |
+          php artisan insights --no-interaction --ansi --format=github-action
+
