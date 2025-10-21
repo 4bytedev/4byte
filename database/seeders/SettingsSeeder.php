@@ -21,21 +21,20 @@ class SettingsSeeder extends Seeder
         $settings->light_logo               = null;
         $settings->dark_logo                = null;
         $settings->favicon                  = null;
-        $settings->default_role             = 2; // örnek role_id
+        $settings->default_role             = 1;
         $settings->available_languages      = ['en', 'tr'];
-        $settings->default_language         = 'en';
-        $settings->terms_and_conditions_url = 'page/terms-and-conditions';
-        $settings->privacy_policy_url       = 'page/privacy-policy';
+        $settings->default_language         = 'tr';
+        $settings->terms_and_conditions_url = 'terms-and-conditions';
+        $settings->privacy_policy_url       = 'privacy-policy';
         $settings->theme_mode               = 'system';
         $settings->dark_mode_enabled        = true;
-        $settings->spa_enabled              = true;
+        $settings->spa_enabled              = false;
 
         $settings->save();
 
         $settings = app(SeoSettings::class);
 
-        // Meta
-        $settings->meta_titleTemplate    = '%title% | My Laravel App';
+        $settings->meta_titleTemplate    = '{title} | My Laravel App';
         $settings->meta_description      = 'This is a default SEO description for my Laravel application.';
         $settings->meta_keywords         = ['laravel', 'seo', 'app'];
         $settings->meta_canonicalEnabled = true;
@@ -82,9 +81,6 @@ class SettingsSeeder extends Seeder
         // Extra
         $settings->extra_header             = '<!-- Custom header scripts -->';
         $settings->extra_footer             = '<!-- Custom footer scripts -->';
-        $settings->google_analytics_id      = null;
-        $settings->google_search_console_id = null;
-        $settings->bing_webmaster_tools_id  = null;
 
         $settings->save();
 
@@ -113,7 +109,7 @@ class SettingsSeeder extends Seeder
         $settings->captcha_email_verification_enabled = false;
 
         $settings->remember_me_enabled         = true;
-        $settings->force_ssl                   = true;
+        $settings->force_ssl                   = false;
         $settings->under_maintenance           = false;
         $settings->email_verification_required = false;
 

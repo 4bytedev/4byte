@@ -216,8 +216,8 @@ class Settings extends Page implements HasForms
         foreach (['light_logo', 'dark_logo', 'favicon'] as $field) {
             if (isset($data['siteSettings'][$field]) && $data['siteSettings'][$field] instanceof UploadedFile) {
                 $old = app(BaseSettings\SiteSettings::class)->{$field};
-                if ($old && Storage::disk('public')->exists($old)) {
-                    Storage::disk('public')->delete($old);
+                if ($old && Storage::exists($old)) {
+                    Storage::delete($old);
                 }
 
                 $file                         = $data['siteSettings'][$field];
@@ -228,8 +228,8 @@ class Settings extends Page implements HasForms
 
         if (isset($data['seoSettings']['twitter_image']) && $data['seoSettings']['twitter_image'] instanceof UploadedFile) {
             $old = app(BaseSettings\SeoSettings::class)->twitter_image;
-            if ($old && Storage::disk('public')->exists($old)) {
-                Storage::disk('public')->delete($old);
+            if ($old && Storage::exists($old)) {
+                Storage::delete($old);
             }
 
             $file                                 = $data['seoSettings']['twitter_image'];
@@ -249,8 +249,8 @@ class Settings extends Page implements HasForms
 
             if ($cond) {
                 foreach ($oldImages as $old) {
-                    if ($old && Storage::disk('public')->exists($old)) {
-                        Storage::disk('public')->delete($old);
+                    if ($old && Storage::exists($old)) {
+                        Storage::delete($old);
                     }
                 }
 
@@ -275,8 +275,8 @@ class Settings extends Page implements HasForms
 
             if ($cond) {
                 foreach ($oldImages as $old) {
-                    if ($old && Storage::disk('public')->exists($old)) {
-                        Storage::disk('public')->delete($old);
+                    if ($old && Storage::exists($old)) {
+                        Storage::delete($old);
                     }
                 }
 

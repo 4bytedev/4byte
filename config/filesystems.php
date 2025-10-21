@@ -58,7 +58,7 @@ return [
             'driver' => 's3',
             'key' => env('STORAGE_ACCESS_KEY_ID'),
             'secret' => env('STORAGE_SECRET_ACCESS_KEY'),
-            'region' => env('STORAGE_REGION', 'us-east-1'),
+            'region' => env('STORAGE_REGION', 'auto'),
             'bucket' => env('STORAGE_BUCKET'),
             'url' => env('STORAGE_URL'),
             'visibility' => 'public',
