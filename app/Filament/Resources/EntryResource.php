@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\EntryResource\Pages;
+use App\Forms\Components\SpatieMediaLibraryFileUpload;
 use BezhanSalleh\FilamentShield\Traits\HasPanelShield;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -38,11 +39,14 @@ class EntryResource extends Resource
             ->schema([
                 Forms\Components\Section::make(__('Main Content'))
                     ->schema([
-                        Forms\Components\SpatieMediaLibraryFileUpload::make('content')
-                            ->collection('content')
-                            ->required()
-                            ->label(__('Content'))
-                            ->extraAttributes(['style' => 'min-height: 300px;']),
+                        SpatieMediaLibraryFileUpload::make('image')
+                            ->label(__('Image'))
+                            ->image()
+                            ->imageEditor()
+                            ->imagePreviewHeight('300')
+                            ->dehydrated(false)
+                            ->multiple()
+                            ->collection('content'),
 
                         Forms\Components\Select::make('user_id')
                             ->searchable()
@@ -65,6 +69,9 @@ class EntryResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->label(__('ID'))
+                    ->grow(false),
                 Tables\Columns\TextColumn::make('slug')
                     ->label(__('Slug'))
                     ->grow(false),
