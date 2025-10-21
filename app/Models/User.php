@@ -160,6 +160,10 @@ class User extends Authenticatable implements FilamentUser, HasMedia
         $this->addMediaCollection('avatar')
             ->singleFile()
             ->acceptsFile(fn ($file) => $validateImage($file));
+
+        $this->addMediaCollection('content')
+            ->singleFile()
+            ->acceptsFile(fn ($file) => $validateImage($file));
     }
 
     /**
