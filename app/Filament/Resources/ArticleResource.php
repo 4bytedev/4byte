@@ -3,6 +3,8 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ArticleResource\Pages;
+use App\Forms\Components\SpatieMediaLibraryFileUpload;
+use App\Forms\Components\SpatieMediaLibraryMarkdownEditor;
 use BezhanSalleh\FilamentShield\Traits\HasPanelShield;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -11,7 +13,6 @@ use Filament\Support\Enums\FontWeight;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Carbon;
-use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Packages\Article\Models\Article;
 use Rmsramos\Activitylog\RelationManagers\ActivitylogRelationManager;
 
@@ -66,7 +67,6 @@ class ArticleResource extends Resource
                                             ]),
 
                                         Forms\Components\Textarea::make('excerpt')
-                                            ->required()
                                             ->label(__('Excerpt')),
 
                                         Forms\Components\Repeater::make('sources')
@@ -82,20 +82,10 @@ class ArticleResource extends Resource
                                                     ->default(Carbon::now()),
                                             ]),
 
-                                        Forms\Components\MarkdownEditor::make('content')
-                                            ->required()
+                                        SpatieMediaLibraryMarkdownEditor::make('content')
                                             ->label(__('Content'))
                                             ->extraAttributes(['style' => 'min-height: 790px;'])
-                                            ->saveUploadedFileAttachmentsUsing(function (TemporaryUploadedFile $file) use ($form) {
-                                                /** @var Article|null $record */
-                                                $record = $form->getRecord();
-
-                                                if ($record) {
-                                                    $media = $record->addMedia($file)->toMediaCollection('content');
-
-                                                    return $media->getPathRelativeToRoot();
-                                                }
-                                            }),
+                                            ->collection('content'),
                                     ])
                                     ->columnSpan(9),
 
@@ -103,22 +93,20 @@ class ArticleResource extends Resource
                                     ->schema([
                                         Forms\Components\Section::make(__('Article Settings'))
                                             ->schema([
-                                                Forms\Components\SpatieMediaLibraryFileUpload::make('image')
-                                                    ->collection('cover')
-                                                    ->required()
+                                                SpatieMediaLibraryFileUpload::make('image')
                                                     ->label(__('Image'))
                                                     ->image()
                                                     ->imageEditor()
-                                                    ->imagePreviewHeight('150'),
+                                                    ->imagePreviewHeight('150')
+                                                    ->dehydrated(false)
+                                                    ->collection('cover'),
 
                                                 Forms\Components\Select::make('categories')
-                                                    ->required()
                                                     ->label(__('Categories'))
                                                     ->multiple()
                                                     ->relationship('categories', 'name'),
 
                                                 Forms\Components\Select::make('tags')
-                                                    ->required()
                                                     ->label(__('Tags'))
                                                     ->multiple()
                                                     ->relationship('tags', 'name'),
@@ -167,7 +155,10 @@ class ArticleResource extends Resource
             ->columns([
                 Tables\Columns\ImageColumn::make('image')
                     ->label(__('Image'))
-                    ->grow(false),
+                    ->grow(false)
+                    ->getStateUsing(function ($record) {
+                        return $record->getFirstMediaUrl('cover');
+                    }),
                 Tables\Columns\TextColumn::make('title')
                     ->label(__('Title'))
                     ->searchable()

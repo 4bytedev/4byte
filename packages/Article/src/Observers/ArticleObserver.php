@@ -22,6 +22,9 @@ class ArticleObserver
      */
     public function saved(Article $article): void
     {
+        error_log("not worked");
+        if ($article->status != "PUBLISHED") return;
+        error_log("worked");
         $gorseItem = new GorseItem(
             'article:' . $article->id,
             ['article', "user:{$article->user_id}"],
@@ -34,7 +37,7 @@ class ArticleObserver
                 ->merge(['article', "user:{$article->user_id}"])
                 ->all(),
             $article->slug,
-            $article->status != 'PUBLISHED',
+            false,
             Carbon::parse($article->published_at)->toDateTimeString()
         );
         $this->gorse->insertItem($gorseItem);

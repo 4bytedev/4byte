@@ -17,8 +17,9 @@ class GorseItem implements JsonSerializable
         private readonly array $categories,
         private readonly string $comment,
         private readonly bool $isHidden,
-        private readonly string $timestamp = Carbon::now()->toDateTimeString()
-    ) {}
+        private readonly string $timestamp
+    ) {
+    }
 
     /**
      * Get the item ID.

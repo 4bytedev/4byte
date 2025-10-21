@@ -3,6 +3,8 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\PageResource\Pages;
+use App\Forms\Components\SpatieMediaLibraryFileUpload;
+use App\Forms\Components\SpatieMediaLibraryMarkdownEditor;
 use BezhanSalleh\FilamentShield\Traits\HasPanelShield;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -11,7 +13,6 @@ use Filament\Support\Enums\FontWeight;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Carbon;
-use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Packages\Page\Models\Page;
 use Rmsramos\Activitylog\RelationManagers\ActivitylogRelationManager;
 
@@ -69,20 +70,11 @@ class PageResource extends Resource
                                             ->required()
                                             ->label(__('Excerpt')),
 
-                                        Forms\Components\MarkdownEditor::make('content')
+                                        SpatieMediaLibraryMarkdownEditor::make('content')
                                             ->required()
                                             ->label(__('Content'))
                                             ->extraAttributes(['style' => 'min-height: 790px;'])
-                                            ->saveUploadedFileAttachmentsUsing(function (TemporaryUploadedFile $file) use ($form) {
-                                                /** @var Page|null $record */
-                                                $record = $form->getRecord();
-
-                                                if ($record) {
-                                                    $media = $record->addMedia($file)->toMediaCollection('content');
-
-                                                    return $media->getPathRelativeToRoot();
-                                                }
-                                            }),
+                                            ->collection('content'),
                                     ])
                                     ->columnSpan(9),
 
@@ -90,7 +82,7 @@ class PageResource extends Resource
                                     ->schema([
                                         Forms\Components\Section::make(__('Page Settings'))
                                             ->schema([
-                                                Forms\Components\SpatieMediaLibraryFileUpload::make('image')
+                                                SpatieMediaLibraryFileUpload::make('image')
                                                     ->collection('cover')
                                                     ->required()
                                                     ->label(__('Image'))
