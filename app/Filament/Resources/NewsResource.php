@@ -3,6 +3,8 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\NewsResource\Pages;
+use App\Forms\Components\SpatieMediaLibraryFileUpload;
+use App\Forms\Components\SpatieMediaLibraryMarkdownEditor;
 use BezhanSalleh\FilamentShield\Traits\HasPanelShield;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -68,8 +70,9 @@ class NewsResource extends Resource
                                             ->required()
                                             ->label(__('Excerpt')),
 
-                                        Forms\Components\MarkdownEditor::make('content')
+                                        SpatieMediaLibraryMarkdownEditor::make('content')
                                             ->required()
+                                            ->collection('content')
                                             ->label(__('Content'))
                                             ->extraAttributes(['style' => 'min-height: 790px;'])
                                             ->fileAttachmentsDirectory('news/images'),
@@ -80,7 +83,8 @@ class NewsResource extends Resource
                                     ->schema([
                                         Forms\Components\Section::make(__('News Settings'))
                                             ->schema([
-                                                Forms\Components\FileUpload::make('image')
+                                                SpatieMediaLibraryFileUpload::make('image')
+                                                    ->collection('cover')
                                                     ->required()
                                                     ->label(__('Image'))
                                                     ->image()

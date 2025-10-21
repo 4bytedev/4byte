@@ -130,7 +130,7 @@ class News extends Model implements HasMedia
     public function registerMediaCollections(): void
     {
         $validateImage = function (File $file, ?array $allowedMimes = null) {
-            $allowedMimes ??= ['image/jpeg', 'image/png', 'image/webp', 'image/avif'];
+            $allowedMimes ??= ['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/gif'];
 
             if (! in_array($file->mimeType, $allowedMimes)) {
                 throw new \Exception("Unsupported file type: {$file->mimeType}");
@@ -143,10 +143,15 @@ class News extends Model implements HasMedia
             return true;
         };
 
+        $this->addMediaCollection('content')
+            ->withResponsiveImages()
+            ->acceptsFile(fn ($file) => $validateImage($file));
+
         $this->addMediaCollection('cover')
             ->withResponsiveImages()
             ->singleFile()
-            ->acceptsFile(fn ($file) => $validateImage($file));
+            ->acceptsFile(fn ($file) => $validateImage($file, ['image/jpeg', 'image/png', 'image/webp', 'image/avif']));
+
         /* @phpstan-ignore-next-line */
         $this->addMediaConversion('thumb')
             ->width(256)
