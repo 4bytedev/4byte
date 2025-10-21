@@ -14,7 +14,6 @@
         "bezhansalleh/filament-language-switch": "^3.1",
         "bezhansalleh/filament-shield": "^3.3",
         "filament/filament": "^3.3",
-        "filament/spatie-laravel-media-library-plugin": "^3.3",
         "guzzlehttp/guzzle": "^7.10",
         "honeystone/laravel-seo": "^2.0",
         "inertiajs/inertia-laravel": "^2.0",

@@ -28,16 +28,6 @@
                 }
             })();
         </script>
-        <script async src="{{ "https://www.googletagmanager.com/gtag/js?id=" . App\Services\SettingsService::getSeoSettingsField('google_analytics_id') }}"></script>
-        <script>
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-
-            (window.requestIdleCallback || function(cb){ setTimeout(cb, 2000); })(() => {
-                gtag('config', '{{ App\Services\SettingsService::getSeoSettingsField('google_analytics_id') }}');
-            });
-        </script>
         {!! App\Services\SettingsService::getSeoSettingsField('extra_header') !!}
     </head>
     <body>

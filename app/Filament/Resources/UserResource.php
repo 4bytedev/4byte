@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Exports\UserExporter;
 use App\Filament\Imports\UserImporter;
 use App\Filament\Resources\UserResource\Pages;
+use App\Forms\Components\SpatieMediaLibraryFileUpload;
 use App\Models\User;
 use BezhanSalleh\FilamentShield\Traits\HasPanelShield;
 use Filament\Forms;
@@ -42,7 +43,7 @@ class UserResource extends Resource
             ->schema([
                 Forms\Components\Section::make(__('User Information'))
                     ->schema([
-                        Forms\Components\SpatieMediaLibraryFileUpload::make('avatar')
+                        SpatieMediaLibraryFileUpload::make('avatar')
                             ->collection('avatar')
                             ->label(__('Avatar'))
                             ->image()
@@ -88,8 +89,8 @@ class UserResource extends Resource
                     Tables\Columns\ImageColumn::make('avatar')
                         ->circular()
                         ->grow(false)
-                        ->getStateUsing(fn ($record) => $record->avatar
-                            ? $record->avatar
+                        ->getStateUsing(fn ($record) => $record->hasMedia('avatar')
+                            ? $record->getFirstMediaUrl('avatar')
                             : 'https://ui-avatars.com/api/?name=' . urlencode($record->name)),
                     Tables\Columns\TextColumn::make('name')
                         ->searchable()
