@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\EntryResource\Pages;
 use App\Forms\Components\SpatieMediaLibraryFileUpload;
+use App\Forms\Components\SpatieMediaLibraryMarkdownEditor;
 use BezhanSalleh\FilamentShield\Traits\HasPanelShield;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -39,6 +40,11 @@ class EntryResource extends Resource
             ->schema([
                 Forms\Components\Section::make(__('Main Content'))
                     ->schema([
+                        SpatieMediaLibraryMarkdownEditor::make('content')
+                            ->collection('content')
+                            ->label(__('Content'))
+                            ->extraAttributes(['style' => 'min-height: 790px;']),
+
                         SpatieMediaLibraryFileUpload::make('image')
                             ->label(__('Image'))
                             ->image()
