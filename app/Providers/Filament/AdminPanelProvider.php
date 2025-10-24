@@ -7,6 +7,7 @@ use App\Filament\Pages\Auth\Login;
 use App\Filament\Pages\Auth\Register;
 use App\Filament\Pages\Auth\ResetPassword;
 use App\Filament\Pages\MyProfile;
+use App\Forms\Components\SpatieMediaLibraryFileUpload;
 use App\Services\SettingsService;
 use App\Settings\SecuritySettings;
 use App\Settings\SeoSettings;
@@ -29,6 +30,7 @@ use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Jeffgreco13\FilamentBreezy\BreezyCore;
@@ -140,7 +142,7 @@ class AdminPanelProvider extends PanelProvider
                     shouldRegisterNavigation: false,
                     shouldRegisterUserMenu: true,
                 )
-                ->avatarUploadComponent(fn ($fileUpload) => $fileUpload->disk('r2')->image()->directory('user/images')->visibility('publico')->imageEditor()->circleCropper()->disableLabel()),
+                ->avatarUploadComponent(fn() => SpatieMediaLibraryFileUpload::make('avatar')->image()->imageEditor()->avatar()->circleCropper()->disableLabel()->collection('avatar')),
             FilamentCookieConsent::make(),
             FilamentShieldPlugin::make(),
             ActivitylogPlugin::make(),
