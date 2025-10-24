@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Filament\Models\Contracts\FilamentUser;
+use Filament\Models\Contracts\HasAvatar;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -74,7 +75,7 @@ use Spatie\Permission\Traits\HasRoles;
  *
  * @mixin \Eloquent
  */
-class User extends Authenticatable implements FilamentUser, HasMedia
+class User extends Authenticatable implements FilamentUser, HasMedia, HasAvatar
 {
     use CanFollow;
 
@@ -135,7 +136,7 @@ class User extends Authenticatable implements FilamentUser, HasMedia
             return '';
         }
 
-        return $media->getFullUrl();
+        return $media->getUrl();
     }
 
     /**
