@@ -295,7 +295,7 @@ class GorseService
 
             return null;
         } catch (\Exception $e) {
-            logger()->error("Gorse API Error", ['e' => $e]);
+            logger()->error('Gorse API Error', ['e' => $e]);
 
             return null;
         }

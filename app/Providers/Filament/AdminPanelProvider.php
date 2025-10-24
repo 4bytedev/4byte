@@ -30,7 +30,6 @@ use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Jeffgreco13\FilamentBreezy\BreezyCore;
@@ -142,7 +141,7 @@ class AdminPanelProvider extends PanelProvider
                     shouldRegisterNavigation: false,
                     shouldRegisterUserMenu: true,
                 )
-                ->avatarUploadComponent(fn() => SpatieMediaLibraryFileUpload::make('avatar')->image()->imageEditor()->avatar()->circleCropper()->disableLabel()->collection('avatar')),
+                ->avatarUploadComponent(fn () => SpatieMediaLibraryFileUpload::make('avatar')->image()->imageEditor()->avatar()->circleCropper()->disableLabel()->collection('avatar')),
             FilamentCookieConsent::make(),
             FilamentShieldPlugin::make(),
             ActivitylogPlugin::make(),
