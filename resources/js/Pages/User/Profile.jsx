@@ -141,12 +141,14 @@ export default function UserProfilePage({ user, profile }) {
 							</div>
 							<div className="flex justify-between md:pt-6 w-full -pt-8 md:flex-row flex-col items-center">
 								<div>
-									<div className="flex gap-2 items-center justify-center">
+									<div className="flex items-center justify-center md:justify-start flex-wrap max-w-md">
 										<h1 className="text-3xl font-bold">{user.name}</h1>
-										<p className="text-muted-foreground">@{user.username}</p>
+										<p className="text-muted-foreground ms-2 md:ms-0">
+											@{user.username}
+										</p>
 									</div>
 									<div className="flex-1">
-										<div className="flex items-center space-x-6 text-sm">
+										<div className="flex items-center space-x-6 text-sm justify-center md:justify-start">
 											<span>
 												<Trans
 													i18nKey="followers"

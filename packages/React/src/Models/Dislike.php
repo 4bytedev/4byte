@@ -31,6 +31,10 @@ class Dislike extends Model
 
     public $timestamps = false;
 
+    public $incrementing = false;
+
+    protected $primaryKey = null;
+
     protected $fillable = [
         'user_id',
         'dislikeable_type',

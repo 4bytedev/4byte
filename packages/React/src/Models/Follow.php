@@ -31,6 +31,10 @@ class Follow extends Model
 
     public $timestamps = false;
 
+    public $incrementing = false;
+
+    protected $primaryKey = null;
+
     protected $fillable = [
         'follower_id',
         'followable_id',

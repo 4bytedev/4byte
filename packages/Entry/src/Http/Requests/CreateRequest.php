@@ -25,14 +25,24 @@ class CreateRequest extends FormRequest
             'content' => [
                 'nullable',
                 'string',
+                function ($attribute, $value, $fail) {
+                    $hasMedia = $this->has('media') && count($this->input('media', [])) > 0;
 
-                function ($_attribute, $value, $fail) {
-                    if (! $this->has('media') && strlen($value ?? '') < 50) {
-                        $fail(__('validation.min.string', ['min' => 50]));
+                    if (! $hasMedia) {
+                        $length = strlen(trim($value ?? ''));
+
+                        if ($length < 50) {
+                            $fail(__('validation.min.string', ['min' => 50]));
+                        }
+
+                        if ($length > 350) {
+                            $fail(__('validation.max.string', ['max' => 350]));
+                        }
                     }
                 },
             ],
-            'media'   => ['required_without:content', 'array'],
+
+            'media'   => ['required_without:content', 'array', 'min:1', 'max:10'],
             'media.*' => ['required_with:media', 'file', 'image'],
         ];
     }

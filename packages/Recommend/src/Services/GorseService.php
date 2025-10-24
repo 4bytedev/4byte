@@ -291,7 +291,11 @@ class GorseService
             $statusCode = $response ? $response->getStatusCode() : 'N/A';
             $content    = $response ? (string) $response->getBody() : $e->getMessage();
 
-            error_log("Gorse API Error ({$statusCode}): {$content}");
+            logger()->error("Gorse API Error ({$statusCode}): {$content}", ['e' => $e]);
+
+            return null;
+        } catch (\Exception $e) {
+            logger()->error('Gorse API Error', ['e' => $e]);
 
             return null;
         }
