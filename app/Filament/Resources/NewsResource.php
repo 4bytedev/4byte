@@ -74,8 +74,7 @@ class NewsResource extends Resource
                                             ->required()
                                             ->collection('content')
                                             ->label(__('Content'))
-                                            ->extraAttributes(['style' => 'min-height: 790px;'])
-                                            ->fileAttachmentsDirectory('news/images'),
+                                            ->extraAttributes(['style' => 'min-height: 790px;']),
                                     ])
                                     ->columnSpan(9),
 
