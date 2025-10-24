@@ -22,9 +22,7 @@ class ArticleObserver
      */
     public function saved(Article $article): void
     {
-        error_log("not worked");
         if ($article->status != "PUBLISHED") return;
-        error_log("worked");
         $gorseItem = new GorseItem(
             'article:' . $article->id,
             ['article', "user:{$article->user_id}"],
