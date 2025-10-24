@@ -231,6 +231,8 @@
 
     "Media": "Medya",
     "Content must be at least 50 characters": "İçerik en az 50 karakter olmalıdır",
+    "Content must be at most 350 characters": "İçerik en fazla 350 karakter olmalıdır",
+    "You can upload up to 10 media files": "En fazla 10 medya yükleyebilirsiniz",
     "Successfully!": "Başarılı!",
     "Your entry is live! It might take a moment to show up, thanks for your patience.": "Girdiğiniz içerik yayında! Görünmesi biraz zaman alabilir, sabrınız için teşekkürler.",
 

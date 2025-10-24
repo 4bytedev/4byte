@@ -231,6 +231,8 @@
 
     "Media": "Media",
     "Content must be at least 50 characters": "Content must be at least 50 characters",
+    "Content must be at most 350 characters": "Content must be at most 50 characters",
+    "You can upload up to 10 media files": "You can upload up to 10 media files",
     "Successfully!": "Successfully!",
     "Your entry is live! It might take a moment to show up, thanks for your patience.": "Your entry is live! It might take a moment to show up, thanks for your patience.",
 
