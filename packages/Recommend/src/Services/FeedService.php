@@ -112,7 +112,7 @@ class FeedService
      */
     public function tags()
     {
-        return Cache::remember('sidebar:tags', 60 * 60 * 24, function () {
+        return Cache::remember('feed:tags', 60 * 60 * 24, function () {
             $tagTotals = $this->getTotals('tag');
 
             $tagDetails = Tag::whereIn('id', $tagTotals->pluck('tag_id'))->get()->keyBy('id');
@@ -292,10 +292,12 @@ class FeedService
     private function getTotals(string $type): Collection
     {
         $articleCounts = DB::table('article_' . $type)
+            ->where('status', 'PUBLISHED')
             ->select($type . '_id', DB::raw('COUNT(*) as count'))
             ->groupBy($type . '_id');
 
         $newsCounts = DB::table('news_' . $type)
+            ->where('status', 'PUBLISHED')
             ->select($type . '_id', DB::raw('COUNT(*) as count'))
             ->groupBy($type . '_id');
 

@@ -30,14 +30,31 @@ export function CreatorCard() {
 	const handleSubmit = () => {
 		setErrors({});
 
-		if (content.length <= 50 && medias.length < 0) {
-			setErrors({ content: t("Content must be at least 50 characters") });
+		if (medias.length === 0) {
+			if (content.trim().length < 50) {
+				setErrors({ content: t("Content must be at least 50 characters") });
+				return;
+			}
+
+			if (content.trim().length > 350) {
+				setErrors({ content: t("Content must be at most 350 characters") });
+				return;
+			}
+		}
+
+		if (medias.length > 0) {
+			if (medias.length > 10) {
+				setErrors({ media: t("You can upload up to 10 media files") });
+				return;
+			}
+		}
+
+		if (content.trim().length === 0 && medias.length === 0) {
+			setErrors({ general: t("You must provide either content or at least one media") });
 			return;
 		}
 
-		const data = {
-			content: content,
-		};
+		const data = { content };
 
 		if (medias.length > 0) {
 			medias.forEach((media, index) => {

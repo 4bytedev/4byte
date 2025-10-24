@@ -31,6 +31,10 @@ class Like extends Model
 
     public $timestamps = false;
 
+    public $incrementing = false;
+
+    protected $primaryKey = null;
+
     protected $fillable = [
         'user_id',
         'likeable_type',
