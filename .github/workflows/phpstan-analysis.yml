@@ -1,9 +1,6 @@
 name: PHPStan Analysis
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
     branches:
       - main
