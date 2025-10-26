@@ -15,6 +15,7 @@ class RecentEntries extends BaseWidget
 
     protected int|string|array $columnSpan = 6;
 
+    /** @var int|array<int>|null */
     protected int | array | null $columns = 6;
 
     protected function getTableRecordUrlUsing(): ?\Closure
@@ -47,6 +48,9 @@ class RecentEntries extends BaseWidget
         ];
     }
 
+    /**
+     * @return Builder<Entry>
+     */
     protected function getTableQuery(): Builder
     {
         return Entry::query()
