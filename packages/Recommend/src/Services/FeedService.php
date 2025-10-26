@@ -291,12 +291,10 @@ class FeedService
     private function getTotals(string $type): Collection
     {
         $articleCounts = DB::table('article_' . $type)
-            ->where('status', 'PUBLISHED')
             ->select($type . '_id', DB::raw('COUNT(*) as count'))
             ->groupBy($type . '_id');
 
         $newsCounts = DB::table('news_' . $type)
-            ->where('status', 'PUBLISHED')
             ->select($type . '_id', DB::raw('COUNT(*) as count'))
             ->groupBy($type . '_id');
 
