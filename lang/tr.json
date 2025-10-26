@@ -1,5 +1,10 @@
 {
     "Home": "Ana Sayfa",
+    "Settings": "Ayarlar",
+    "Mail Verification": "Mail Doğrulama",
+    "Reset Password": "Şifreni Sıfırla",
+    "Create Article": "Makale Yaz",
+    "Edit Article": "Makale Düzenle",
     "You have a new follower!": "Yeni bir takipçin var!",
     "user_follow": "\":username\" seni takip etmeye başladı.",
     "View Profile": "Profili Görüntüle"

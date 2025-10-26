@@ -79,7 +79,7 @@ class UserController extends Controller
      */
     public function verificationView(): Response
     {
-        return Inertia::render('User/Verify');
+        return Inertia::render('User/Verify')->withViewData(['seo' => $this->seoService->getMailVerificationSEO()]);
     }
 
     /**
@@ -152,7 +152,7 @@ class UserController extends Controller
             'account'  => $account,
             'profile'  => $profile,
             'sessions' => $sessions,
-        ]);
+        ])->withViewData(['seo' => $this->seoService->getUserSettingsSEO()]);
     }
 
     /**

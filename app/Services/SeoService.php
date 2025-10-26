@@ -88,6 +88,38 @@ class SeoService
     }
 
     /**
+     * Get SEO data for the user settings page.
+     */
+    public function getUserSettingsSEO(): BuildsMetadata
+    {
+        return $this->buildSeo([
+            'title' => __('Settings'),
+            'url'   => route('user.settings.view'),
+        ]);
+    }
+
+    /**
+     * Get SEO data for the mail verification page.
+     */
+    public function getMailVerificationSEO(): BuildsMetadata
+    {
+        return $this->buildSeo([
+            'title' => __('Mail Verification'),
+            'url'   => route('user.verification.view'),
+        ]);
+    }
+
+    /**
+     * Get SEO data for the reset password page.
+     */
+    public function getResetPasswordSEO(): BuildsMetadata
+    {
+        return $this->buildSeo([
+            'title' => __('Reset Password'),
+        ]);
+    }
+
+    /**
      * Get SEO data for the article detail page.
      */
     public function getArticleSEO(ArticleData $article, UserData $user): BuildsMetadata
@@ -132,6 +164,26 @@ class SeoService
                 )
             ),
         ])->openGraphProperty('og:updated_time', $article->published_at->format('Uu'))->jsonLdImport($schema);
+    }
+
+    /**
+     * Get SEO data for the article create page.
+     */
+    public function getArticleCreateSEO(): BuildsMetadata
+    {
+        return $this->buildSeo([
+            'title' => __('Create Article'),
+        ]);
+    }
+
+    /**
+     * Get SEO data for the article edit page.
+     */
+    public function getArticleEditSEO(): BuildsMetadata
+    {
+        return $this->buildSeo([
+            'title' => __('Edit Article'),
+        ]);
     }
 
     /**
