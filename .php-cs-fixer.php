@@ -18,7 +18,36 @@ return (new Config())
             'operators' => ['=' => 'align_single_space', '=>' => 'align_single_space'],
         ],
         'phpdoc_align' => ['align' => 'left'],
-        'phpdoc_separation' => true,
+        'phpdoc_separation' => [
+            'groups' => [
+                ['author', 'copyright', 'license'],
+                ['category', 'package', 'subpackage'],
+                ['property'],
+                ['property-read', 'property-write'],
+                ['deprecated', 'link', 'see', 'since']
+            ]
+        ],
+        'phpdoc_order' => [
+            'order' => [
+                'type',
+                'template',
+                'template-covariant',
+                'template-extends',
+                'extends',
+                'implements',
+                'property',
+                'method',
+                'param',
+                'return',
+                'var',
+                'assert',
+                'assert-if-false',
+                'assert-if-true',
+                'throws',
+                'author',
+                'see',
+            ],
+        ],
         'blank_line_after_namespace' => true,
         'blank_line_after_opening_tag' => true,
         'blank_line_before_statement' => [
