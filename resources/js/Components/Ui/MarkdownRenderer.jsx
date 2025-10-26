@@ -5,6 +5,7 @@ import parse from "html-react-parser";
 import { useTranslation } from "react-i18next";
 import { slugify } from "@/Lib/Utils";
 import { markedCodeGroup, initCodeGroups } from "@/Lib/MarkedCodeGroup";
+import { markedEmoji } from "@/Lib/MarkedEmoji";
 
 export default function MarkdownRenderer({ content }) {
 	const { t } = useTranslation();
@@ -19,6 +20,7 @@ export default function MarkdownRenderer({ content }) {
 	};
 
 	markedCodeGroup(marked);
+	markedEmoji(marked);
 
 	const html = marked(content, {
 		renderer,
