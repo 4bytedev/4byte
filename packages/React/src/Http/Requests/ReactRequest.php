@@ -35,7 +35,7 @@ class ReactRequest extends FormRequest
      */
     public function resolveTarget(): array
     {
-        $type         = $this->input('type');
+        $type         = $this->route('type');
         $serviceClass = config('react.callbacks')[$type] ?? null;
         $baseClass    = config('react.classes')[$type] ?? null;
 
@@ -45,7 +45,7 @@ class ReactRequest extends FormRequest
 
         $service = $serviceClass === 'self' ? null : app($serviceClass);
         $itemId  = $serviceClass === 'self'
-            ? $this->get('slug')
+            ? $this->route('slug')
             : $service->getId($this->slug);
 
         return [$baseClass, $itemId, $type];
