@@ -46,20 +46,23 @@ export function ArticleCard({
 					</UserProfileHover>
 					<div className="flex items-center space-x-1">
 						{categories.slice(0, 3).map((category) => (
-							<Badge
+							<Link
 								key={category.slug}
-								variant="outline"
-								className="text-xs p-1 px-2"
+								href={route("category.view", { slug: category.slug })}
 							>
-								<Tag className="h-4 w-4 mr-1" />
-								{category.name}
-							</Badge>
+								<Badge variant="outline" className="text-xs p-1 px-2">
+									<Tag className="h-4 w-4 mr-1" />
+									{category.name}
+								</Badge>
+							</Link>
 						))}
 						{tags.slice(0, 3).map((tag) => (
-							<Badge key={tag.slug} variant="outline" className="text-xs p-1 px-2">
-								<Hash className="h-4 w-4 mr-1" />
-								{tag.name}
-							</Badge>
+							<Link key={tag.slug} href={route("tag.view", { slug: tag.slug })}>
+								<Badge variant="outline" className="text-xs p-1 px-2">
+									<Hash className="h-4 w-4 mr-1" />
+									{tag.name}
+								</Badge>
+							</Link>
 						))}
 						{tags.length + categories.length > 3 && (
 							<Badge variant="outline" className="text-xs">
@@ -71,38 +74,39 @@ export function ArticleCard({
 			</CardHeader>
 
 			<div className="relative h-64 w-full overflow-hidden">
-				<img
-					src={image.image}
-					srcSet={image.srcset}
-					alt={title}
-					className="h-full w-full object-cover object-center transition-transform duration-1000 group-hover:scale-105"
-				/>
-				<div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent" />
+				<Link href={href}>
+					<img
+						src={image.image}
+						srcSet={image.srcset}
+						alt={title}
+						className="h-full w-full object-cover object-center transition-transform duration-1000 group-hover:scale-105"
+					/>
+					<div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent" />
+				</Link>
 			</div>
-
-			<Link href={href}>
-				<CardHeader className="pb-3">
-					<div className="flex items-start justify-between">
-						<div className="flex items-center space-x-2 text-sm text-muted-foreground">
-							{published_at && (
-								<>
-									<Calendar className="h-3 w-3" />
-									<span>{new Date(published_at).toLocaleDateString()}</span>
-								</>
-							)}
-							{readTime && (
-								<>
-									<Clock className="h-3 w-3 ml-2" />
-									<span>{readTime}</span>
-								</>
-							)}
-						</div>
+			<CardHeader className="pb-3">
+				<div className="flex items-start justify-between">
+					<div className="flex items-center space-x-2 text-sm text-muted-foreground">
+						{published_at && (
+							<>
+								<Calendar className="h-3 w-3" />
+								<span>{new Date(published_at).toLocaleDateString()}</span>
+							</>
+						)}
+						{readTime && (
+							<>
+								<Clock className="h-3 w-3 ml-2" />
+								<span>{readTime}</span>
+							</>
+						)}
 					</div>
+				</div>
+				<Link href={href}>
 					<h3 className="text-lg font-semibold line-clamp-2 group-hover:text-primary transition-colors">
 						{title}
 					</h3>
-				</CardHeader>
-			</Link>
+				</Link>
+			</CardHeader>
 			<CardContent>
 				<p className="text-muted-foreground line-clamp-3 mb-4">{excerpt}</p>
 			</CardContent>
