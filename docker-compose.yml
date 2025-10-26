@@ -240,6 +240,8 @@ services:
         depends_on:
             pgsql:
                 condition: service_healthy
+            mysql:
+                condition: service_healthy
         volumes:
             - stack-pgsql:/backup/pgsql:ro
             - stack-mysql:/backup/mysql:ro
