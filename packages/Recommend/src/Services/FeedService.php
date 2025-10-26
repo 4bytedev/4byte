@@ -175,7 +175,6 @@ class FeedService
                     'type'  => 'draft',
                 ])->toArray();
         }
-
         if ($tab === 'saves' && $userId) {
             return Article::whereIn(
                 'id',
