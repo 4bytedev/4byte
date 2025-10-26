@@ -26,9 +26,11 @@ class GorseService
      *
      * @throws GuzzleException
      */
-    public function insertUser(GorseUser $user): RowAffected
+    public function insertUser(GorseUser $user): ?RowAffected
     {
-        return RowAffected::fromJSON($this->request('POST', '/api/user', $user));
+        $response = $this->request('POST', '/api/user', $user);
+
+        return $response ? RowAffected::fromJSON($response) : null;
     }
 
     /**
@@ -36,11 +38,13 @@ class GorseService
      *
      * @throws GuzzleException
      */
-    public function updateUser(GorseUser $user): RowAffected
+    public function updateUser(GorseUser $user): ?RowAffected
     {
         $path = '/api/user/' . rawurlencode($user->getUserId());
 
-        return RowAffected::fromJSON($this->request('PATCH', $path, $user));
+        $response = $this->request('PATCH', $path, $user);
+
+        return $response ? RowAffected::fromJSON($response) : null;
     }
 
     /**
@@ -48,11 +52,13 @@ class GorseService
      *
      * @throws GuzzleException
      */
-    public function getUser(string $userId): GorseUser
+    public function getUser(string $userId): ?GorseUser
     {
         $path = '/api/user/' . rawurlencode($userId);
 
-        return GorseUser::fromJSON($this->request('GET', $path, null));
+        $response = $this->request('GET', $path, null);
+
+        return $response ? GorseUser::fromJSON($response) : null;
     }
 
     /**
@@ -60,11 +66,13 @@ class GorseService
      *
      * @throws GuzzleException
      */
-    public function deleteUser(string $userId): RowAffected
+    public function deleteUser(string $userId): ?RowAffected
     {
         $path = '/api/user/' . rawurlencode($userId);
 
-        return RowAffected::fromJSON($this->request('DELETE', $path, null));
+        $response = $this->request('DELETE', $path, null);
+
+        return $response ? RowAffected::fromJSON($response) : null;
     }
 
     /**
@@ -72,9 +80,11 @@ class GorseService
      *
      * @throws GuzzleException
      */
-    public function insertItem(GorseItem $item): RowAffected
+    public function insertItem(GorseItem $item): ?RowAffected
     {
-        return RowAffected::fromJSON($this->request('POST', '/api/item', $item));
+        $response = $this->request('POST', '/api/item', $item);
+
+        return $response ? RowAffected::fromJSON($response) : null;
     }
 
     /**
@@ -82,11 +92,13 @@ class GorseService
      *
      * @throws GuzzleException
      */
-    public function updateItem(GorseItem $item): RowAffected
+    public function updateItem(GorseItem $item): ?RowAffected
     {
         $path = '/api/item/' . rawurlencode($item->getItemId());
 
-        return RowAffected::fromJSON($this->request('PATCH', $path, $item));
+        $response = $this->request('PATCH', $path, $item);
+
+        return $response ? RowAffected::fromJSON($response) : null;
     }
 
     /**
@@ -94,11 +106,13 @@ class GorseService
      *
      * @throws GuzzleException
      */
-    public function getItem(string $itemId): GorseItem
+    public function getItem(string $itemId): ?GorseItem
     {
         $path = '/api/item/' . rawurlencode($itemId);
 
-        return GorseItem::fromJSON($this->request('GET', $path, null));
+        $response = $this->request('GET', $path, null);
+
+        return $response ? GorseItem::fromJSON($response) : null;
     }
 
     /**
@@ -106,11 +120,13 @@ class GorseService
      *
      * @throws GuzzleException
      */
-    public function deleteItem(string $itemId): RowAffected
+    public function deleteItem(string $itemId): ?RowAffected
     {
         $path = '/api/item/' . rawurlencode($itemId);
 
-        return RowAffected::fromJSON($this->request('DELETE', $path, null));
+        $response = $this->request('DELETE', $path, null);
+
+        return $response ? RowAffected::fromJSON($response) : null;
     }
 
     /**
@@ -118,7 +134,7 @@ class GorseService
      *
      * @throws GuzzleException
      */
-    public function insertItemCategory(string $itemId, string $categoryId): RowAffected
+    public function insertItemCategory(string $itemId, string $categoryId): ?RowAffected
     {
         $path = sprintf(
             '/api/item/%s/category/%s',
@@ -126,7 +142,9 @@ class GorseService
             rawurlencode($categoryId)
         );
 
-        return RowAffected::fromJSON($this->request('PUT', $path, null));
+        $response = $this->request('PUT', $path, null);
+
+        return $response ? RowAffected::fromJSON($response) : null;
     }
 
     /**
@@ -134,7 +152,7 @@ class GorseService
      *
      * @throws GuzzleException
      */
-    public function deleteItemCategory(string $itemId, string $categoryId): RowAffected
+    public function deleteItemCategory(string $itemId, string $categoryId): ?RowAffected
     {
         $path = sprintf(
             '/api/item/%s/category/%s',
@@ -142,7 +160,9 @@ class GorseService
             rawurlencode($categoryId)
         );
 
-        return RowAffected::fromJSON($this->request('DELETE', $path, null));
+        $response = $this->request('DELETE', $path, null);
+
+        return $response ? RowAffected::fromJSON($response) : null;
     }
 
     /**
@@ -150,9 +170,11 @@ class GorseService
      *
      * @throws GuzzleException
      */
-    public function insertFeedback(GorseFeedback $feedback): RowAffected
+    public function insertFeedback(GorseFeedback $feedback): ?RowAffected
     {
-        return RowAffected::fromJSON($this->request('POST', '/api/feedback', [$feedback]));
+        $response = $this->request('POST', '/api/feedback', [$feedback]);
+
+        return $response ? RowAffected::fromJSON($response) : null;
     }
 
     /**
@@ -160,7 +182,7 @@ class GorseService
      *
      * @throws GuzzleException
      */
-    public function deleteFeedback(string $type, string $userId, string $itemId): RowAffected
+    public function deleteFeedback(string $type, string $userId, string $itemId): ?RowAffected
     {
         $path = sprintf(
             '/api/feedback/%s/%s/%s',
@@ -169,7 +191,9 @@ class GorseService
             rawurlencode($itemId)
         );
 
-        return RowAffected::fromJSON($this->request('DELETE', $path, null));
+        $response = $this->request('DELETE', $path, null);
+
+        return $response ? RowAffected::fromJSON($response) : null;
     }
 
     /**
