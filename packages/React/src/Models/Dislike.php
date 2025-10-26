@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @property int $user_id
  * @property string $dislikeable_type
  * @property int $dislikeable_id
+ *
  * @property-read Model $dislikeable
  * @property-read User $user
  *
