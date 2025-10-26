@@ -203,6 +203,9 @@ class Settings extends Page implements HasForms
         if ($this->siteSettings['favicon']) {
             $this->siteSettings['favicon'] = [$this->siteSettings['favicon']];
         }
+        if ($this->seoSettings['twitter_image']) {
+            $this->seoSettings['twitter_image'] = [$this->seoSettings['twitter_image']];
+        }
         if ($this->seoSettings['meta_keywords']) {
             $this->seoSettings['meta_keywords'] = implode(',', $this->seoSettings['meta_keywords']);
         }

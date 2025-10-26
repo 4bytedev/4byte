@@ -3,6 +3,7 @@
 namespace App\Filament\Pages\Settings;
 
 use Filament\Forms;
+use Packages\Page\Models\Page;
 use Spatie\Permission\Models\Role as SpatieRole;
 
 class SiteSettings
@@ -82,11 +83,19 @@ class SiteSettings
                     ]),
                 Forms\Components\Grid::make()
                     ->schema([
-                        Forms\Components\TextInput::make('siteSettings.terms_and_conditions_url')
-                            ->label(__('Term and conditions URI'))
+                        Forms\Components\Select::make('siteSettings.terms_and_conditions_url')
+                            ->label(__('Terms and Conditions Page'))
+                            ->options(
+                                Page::pluck('slug', 'slug')->toArray()
+                            )
+                            ->searchable()
                             ->required(),
-                        Forms\Components\TextInput::make('siteSettings.privacy_policy_url')
+                        Forms\Components\Select::make('siteSettings.privacy_policy_url')
                             ->label(__('Privacy policy URI'))
+                            ->options(
+                                Page::pluck('slug', 'slug')->toArray()
+                            )
+                            ->searchable()
                             ->required(),
                     ]),
                 Forms\Components\Grid::make()
