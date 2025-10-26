@@ -118,8 +118,8 @@ class ReactController extends Controller
 
         [$baseClass, $itemId] = $request->resolveTarget();
         $userId               = Auth::id();
-        $content = $request->input('content');
-        $parentId = $request->route('parent', null);
+        $content              = $request->input('content');
+        $parentId             = $request->route('parent', null);
 
         $comment = $this->reactService->insertComment($baseClass, $itemId, $content, $userId, $parentId);
 
@@ -138,7 +138,7 @@ class ReactController extends Controller
         ]);
 
         [$baseClass, $itemId] = $request->resolveTarget();
-        $page = $request->input('page', 1);
+        $page                 = $request->input('page', 1);
 
         $comments = $this->reactService->getComments($baseClass, $itemId, $page, 10);
 
@@ -161,9 +161,13 @@ class ReactController extends Controller
             'parent' => 'required|integer|exists:comments,id',
         ]);
 
-        $parentId = $request->route('parent');
+        $parentId             = (int) $request->route('parent');
         [$baseClass, $itemId] = $request->resolveTarget();
-        $page = $request->input('page', 1);
+        $page                 = $request->input('page', 1);
+
+        if (! $parentId) {
+            response()->noContent();
+        }
 
         $commentReplies = $this->reactService->getCommentReplies($baseClass, $itemId, $parentId, $page, 10);
 
