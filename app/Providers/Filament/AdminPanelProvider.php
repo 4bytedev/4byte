@@ -7,6 +7,11 @@ use App\Filament\Pages\Auth\Login;
 use App\Filament\Pages\Auth\Register;
 use App\Filament\Pages\Auth\ResetPassword;
 use App\Filament\Pages\MyProfile;
+use App\Filament\Resources\ArticleResource\Widgets\ArticleStatsOverview;
+use App\Filament\Resources\ArticleResource\Widgets\RecentArticles;
+use App\Filament\Resources\CommentResource\Widgets\CommentStatsOverview;
+use App\Filament\Resources\EntryResource\Widgets\EntryStatsOverview;
+use App\Filament\Resources\EntryResource\Widgets\RecentEntries;
 use App\Forms\Components\SpatieMediaLibraryFileUpload;
 use App\Services\SettingsService;
 use App\Settings\SecuritySettings;
@@ -20,11 +25,9 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
-use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -65,7 +68,6 @@ class AdminPanelProvider extends PanelProvider
 
     public function panel(Panel $panel): Panel
     {
-        // return $panel->default()->id("admin")->path("admin")->login();
         try {
             return $panel
                 ->default()
@@ -97,13 +99,14 @@ class AdminPanelProvider extends PanelProvider
 
                 ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
                 ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
-                ->pages([
-                    Pages\Dashboard::class,
-                ])
+                ->pages([])
                 ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
                 ->widgets([
-                    Widgets\AccountWidget::class,
-                    Widgets\FilamentInfoWidget::class,
+                    ArticleStatsOverview::class,
+                    EntryStatsOverview::class,
+                    CommentStatsOverview::class,
+                    RecentArticles::class,
+                    RecentEntries::class,
                 ])
                 ->middleware([
                     EncryptCookies::class,
