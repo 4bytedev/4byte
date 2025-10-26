@@ -40,104 +40,101 @@ class ArticleResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Grid::make()
+                Forms\Components\Grid::make(12)
                     ->schema([
-                        Forms\Components\Grid::make(12)
+                        Forms\Components\Section::make(__('Main Content'))
                             ->schema([
-                                Forms\Components\Section::make(__('Main Content'))
+                                Forms\Components\Grid::make()
                                     ->schema([
-                                        Forms\Components\Grid::make()
-                                            ->schema([
-                                                Forms\Components\TextInput::make('title')
-                                                    ->label(__('Title'))
-                                                    ->required()
-                                                    ->reactive(),
-                                                Forms\Components\TextInput::make('slug')
-                                                    ->label(__('Slug'))
-                                                    ->required()
-                                                    ->unique(Article::class, 'slug', fn ($record) => $record)
-                                                    ->suffixAction(
-                                                        Forms\Components\Actions\Action::make('generateSlug')
-                                                            ->icon('heroicon-o-arrow-path')
-                                                            ->tooltip(__('Generate from slug'))
-                                                            ->action(function ($state, $set, $get) {
-                                                                $set('slug', \Str::slug($get('title')));
-                                                            })
-                                                    ),
-                                            ]),
+                                        Forms\Components\TextInput::make('title')
+                                            ->label(__('Title'))
+                                            ->required()
+                                            ->reactive(),
+                                        Forms\Components\TextInput::make('slug')
+                                            ->label(__('Slug'))
+                                            ->required()
+                                            ->unique(Article::class, 'slug', fn ($record) => $record)
+                                            ->suffixAction(
+                                                Forms\Components\Actions\Action::make('generateSlug')
+                                                    ->icon('heroicon-o-arrow-path')
+                                                    ->tooltip(__('Generate from slug'))
+                                                    ->action(function ($state, $set, $get) {
+                                                        $set('slug', \Str::slug($get('title')));
+                                                    })
+                                            ),
+                                    ]),
 
-                                        Forms\Components\Textarea::make('excerpt')
-                                            ->label(__('Excerpt')),
+                                Forms\Components\Textarea::make('excerpt')
+                                    ->label(__('Excerpt')),
 
-                                        Forms\Components\Repeater::make('sources')
-                                            ->label(__('Sources'))
-                                            ->schema([
-                                                Forms\Components\TextInput::make('url')
-                                                    ->label(__('Url'))
-                                                    ->required()
-                                                    ->url(),
-                                                Forms\Components\DatePicker::make('date')
-                                                    ->label(__('Date'))
-                                                    ->required()
-                                                    ->default(Carbon::now()),
-                                            ]),
-
-                                        SpatieMediaLibraryMarkdownEditor::make('content')
-                                            ->label(__('Content'))
-                                            ->extraAttributes(['style' => 'min-height: 790px;'])
-                                            ->collection('content'),
-                                    ])
-                                    ->columnSpan(9),
-
-                                Forms\Components\Group::make()
+                                Forms\Components\Repeater::make('sources')
+                                    ->label(__('Sources'))
                                     ->schema([
-                                        Forms\Components\Section::make(__('Article Settings'))
-                                            ->schema([
-                                                SpatieMediaLibraryFileUpload::make('image')
-                                                    ->label(__('Image'))
-                                                    ->image()
-                                                    ->imageEditor()
-                                                    ->imagePreviewHeight('150')
-                                                    ->dehydrated(false)
-                                                    ->collection('cover'),
+                                        Forms\Components\TextInput::make('url')
+                                            ->label(__('Url'))
+                                            ->required()
+                                            ->url(),
+                                        Forms\Components\DatePicker::make('date')
+                                            ->label(__('Date'))
+                                            ->required()
+                                            ->default(Carbon::now()),
+                                    ]),
 
-                                                Forms\Components\Select::make('categories')
-                                                    ->label(__('Categories'))
-                                                    ->multiple()
-                                                    ->relationship('categories', 'name'),
+                                SpatieMediaLibraryMarkdownEditor::make('content')
+                                    ->label(__('Content'))
+                                    ->extraAttributes(['style' => 'min-height: 790px;'])
+                                    ->collection('content'),
+                            ])
+                            ->columnSpan(9),
 
-                                                Forms\Components\Select::make('tags')
-                                                    ->label(__('Tags'))
-                                                    ->multiple()
-                                                    ->relationship('tags', 'name'),
+                        Forms\Components\Group::make()
+                            ->schema([
+                                Forms\Components\Section::make(__('Article Settings'))
+                                    ->schema([
+                                        SpatieMediaLibraryFileUpload::make('image')
+                                            ->label(__('Image'))
+                                            ->image()
+                                            ->imageEditor()
+                                            ->imagePreviewHeight('150')
+                                            ->dehydrated(false)
+                                            ->collection('cover'),
 
-                                                Forms\Components\Select::make('user_id')
-                                                    ->searchable()
-                                                    ->required()
-                                                    ->label(__('User'))
-                                                    ->relationship('user', 'name'),
+                                        Forms\Components\Select::make('categories')
+                                            ->label(__('Categories'))
+                                            ->multiple()
+                                            ->relationship('categories', 'name'),
 
-                                                Forms\Components\Select::make('status')
-                                                    ->required()
-                                                    ->label(__('Status'))
-                                                    ->options(['DRAFT' => 'Draft', 'PUBLISHED' => 'Publıshed', 'PENDING' => 'Pending'])
-                                                    ->default('DRAFT')
-                                                    ->live()
-                                                    ->afterStateUpdated(function (string $state, callable $set) {
-                                                        if ($state === 'PUBLISHED') {
-                                                            $set('published_at', Carbon::now());
-                                                        } else {
-                                                            $set('published_at', null);
-                                                        }
-                                                    }),
+                                        Forms\Components\Select::make('tags')
+                                            ->label(__('Tags'))
+                                            ->multiple()
+                                            ->relationship('tags', 'name'),
 
-                                                Forms\Components\DateTimePicker::make('published_at')
-                                                    ->label(__('Published At'))
-                                                    ->required(fn ($get) => $get('status') === 'PENDING'),
-                                            ]),
-                                    ])->columnSpan(3),
+                                        Forms\Components\Select::make('user_id')
+                                            ->searchable()
+                                            ->required()
+                                            ->label(__('User'))
+                                            ->relationship('user', 'name'),
 
-                            ]),
+                                        Forms\Components\Select::make('status')
+                                            ->required()
+                                            ->label(__('Status'))
+                                            ->options(['DRAFT' => 'Draft', 'PUBLISHED' => 'Publıshed', 'PENDING' => 'Pending'])
+                                            ->default('DRAFT')
+                                            ->live()
+                                            ->afterStateUpdated(function (string $state, callable $set) {
+                                                if ($state === 'PUBLISHED') {
+                                                    $set('published_at', Carbon::now());
+                                                } else {
+                                                    $set('published_at', null);
+                                                }
+                                            }),
+
+                                        Forms\Components\DateTimePicker::make('published_at')
+                                            ->label(__('Published At'))
+                                            ->required(fn ($get) => $get('status') === 'PENDING'),
+                                    ]),
+                            ])->columnSpan(3),
+
                     ]),
             ]);
     }
