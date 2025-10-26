@@ -137,7 +137,7 @@ export default function VerifyPage() {
 								</div>
 							) : resendCooldown > 0 ? (
 								<div className="flex items-center space-x-2">
-									<RefreshCw className="h-4 w-4" />
+									<RefreshCw className="h-4 w-4 mr-1" />
 									<Trans
 										i18nKey="resend_in"
 										values={{ count: resendCooldown }}
