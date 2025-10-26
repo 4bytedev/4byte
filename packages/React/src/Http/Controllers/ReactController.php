@@ -118,8 +118,10 @@ class ReactController extends Controller
 
         [$baseClass, $itemId] = $request->resolveTarget();
         $userId               = Auth::id();
+        $content = $request->input('content');
+        $parentId = $request->route('parent', null);
 
-        $comment = $this->reactService->insertComment($baseClass, $itemId, $request->get('content'), $userId, $request->get('parent', null));
+        $comment = $this->reactService->insertComment($baseClass, $itemId, $content, $userId, $parentId);
 
         return response()->json($comment);
     }
@@ -136,8 +138,9 @@ class ReactController extends Controller
         ]);
 
         [$baseClass, $itemId] = $request->resolveTarget();
+        $page = $request->input('page', 1);
 
-        $comments = $this->reactService->getComments($baseClass, $itemId, $request->get('page', 1), 10);
+        $comments = $this->reactService->getComments($baseClass, $itemId, $page, 10);
 
         return response()->json($comments);
     }
@@ -158,11 +161,11 @@ class ReactController extends Controller
             'parent' => 'required|integer|exists:comments,id',
         ]);
 
-        $parentId = $request->get('parent');
-
+        $parentId = $request->route('parent');
         [$baseClass, $itemId] = $request->resolveTarget();
+        $page = $request->input('page', 1);
 
-        $commentReplies = $this->reactService->getCommentReplies($baseClass, $itemId, $parentId, $request->integer('page', 1), 10);
+        $commentReplies = $this->reactService->getCommentReplies($baseClass, $itemId, $parentId, $page, 10);
 
         return response()->json($commentReplies);
     }
