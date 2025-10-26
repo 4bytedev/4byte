@@ -7,6 +7,7 @@ use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\LogoutRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Requests\Auth\ResetPasswordRequest;
+use App\Services\SeoService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -14,6 +15,13 @@ use Inertia\Response;
 
 class AuthController extends Controller
 {
+    protected SeoService $seoService;
+
+    public function __construct()
+    {
+        $this->seoService       = app(SeoService::class);
+    }
+
     /**
      * Authenticate a user using login credentials.
      */
@@ -51,7 +59,8 @@ class AuthController extends Controller
      */
     public function viewResetPassword(Request $request): Response
     {
-        return Inertia::render('Auth/ResetPassword', $request->only(['email', 'token']));
+        return Inertia::render('Auth/ResetPassword', $request->only(['email', 'token']))
+            ->withViewData(['seo' => $this->seoService->getResetPasswordSEO()]);
     }
 
     /**
