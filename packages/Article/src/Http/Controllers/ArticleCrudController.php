@@ -11,22 +11,18 @@ use Inertia\Response;
 use Packages\Article\Http\Requests\CreateRequest;
 use Packages\Article\Http\Requests\EditRequest;
 use Packages\Article\Models\Article;
-use Packages\Article\Services\ArticleService;
 use Packages\Category\Models\Category;
 use Packages\Recommend\Services\FeedService;
 use Packages\Tag\Models\Tag;
 
 class ArticleCrudController extends Controller
 {
-    protected ArticleService $articleService;
-
     protected SeoService $seoService;
 
     protected FeedService $feedService;
 
     public function __construct()
     {
-        $this->articleService = app(ArticleService::class);
         $this->seoService     = app(SeoService::class);
         $this->feedService    = app(FeedService::class);
     }
@@ -43,7 +39,7 @@ class ArticleCrudController extends Controller
         return Inertia::render('Article/Create', [
             'topCategories' => $topCategories,
             'topTags'       => $topTags,
-        ]);
+        ])->withViewData(['seo' => $this->seoService->getArticleCreateSEO()]);
     }
 
     /**
@@ -115,7 +111,7 @@ class ArticleCrudController extends Controller
                 'published'  => $article->status === 'PUBLISHED',
                 'image'      => $article->getCoverImage()['image'],
             ],
-        ]);
+        ])->withViewData(['seo' => $this->seoService->getArticleEditSEO()]);
     }
 
     /**
