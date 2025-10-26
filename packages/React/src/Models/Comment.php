@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Packages\React\Services\ReactService;
 use Packages\React\Traits\HasLikes;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 /**
  * @property int $id
@@ -19,6 +21,8 @@ use Packages\React\Traits\HasLikes;
  * @property int $commentable_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activities
+ * @property-read int|null $activities_count
  * @property-read Model $commentable
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Like> $likes
  * @property-read int|null $likes_count
@@ -45,6 +49,7 @@ class Comment extends Model
     use HasFactory;
 
     use HasLikes;
+    use LogsActivity;
 
     protected $fillable = [
         'content',
@@ -84,5 +89,18 @@ class Comment extends Model
     public function repliesCount(): int
     {
         return app(ReactService::class)->getCommentRepliesCount($this->commentable_type, $this->commentable_id, $this->id);
+    }
+
+    /**
+     * Get the activity log options for Comment model.
+     * Logs changes to the "title", "slug", "excerpt" and "content" attributes.
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->useLogName('comment')
+            ->logOnly(['content'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
     }
 }
