@@ -248,12 +248,12 @@ class SeoService
                         Schema::imageObject()->url($this->siteSettings->getLightLogoUrlAttribute())
                     )
             )
-            ->image($page->image);
+            ->image($page->image['thumb']);
 
         return $this->buildSeo([
             'title'         => $page->title,
             'description'   => $page->excerpt,
-            'image'         => $page->image,
+            'image'         => $page->image['thumb'],
             'url'           => route('page.view', ['slug' => $page->slug]),
             'openGraphType' => new ArticleProperties(
                 publishedTime: $page->published_at,
