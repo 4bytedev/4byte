@@ -1,10 +1,9 @@
 import { useState } from "react";
-import { Calendar, Share2, Edit, Check } from "lucide-react";
+import { Calendar, Share2, Check } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/Components/Ui/Avatar";
 import { Button } from "@/Components/Ui/Button";
 import { Separator } from "@/Components/Ui/Separator";
 import { UserProfileHover } from "@/Components/Ui/UserProfileHover";
-import { Link } from "@inertiajs/react";
 import MarkdownRenderer from "@/Components/Ui/MarkdownRenderer";
 
 export default function PagePage({ page }) {
@@ -67,19 +66,6 @@ export default function PagePage({ page }) {
 						</div>
 
 						<div className="flex items-center space-x-2">
-							{page.canUpdate && (
-								<Button variant="outline" asChild>
-									<Link
-										className="flex"
-										href={route("filament.admin.resources.articles.edit", {
-											record: page.id,
-										})}
-									>
-										<Edit className="h-4 w-4 mr-2" />
-										Edit
-									</Link>
-								</Button>
-							)}
 							<Button variant="outline" size="sm" onClick={handleShare}>
 								{isCopied ? (
 									<Check className="h-4 w-4" />
