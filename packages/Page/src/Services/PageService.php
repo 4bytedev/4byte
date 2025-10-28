@@ -26,7 +26,7 @@ class PageService
         $page = Cache::rememberForever("page:{$pageId}", function () use ($pageId) {
             return Page::query()
                 ->where('status', 'PUBLISHED')
-                ->select(['id', 'title', 'slug', 'content', 'excerpt', 'image', 'published_at', 'user_id'])
+                ->select(['id', 'title', 'slug', 'content', 'excerpt', 'published_at', 'user_id'])
                 ->findOrFail($pageId);
         });
 
