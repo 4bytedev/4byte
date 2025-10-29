@@ -2,8 +2,9 @@ import { ArticleCard } from "./ArticleCard";
 import { CommentCard } from "./CommentCard";
 import { DraftCard } from "./DraftCard";
 import { EntryCard } from "./EntryCard";
+import { UserCard } from "./UserCard";
 
-export function ContentCard(props) {
+export function ContentCard({ ...props }) {
 	const { type } = props;
 
 	switch (type) {
@@ -15,7 +16,9 @@ export function ContentCard(props) {
 			return <EntryCard {...props} />;
 		case "comment":
 			return <CommentCard {...props} />;
+		case "user":
+			return <UserCard {...props} />;
 		default:
-			return <ArticleCard {...props} />;
+			return null;
 	}
 }

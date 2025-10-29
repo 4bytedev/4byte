@@ -1,15 +1,38 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ChevronDown, ChevronRight, BookOpen, TrendingUp, ChartNoAxesCombined } from "lucide-react";
 import { Button } from "@/Components/Ui/Button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/Components/Ui/Collapsible";
 import { useTranslation } from "react-i18next";
 import { ContentPreviewCard } from "../Content/ContentPreviewCard";
+import ApiService from "@/Services/ApiService";
 
-export function Sidebar({ tags, categories, articles }) {
+export function Sidebar() {
+	const [articles, setArticles] = useState();
+	const [tags, setTags] = useState();
+	const [categories, setCategories] = useState();
+	const [isLoading, setIsLoading] = useState(true);
 	const [isTagsOpen, setIsTagsOpen] = useState(true);
 	const [isArticlesOpen, setIsArticlesOpen] = useState(true);
 	const [isCategoriesOpen, setIsCategoriesOpen] = useState(true);
 	const { t } = useTranslation();
+
+	useEffect(() => {
+		setIsLoading(true);
+		ApiService.fetchJson(route("api.feed.data"), {}, { method: "GET" }).then((response) => {
+			setArticles(response.articles);
+			setTags(response.tags);
+			setCategories(response.categories);
+			setIsLoading(false);
+		});
+	}, []);
+
+	if (isLoading) {
+		return (
+			<div className="flex justify-center py-8">
+				<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+			</div>
+		);
+	}
 
 	return (
 		<aside className="w-64 border-l bg-background/50 p-4 space-y-6">
@@ -30,7 +53,7 @@ export function Sidebar({ tags, categories, articles }) {
 				<CollapsibleContent className="space-y-2 mt-3">
 					{tags.map((tag) => (
 						<ContentPreviewCard
-							key={tag.slug}
+							key={tag.data.slug}
 							item={{ ...tag.data, total: tag.total }}
 						/>
 					))}
@@ -54,7 +77,7 @@ export function Sidebar({ tags, categories, articles }) {
 				<CollapsibleContent className="space-y-2 mt-3">
 					{categories.map((category) => (
 						<ContentPreviewCard
-							key={category.slug}
+							key={category.data.slug}
 							item={{ ...category.data, total: category.total }}
 						/>
 					))}

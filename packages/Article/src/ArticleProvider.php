@@ -12,6 +12,7 @@ use Packages\Article\Listeners\ArticlePublishedListener;
 use Packages\Article\Models\Article;
 use Packages\Article\Observers\ArticleObserver;
 use Packages\Article\Policies\ArticlePolicy;
+use Packages\Search\Services\SearchService;
 
 class ArticleProvider extends ServiceProvider
 {
@@ -29,6 +30,7 @@ class ArticleProvider extends ServiceProvider
         $this->loadSeeders();
         $this->loadTranslations();
         $this->loadMigrations();
+        $this->configureSearch();
     }
 
     public function loadPolicies(): void
@@ -87,5 +89,16 @@ class ArticleProvider extends ServiceProvider
                 __DIR__ . '/../database/migrations' => database_path('migrations/'),
             ], 'migrations');
         }
+    }
+
+    protected function configureSearch()
+    {
+        SearchService::registerHandler(
+            index: "articles", 
+            callback: fn($hit) => app(\Packages\Article\Services\ArticleService::class)->getData($hit['id']),
+            searchableAttributes: ['title'],
+            filterableAttributes: ['id'],
+            sortableAttributes: ['updated_at']
+        );
     }
 }

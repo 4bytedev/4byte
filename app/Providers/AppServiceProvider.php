@@ -12,6 +12,7 @@ use App\Settings\SiteSettings;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
+use Packages\Search\Services\SearchService;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -42,6 +43,7 @@ class AppServiceProvider extends ServiceProvider
 
         $this->loadObservers();
         $this->loadMacros();
+        $this->configureSearch();
 
         try {
             $siteSettings = SettingsService::getSiteSettings();
@@ -53,7 +55,7 @@ class AppServiceProvider extends ServiceProvider
         }
     }
 
-    public function loadSeoConfig(SiteSettings $siteSettings, SeoSettings $seoSettings): void
+    protected function loadSeoConfig(SiteSettings $siteSettings, SeoSettings $seoSettings): void
     {
         $generators = [
             'MetaGenerator' => [
@@ -101,7 +103,7 @@ class AppServiceProvider extends ServiceProvider
         }
     }
 
-    public function loadSiteConfig(SiteSettings $siteSettings): void
+    protected function loadSiteConfig(SiteSettings $siteSettings): void
     {
         if ($siteSettings->terms_and_conditions_url) {
             config([
@@ -126,5 +128,16 @@ class AppServiceProvider extends ServiceProvider
 
             return $this;
         });
+    }
+
+    protected function configureSearch()
+    {
+        SearchService::registerHandler(
+            index: "users", 
+            callback: fn($hit) => app(\App\Services\UserService::class)->getData($hit['id']),
+            searchableAttributes: ['name', 'username'],
+            filterableAttributes: ['id'],
+            sortableAttributes: ['created_at']
+        );
     }
 }

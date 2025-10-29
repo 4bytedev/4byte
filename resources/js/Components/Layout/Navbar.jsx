@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link } from "@inertiajs/react";
-import { Search, User, Settings, LogOut } from "lucide-react";
+import { User, Settings, LogOut } from "lucide-react";
 import { Button } from "@/Components/Ui/Button";
-import { Input } from "@/Components/Ui/Input";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -18,9 +17,9 @@ import { useAuthStore } from "@/Stores/AuthStore";
 import { useSiteStore } from "@/Stores/SiteStore";
 import { useModalStore } from "@/Stores/ModalStore";
 import { useTranslation } from "react-i18next";
+import { SearchBar } from "../Content/SearchBar";
 
 export function Navbar() {
-	const [searchQuery, setSearchQuery] = useState("");
 	const authStore = useAuthStore();
 	const siteStore = useSiteStore();
 	const modalStore = useModalStore();
@@ -35,7 +34,6 @@ export function Navbar() {
 		<nav className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-sm">
 			<div className="container mx-auto px-4">
 				<div className="flex h-16 items-center justify-between">
-					{/* Logo */}
 					<Link href="/" className="flex items-center space-x-2">
 						{siteStore.getLogo() ? (
 							<img src={siteStore.getLogo()} alt={siteStore.title} className="h-8" />
@@ -44,20 +42,8 @@ export function Navbar() {
 						)}
 					</Link>
 
-					{/* Search Bar */}
-					<div className="flex items-center space-x-4 flex-1 max-w-md mx-2 md:mx-8 hidden md:block">
-						<div className="relative flex-1">
-							<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-							<Input
-								placeholder="Search articles, news, users ..."
-								value={searchQuery}
-								onChange={(e) => setSearchQuery(e.target.value)}
-								className="pl-10"
-							/>
-						</div>
-					</div>
+					<SearchBar />
 
-					{/* Right Actions */}
 					<div className="flex items-center space-x-2 md:space-x-4">
 						<ThemeToggle />
 

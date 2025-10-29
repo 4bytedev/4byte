@@ -1,10 +1,10 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { Grid, List } from "lucide-react";
 import { Button } from "@/Components/Ui/Button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/Ui/Tabs";
 import { useTranslation } from "react-i18next";
 import { CreatorCard } from "./CreatorCard";
 import { ContentCard } from "./ContentCard";
+import ApiService from "@/Services/ApiService";
 
 const ContentScroll = ({
 	endpoint,
@@ -15,7 +15,6 @@ const ContentScroll = ({
 	description = false,
 	creator = false,
 }) => {
-	const [viewMode, setViewMode] = useState("grid");
 	const [activeTab, setActiveTab] = useState(initialTab);
 	const [content, setContent] = useState([]);
 	const [contentCache, setContentCache] = useState({});
@@ -27,6 +26,7 @@ const ContentScroll = ({
 	const { t } = useTranslation();
 
 	const fetchContent = async (tab = activeTab, pageOverride = 1) => {
+		if (!endpoint) return;
 		const cached = contentCache[tab];
 
 		if (pageOverride === 1 && cached) {
@@ -56,26 +56,32 @@ const ContentScroll = ({
 				url.searchParams.append(filter, filters[filter]);
 			});
 
-			const response = await fetch(url);
-			if (!response.ok) {
-				setHasMore(false);
-				return;
-			}
+			ApiService.fetchJson(
+				url,
+				{},
+				{
+					method: "GET",
+				},
+			)
+				.then((response) => {
+					const items = response.items || response.content || response;
 
-			const data = await response.json();
-			const items = data.items || data.content || data;
+					const newContent =
+						pageOverride === 1 ? items : [...(cached?.items || []), ...items];
 
-			const newContent = pageOverride === 1 ? items : [...(cached?.items || []), ...items];
+					const more = items.length == 10;
 
-			const more = items.length == 10;
+					setContent(newContent);
+					setHasMore(more);
 
-			setContent(newContent);
-			setHasMore(more);
-
-			setContentCache((prev) => ({
-				...prev,
-				[tab]: { items: newContent, hasMore: more },
-			}));
+					setContentCache((prev) => ({
+						...prev,
+						[tab]: { items: newContent, hasMore: more },
+					}));
+				})
+				.catch(() => {
+					setHasMore(false);
+				});
 		} catch (err) {
 			setError(err.message);
 			console.error("Failed to fetch content:", err);
@@ -148,58 +154,6 @@ const ContentScroll = ({
 									</TabsTrigger>
 								))}
 							</TabsList>
-
-							<div className="flex items-center space-x-2">
-								{/* {filters.length > 0 && (
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="outline" size="sm">
-                          <Filter className="h-4 w-4 mr-1" />
-                          Filters
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-56 p-2">
-                        {filters.map(f => (
-                          <DropdownMenuItem key={f.slug} className="flex flex-col py-2" closeOnSelect={false}>
-                            <Label htmlFor={`filter-${f.slug}`}>{f.label}</Label>
-                            {f.type === 'select' && (
-                              <div className="space-y-2 mt-1">
-                                <Select value={filterValues[f.slug]} onValueChange={value => handleFilterChange(f.slug, value)}>
-                                  <SelectTrigger>
-                                    <SelectValue placeholder="Select category" />
-                                  </SelectTrigger>
-                                  <SelectContent className="z-[1000]">
-                                    {f.options.map((opt) => (
-                                      <SelectItem key={opt.value} value={opt.value}>
-                                        {opt.label}
-                                      </SelectItem>
-                                    ))}
-                                  </SelectContent>
-                                </Select>
-                              </div>
-                            )}
-                          </DropdownMenuItem>
-                        ))}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  )} */}
-								<div className="items-center border rounded-lg p-1 hidden sm:flex">
-									<Button
-										variant={viewMode === "grid" ? "default" : "ghost"}
-										size="sm"
-										onClick={() => setViewMode("grid")}
-									>
-										<Grid className="h-4 w-4" />
-									</Button>
-									<Button
-										variant={viewMode === "list" ? "default" : "ghost"}
-										size="sm"
-										onClick={() => setViewMode("list")}
-									>
-										<List className="h-4 w-4" />
-									</Button>
-								</div>
-							</div>
 						</div>
 
 						{tabs.map((tab) => (
@@ -224,19 +178,10 @@ const ContentScroll = ({
 									</div>
 								)}
 
-								<div
-									className={`grid gap-6 ${viewMode === "grid" ? "grid-cols-1" : "grid-cols-2"}`}
-								>
-									{content.map((item, index) => {
-										return (
-											<ContentCard
-												key={item.slug || index}
-												{...item}
-												showImage={viewMode === "grid"}
-												userFooter={viewMode === "list"}
-											/>
-										);
-									})}
+								<div className="grid gap-6 grid-cols-1">
+									{content.map((item, idx) => (
+										<ContentCard key={idx} {...item} />
+									))}
 								</div>
 
 								<div ref={lastItemRef} className="flex justify-center py-8">
