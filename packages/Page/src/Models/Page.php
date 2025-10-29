@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Laravel\Scout\Searchable;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\MediaLibrary\HasMedia;
@@ -53,6 +54,7 @@ class Page extends Model implements HasMedia
 
     use InteractsWithMedia;
     use LogsActivity;
+    use Searchable;
 
     protected $fillable = [
         'title', 'slug', 'excerpt', 'content', 'status', 'published_at', 'user_id',
@@ -147,5 +149,26 @@ class Page extends Model implements HasMedia
             ->logOnly(['title', 'slug', 'excerpt', 'content'])
             ->logOnlyDirty()
             ->dontSubmitEmptyLogs();
+    }
+
+    /**
+     * Determine should be searchable
+     */
+    public function shouldBeSearchable(): bool
+    {
+        return $this->status === 'PUBLISHED';
+    }
+
+    /**
+     * Get the search fields for Page model
+     * Searchs between "id", "name" and "title" attributes.
+     * @return array{id: int, title: string}
+     */
+    public function toSearchableArray(): array
+    {
+        return [
+            'id' => (int) $this->id,
+            'title' => $this->title,
+        ];
     }
 }

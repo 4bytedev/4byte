@@ -12,6 +12,7 @@ use Packages\Page\Listeners\PagePublishedListener;
 use Packages\Page\Models\Page;
 use Packages\Page\Observers\PageObserver;
 use Packages\Page\Policies\PagePolicy;
+use Packages\Search\Services\SearchService;
 
 class PageProvider extends ServiceProvider
 {
@@ -29,6 +30,7 @@ class PageProvider extends ServiceProvider
         $this->loadSeeders();
         $this->loadTranslations();
         $this->loadMigrations();
+        $this->configureSearch();
     }
 
     public function loadPolicies(): void
@@ -87,5 +89,16 @@ class PageProvider extends ServiceProvider
                 __DIR__ . '/../database/migrations' => database_path('migrations/'),
             ], 'migrations');
         }
+    }
+
+    protected function configureSearch()
+    {
+        SearchService::registerHandler(
+            index: "pages", 
+            callback: fn($hit) => app(\Packages\Page\Services\PageService::class)->getData($hit['id']),
+            searchableAttributes: ['title'],
+            filterableAttributes: ['id'],
+            sortableAttributes: ['updated_at']
+        );
     }
 }

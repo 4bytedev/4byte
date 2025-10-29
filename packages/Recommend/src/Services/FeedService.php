@@ -51,34 +51,18 @@ class FeedService
     /**
      * Get popular articles based on likes count.
      *
-     * @return array<string, array{
-     *     title: string,
-     *     slug: string,
-     *     excerpt: string,
-     *     likes_count: int,
-     *     user: array{name: string, username: string, avatar: string}
-     * }>
+     * @return array<int, \Packages\Article\Data\ArticleData>
      */
     public function articles(): array
     {
         return Cache::remember('feed:articles', 60 * 60 * 24, function () {
-            return Article::select(['id', 'title', 'slug', 'excerpt', 'user_id'])
-                ->with('user:id,name,username')->withCount('likes')
+            return Article::select(['id'])
+                ->withCount('likes')
                 ->where('status', 'PUBLISHED')
                 ->orderBy('likes_count', 'desc')
                 ->take(7)
                 ->get()->map(function (Article $article) {
-                    return [
-                        'title'       => $article->title,
-                        'slug'        => $article->slug,
-                        'excerpt'     => $article->excerpt,
-                        'likes_count' => $article->likes_count,
-                        'user'        => [
-                            'name'     => $article->user->name,
-                            'username' => $article->user->username,
-                            'avatar'   => $article->user->getAvatarImage(),
-                        ],
-                    ];
+                    return $this->articleService->getData($article->id);
                 })->all();
         });
     }
@@ -93,12 +77,9 @@ class FeedService
         return Cache::remember('feed:categories', 60 * 60 * 24, function () {
             $categoryTotals = $this->getTotals('category');
 
-            $categoryDetails = Category::whereIn('id', $categoryTotals->pluck('category_id'))->get()->keyBy('id');
-
-            return $categoryTotals->map(function ($cat) use ($categoryDetails) {
+            return $categoryTotals->map(function ($cat) {
                 return [
-                    'name'  => $categoryDetails[$cat->category_id]->name ?? 'Unknown',
-                    'slug'  => $categoryDetails[$cat->category_id]->slug ?? null,
+                    'data' => $this->categoryService->getData($cat->category_id),
                     'total' => $cat->total,
                 ];
             })->all();
@@ -115,12 +96,9 @@ class FeedService
         return Cache::remember('feed:tags', 60 * 60 * 24, function () {
             $tagTotals = $this->getTotals('tag');
 
-            $tagDetails = Tag::whereIn('id', $tagTotals->pluck('tag_id'))->get()->keyBy('id');
-
-            return $tagTotals->map(function ($tag) use ($tagDetails) {
+            return $tagTotals->map(function ($tag) {
                 return [
-                    'name'  => $tagDetails[$tag->tag_id]->name ?? 'Unknown',
-                    'slug'  => $tagDetails[$tag->tag_id]->slug ?? null,
+                    'data' => $this->tagService->getData($tag->tag_id),
                     'total' => $tag->total,
                 ];
             })->all();

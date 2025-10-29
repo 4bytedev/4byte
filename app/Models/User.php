@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Jeffgreco13\FilamentBreezy\Traits\TwoFactorAuthenticatable;
+use Laravel\Scout\Searchable;
 use Packages\React\Traits\CanFollow;
 use Packages\React\Traits\HasFollowers;
 use Spatie\Activitylog\LogOptions;
@@ -90,6 +91,7 @@ class User extends Authenticatable implements FilamentUser, HasMedia, HasAvatar
     use Notifiable;
     use SoftDeletes;
     use TwoFactorAuthenticatable;
+    use Searchable;
 
     /**
      * The attributes that are mass assignable.
@@ -179,6 +181,20 @@ class User extends Authenticatable implements FilamentUser, HasMedia, HasAvatar
             ->logOnly(['name', 'email', 'username', 'password'])
             ->logOnlyDirty()
             ->dontSubmitEmptyLogs();
+    }
+
+    /**
+     * Get the search fields for User model
+     * Searchs between "id", "name" and "username" attributes.
+     * @return array{id: int, name: string, username: string}
+     */
+    public function toSearchableArray(): array
+    {
+        return [
+            'id' => (int) $this->id,
+            'name' => $this->name,
+            'username' => $this->username,
+        ];
     }
 
     /**

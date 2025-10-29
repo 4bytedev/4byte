@@ -13,7 +13,8 @@ class TagData extends Data
         public string $name,
         public string $slug,
         public int $followers,
-        public bool $isFollowing
+        public bool $isFollowing,
+        public string $type = "tag"
     ) {
     }
 

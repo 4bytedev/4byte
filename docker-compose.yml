@@ -14,6 +14,12 @@ services:
             - app
         container_name: php-backend
         image: 4bytedev/4byte:latest
+        depends_on:
+            - pgsql
+            - redis 
+            - meilisearch
+            - gorse-master
+            - gorse-server
         build:
             context: .
             args:
@@ -84,6 +90,28 @@ services:
             resources:
                 limits:
                     memory: 2.5G
+    meilisearch:
+        profiles:
+          - production
+        container_name: meilisearch
+        image: getmeili/meilisearch:latest
+        ports:
+            - 7700:7700
+        volumes:
+            - stack-meilisearch:/meili_data
+        ulimits:
+            nofile:
+                soft: 65536
+                hard: 65536
+        security_opt:
+            - no-new-privileges:true
+        environment:
+            - MASTER_KEY='${MEILISEARCH_KEY}'
+        networks:
+            - stack
+        healthcheck:
+            test: ["CMD-SHELL", "curl -fs http://localhost:7700/health"]
+            <<: *default-healthcheck
     pgsql:
         profiles:
             - app
@@ -258,6 +286,7 @@ services:
 volumes:
   stack-redis:
   stack-pgsql:
+  stack-meilisearch:
   stack-mysql:
   stack-gorse-worker:
   stack-gorse-server:

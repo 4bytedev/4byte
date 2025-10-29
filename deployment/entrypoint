@@ -13,4 +13,6 @@ php artisan app:upload-front-end
 php artisan filament:optimize
 php artisan optimize
 
+php artisan scout:sync-index-settings
+
 exec /usr/bin/supervisord -n -c /etc/supervisord.conf
