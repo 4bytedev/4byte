@@ -118,7 +118,6 @@ export default function UserProfilePage({ user, profile }) {
 	return (
 		<div className="container mx-auto px-4 py-8">
 			<div className="max-w-4xl mx-auto mb-5">
-				{/* Profile Header */}
 				<Card className="mb-8 relative h-64">
 					<img
 						src={profile.cover.image || "/img/wallpaper-dark.jpg"}

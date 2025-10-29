@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Laravel\Scout\Searchable;
 use Packages\Category\Models\Category;
 use Packages\React\Traits\HasComments;
 use Packages\React\Traits\HasDislikes;
@@ -79,6 +80,7 @@ class Article extends Model implements HasMedia
     use HasSaves;
     use InteractsWithMedia;
     use LogsActivity;
+    use Searchable;
 
     protected $fillable = [
         'title',
@@ -196,5 +198,27 @@ class Article extends Model implements HasMedia
             ->logOnly(['title', 'slug', 'excerpt', 'content'])
             ->logOnlyDirty()
             ->dontSubmitEmptyLogs();
+    }
+
+    /**
+     * Determine should be searchable.
+     */
+    public function shouldBeSearchable(): bool
+    {
+        return $this->status === 'PUBLISHED';
+    }
+
+    /**
+     * Get the search fields for Article model
+     * Searchs between "id" and "title" attributes.
+     *
+     * @return array{id: int, title: string}
+     */
+    public function toSearchableArray(): array
+    {
+        return [
+            'id'    => (int) $this->id,
+            'title' => $this->title,
+        ];
     }
 }

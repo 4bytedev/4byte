@@ -11,4 +11,5 @@ return [
     Packages\Tag\TagProvider::class,
     Packages\Entry\EntryProvider::class,
     Packages\React\ReactProvider::class,
+    Packages\Search\SearchProvider::class,
 ];

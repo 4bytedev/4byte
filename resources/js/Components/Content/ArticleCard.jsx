@@ -1,9 +1,8 @@
 import { Calendar, Clock, Tag, Hash } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/Components/Ui/Card";
 import { Badge } from "@/Components/Ui/Badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/Components/Ui/Avatar";
-import { UserProfileHover } from "@/Components/Ui/UserProfileHover";
 import { Link } from "@inertiajs/react";
+import { UserInfo } from "./Shared/UserInfo";
 
 export function ArticleCard({
 	title,
@@ -22,28 +21,7 @@ export function ArticleCard({
 		<Card className="group hover:shadow-lg transition-all duration-200 overflow-hidden">
 			<CardHeader className="p-2">
 				<div className="flex items-center justify-between">
-					<UserProfileHover username={user.username}>
-						<div className="flex items-center space-x-2">
-							<div className="px-2 py-1.5 text-sm flex">
-								<Avatar className="h-10 w-10 me-2">
-									<AvatarImage
-										src={user.avatar || "/placeholder-avatar.jpg"}
-										alt={user.name || "User"}
-									/>
-									<AvatarFallback>
-										{user.name
-											.split(" ")
-											.map((n) => n[0])
-											.join("") || "U"}
-									</AvatarFallback>
-								</Avatar>
-								<div>
-									<div className="font-medium">{user.name}</div>
-									<div className="text-muted-foreground">@{user.username}</div>
-								</div>
-							</div>
-						</div>
-					</UserProfileHover>
+					<UserInfo user={user} />
 					<div className="flex items-center space-x-1">
 						{categories.slice(0, 3).map((category) => (
 							<Link

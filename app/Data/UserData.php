@@ -17,7 +17,8 @@ class UserData extends Data
         public int $followers,
         public int $followings,
         public bool $isFollowing,
-        public DateTime $created_at
+        public DateTime $created_at,
+        public string $type = 'user'
     ) {
     }
 
