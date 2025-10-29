@@ -1,20 +1,9 @@
 import { useState } from "react";
-import {
-	ChevronDown,
-	ChevronRight,
-	Hash,
-	BookOpen,
-	TrendingUp,
-	Tag,
-	ChartNoAxesCombined,
-} from "lucide-react";
+import { ChevronDown, ChevronRight, BookOpen, TrendingUp, ChartNoAxesCombined } from "lucide-react";
 import { Button } from "@/Components/Ui/Button";
-import { Badge } from "@/Components/Ui/Badge";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/Components/Ui/Collapsible";
-import { Avatar, AvatarFallback, AvatarImage } from "@/Components/Ui/Avatar";
-import { Link } from "@inertiajs/react";
-import { UserProfileHover } from "@/Components/Ui/UserProfileHover";
 import { useTranslation } from "react-i18next";
+import { ContentPreviewCard } from "../Content/ContentPreviewCard";
 
 export function Sidebar({ tags, categories, articles }) {
 	const [isTagsOpen, setIsTagsOpen] = useState(true);
@@ -24,7 +13,6 @@ export function Sidebar({ tags, categories, articles }) {
 
 	return (
 		<aside className="w-64 border-l bg-background/50 p-4 space-y-6">
-			{/* Trending Tags */}
 			<Collapsible open={isTagsOpen} onOpenChange={setIsTagsOpen}>
 				<CollapsibleTrigger asChild>
 					<Button variant="ghost" className="w-full justify-between p-0 h-auto">
@@ -41,22 +29,14 @@ export function Sidebar({ tags, categories, articles }) {
 				</CollapsibleTrigger>
 				<CollapsibleContent className="space-y-2 mt-3">
 					{tags.map((tag) => (
-						<Link key={tag.name} href={route("tag.view", { slug: tag.slug })}>
-							<div className="flex items-center justify-between p-2 rounded-lg hover:bg-accent/50 cursor-pointer transition-colors">
-								<div className="flex items-center space-x-2">
-									<Hash className="h-3 w-3 text-muted-foreground" />
-									<span className="text-sm">{tag.name}</span>
-								</div>
-								<Badge variant="secondary" className="text-xs">
-									{tag.total}
-								</Badge>
-							</div>
-						</Link>
+						<ContentPreviewCard
+							key={tag.slug}
+							item={{ ...tag.data, total: tag.total }}
+						/>
 					))}
 				</CollapsibleContent>
 			</Collapsible>
 
-			{/* Trending Tags */}
 			<Collapsible open={isCategoriesOpen} onOpenChange={setIsCategoriesOpen}>
 				<CollapsibleTrigger asChild>
 					<Button variant="ghost" className="w-full justify-between p-0 h-auto">
@@ -73,25 +53,14 @@ export function Sidebar({ tags, categories, articles }) {
 				</CollapsibleTrigger>
 				<CollapsibleContent className="space-y-2 mt-3">
 					{categories.map((category) => (
-						<Link
+						<ContentPreviewCard
 							key={category.slug}
-							href={route("category.view", { slug: category.slug })}
-						>
-							<div className="flex items-center justify-between p-2 rounded-lg hover:bg-accent/50 cursor-pointer transition-colors">
-								<div className="flex items-center space-x-2">
-									<Tag className="h-3 w-3 text-muted-foreground" />
-									<span className="text-sm">{category.name}</span>
-								</div>
-								<Badge variant="secondary" className="text-xs">
-									{category.total}
-								</Badge>
-							</div>
-						</Link>
+							item={{ ...category.data, total: category.total }}
+						/>
 					))}
 				</CollapsibleContent>
 			</Collapsible>
 
-			{/* Popular Articles */}
 			<Collapsible open={isArticlesOpen} onOpenChange={setIsArticlesOpen}>
 				<CollapsibleTrigger asChild>
 					<Button variant="ghost" className="w-full justify-between p-0 h-auto">
@@ -108,33 +77,7 @@ export function Sidebar({ tags, categories, articles }) {
 				</CollapsibleTrigger>
 				<CollapsibleContent className="space-y-2 mt-3">
 					{articles.map((article) => (
-						<div
-							key={article.slug}
-							className="flex items-center justify-between p-2 rounded-lg hover:bg-accent/50 cursor-pointer transition-colors"
-						>
-							<div className="flex items-center space-x-2 w-full">
-								<UserProfileHover username={article.user.username}>
-									<Avatar className="h-8 w-8">
-										<AvatarImage
-											src={article.user.avatar || "/placeholder-avatar.jpg"}
-											alt={article.user.name || "User"}
-										/>
-										<AvatarFallback>
-											{article.user.name
-												.split(" ")
-												.map((n) => n[0])
-												.join("") || "U"}
-										</AvatarFallback>
-									</Avatar>
-								</UserProfileHover>
-								<Link
-									href={route("article.view", { slug: article.slug })}
-									className="w-full"
-								>
-									<span className="text-xs">{article.title}</span>
-								</Link>
-							</div>
-						</div>
+						<ContentPreviewCard key={article.slug} item={article} />
 					))}
 				</CollapsibleContent>
 			</Collapsible>
