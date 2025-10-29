@@ -21,9 +21,11 @@
         "laravel/framework": "^12.0",
         "laravel/octane": "^2.12",
         "laravel/sanctum": "^4.0",
+        "laravel/scout": "^10.20",
         "laravel/tinker": "^2.10.1",
         "league/flysystem-aws-s3-v3": "^3.0",
         "marcogermani87/filament-cookie-consent": "^1.1",
+        "meilisearch/meilisearch-php": "^1.16",
         "rmsramos/activitylog": "^2.0",
         "spatie/laravel-activitylog": "^4.10",
         "spatie/laravel-data": "^4.17",
@@ -60,7 +62,8 @@
             "Packages\\News\\": "packages/News/src/",
             "Packages\\Recommend\\": "packages/Recommend/src/",
             "Packages\\Entry\\": "packages/Entry/src/",
-            "Packages\\React\\": "packages/React/src/"
+            "Packages\\React\\": "packages/React/src/",
+            "Packages\\Search\\": "packages/Search/src/"
         }
     },
     "autoload-dev": {

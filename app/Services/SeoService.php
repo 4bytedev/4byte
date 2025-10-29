@@ -187,6 +187,16 @@ class SeoService
     }
 
     /**
+     * Get SEO data for the search page.
+     */
+    public function getSearchSEO(string $q): BuildsMetadata
+    {
+        return $this->buildSeo([
+            'title' => $q,
+        ]);
+    }
+
+    /**
      * Get SEO data for the entry detail page.
      */
     public function getEntrySEO(EntryData $entry, UserData $user): BuildsMetadata
