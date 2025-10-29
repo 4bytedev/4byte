@@ -91,11 +91,11 @@ class ArticleProvider extends ServiceProvider
         }
     }
 
-    protected function configureSearch()
+    protected function configureSearch(): void
     {
         SearchService::registerHandler(
-            index: "articles", 
-            callback: fn($hit) => app(\Packages\Article\Services\ArticleService::class)->getData($hit['id']),
+            index: 'articles',
+            callback: fn ($hit) => app(Services\ArticleService::class)->getData($hit['id']),
             searchableAttributes: ['title'],
             filterableAttributes: ['id'],
             sortableAttributes: ['updated_at']

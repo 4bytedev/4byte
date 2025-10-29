@@ -130,11 +130,11 @@ class AppServiceProvider extends ServiceProvider
         });
     }
 
-    protected function configureSearch()
+    protected function configureSearch(): void
     {
         SearchService::registerHandler(
-            index: "users", 
-            callback: fn($hit) => app(\App\Services\UserService::class)->getData($hit['id']),
+            index: 'users',
+            callback: fn ($hit) => app(\App\Services\UserService::class)->getData($hit['id']),
             searchableAttributes: ['name', 'username'],
             filterableAttributes: ['id'],
             sortableAttributes: ['created_at']

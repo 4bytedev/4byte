@@ -14,7 +14,7 @@ class CategoryData extends Data
         public string $slug,
         public int $followers,
         public bool $isFollowing,
-        public string $type = "category"
+        public string $type = 'category'
     ) {
     }
 
