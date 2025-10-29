@@ -186,13 +186,14 @@ class User extends Authenticatable implements FilamentUser, HasMedia, HasAvatar
     /**
      * Get the search fields for User model
      * Searchs between "id", "name" and "username" attributes.
+     *
      * @return array{id: int, name: string, username: string}
      */
     public function toSearchableArray(): array
     {
         return [
-            'id' => (int) $this->id,
-            'name' => $this->name,
+            'id'       => (int) $this->id,
+            'name'     => $this->name,
             'username' => $this->username,
         ];
     }

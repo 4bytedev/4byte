@@ -91,11 +91,11 @@ class PageProvider extends ServiceProvider
         }
     }
 
-    protected function configureSearch()
+    protected function configureSearch(): void
     {
         SearchService::registerHandler(
-            index: "pages", 
-            callback: fn($hit) => app(\Packages\Page\Services\PageService::class)->getData($hit['id']),
+            index: 'pages',
+            callback: fn ($hit) => app(Services\PageService::class)->getData($hit['id']),
             searchableAttributes: ['title'],
             filterableAttributes: ['id'],
             sortableAttributes: ['updated_at']

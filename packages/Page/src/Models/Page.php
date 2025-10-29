@@ -152,7 +152,7 @@ class Page extends Model implements HasMedia
     }
 
     /**
-     * Determine should be searchable
+     * Determine should be searchable.
      */
     public function shouldBeSearchable(): bool
     {
@@ -162,12 +162,13 @@ class Page extends Model implements HasMedia
     /**
      * Get the search fields for Page model
      * Searchs between "id", "name" and "title" attributes.
+     *
      * @return array{id: int, title: string}
      */
     public function toSearchableArray(): array
     {
         return [
-            'id' => (int) $this->id,
+            'id'    => (int) $this->id,
             'title' => $this->title,
         ];
     }

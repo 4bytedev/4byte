@@ -9,13 +9,11 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Packages\Article\Models\Article;
 use Packages\Article\Services\ArticleService;
-use Packages\Category\Models\Category;
 use Packages\Category\Services\CategoryService;
 use Packages\Entry\Services\EntryService;
 use Packages\News\Services\NewsService;
 use Packages\React\Models\Save;
 use Packages\React\Services\ReactService;
-use Packages\Tag\Models\Tag;
 use Packages\Tag\Services\TagService;
 
 class FeedService
@@ -79,7 +77,7 @@ class FeedService
 
             return $categoryTotals->map(function ($cat) {
                 return [
-                    'data' => $this->categoryService->getData($cat->category_id),
+                    'data'  => $this->categoryService->getData($cat->category_id),
                     'total' => $cat->total,
                 ];
             })->all();
@@ -98,7 +96,7 @@ class FeedService
 
             return $tagTotals->map(function ($tag) {
                 return [
-                    'data' => $this->tagService->getData($tag->tag_id),
+                    'data'  => $this->tagService->getData($tag->tag_id),
                     'total' => $tag->total,
                 ];
             })->all();
