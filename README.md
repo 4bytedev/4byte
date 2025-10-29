@@ -24,7 +24,7 @@ wget https://raw.githubusercontent.com/4bytedev/4byte/refs/heads/main/docker-com
 wget https://raw.githubusercontent.com/4bytedev/4byte/refs/heads/main/.env.example -O .env
 
 # Start Docker containers
-docker compose --env-file --profile app --profile production up -d
+docker compose --env-file .env --profile app --profile production up -d
 ```
 ## Authors
 
