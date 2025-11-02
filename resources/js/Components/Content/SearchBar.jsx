@@ -8,13 +8,15 @@ import { ContentPreviewCard } from "./ContentPreviewCard";
 import { useTranslation } from "react-i18next";
 import { router } from "@inertiajs/react";
 
-export function SearchBar() {
+export function SearchBar({ isMobile = false }) {
 	const [searchQuery, setSearchQuery] = useState("");
 	const [searchResults, setSearchResults] = useState([]);
 	const debounceRef = useRef(null);
 	const { t } = useTranslation();
 
 	const handleSearch = (query) => {
+		if (isMobile) return;
+
 		setSearchQuery(query);
 
 		if (query.trim().length < 3) {
@@ -42,7 +44,9 @@ export function SearchBar() {
 	};
 
 	return (
-		<div className="flex items-center space-x-4 flex-1 max-w-md mx-2 md:mx-8 hidden md:block">
+		<div
+			className={`flex items-center space-x-4 flex-1 ${isMobile ? "mb-3 block md:hidden" : "max-w-md mx-2 md:mx-8 hidden md:block"}`}
+		>
 			<div className="relative flex-1">
 				<Popover
 					open={searchQuery.trim().length >= 3 && searchResults.length > 0}

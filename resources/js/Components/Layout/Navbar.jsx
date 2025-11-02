@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "@inertiajs/react";
-import { User, Settings, LogOut } from "lucide-react";
+import { User, Settings, LogOut, Menu, X } from "lucide-react";
 import { Button } from "@/Components/Ui/Button";
 import {
 	DropdownMenu,
@@ -18,8 +18,10 @@ import { useSiteStore } from "@/Stores/SiteStore";
 import { useModalStore } from "@/Stores/ModalStore";
 import { useTranslation } from "react-i18next";
 import { SearchBar } from "../Content/SearchBar";
+import { useSidebar } from "@/Contexts/SidebarContext";
 
 export function Navbar() {
+	const { isVisible, toggleSidebar, isOpen } = useSidebar();
 	const authStore = useAuthStore();
 	const siteStore = useSiteStore();
 	const modalStore = useModalStore();
@@ -34,6 +36,21 @@ export function Navbar() {
 		<nav className="sticky top-0 z-50 border-b bg-background/80 backdrop-blur-sm">
 			<div className="container mx-auto px-4">
 				<div className="flex h-16 items-center justify-between">
+					{isVisible && (
+						<div className="flex sm:hidden">
+							<Button
+								variant="ghost"
+								onClick={toggleSidebar}
+								className="p-2 transition-transform duration-200 hover:scale-110"
+							>
+								{isOpen ? (
+									<X className="h-5 w-5 animate-pop-in" />
+								) : (
+									<Menu className="h-5 w-5 animate-pop-in" />
+								)}
+							</Button>
+						</div>
+					)}
 					<Link href="/" className="flex items-center space-x-2">
 						{siteStore.getLogo() ? (
 							<img src={siteStore.getLogo()} alt={siteStore.title} className="h-8" />
