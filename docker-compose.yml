@@ -89,7 +89,7 @@ services:
         deploy:
             resources:
                 limits:
-                    memory: 2.5G
+                    memory: '${REDIS_MAXMEMORY:-2gb}'
     meilisearch:
         profiles:
           - production
