@@ -8,13 +8,13 @@ class GorseUser implements JsonSerializable
 {
     /**
      * @param array<int, string> $labels
-     * @param array<int, string> $subscribe
+     * @param array<int, string>|null $subscribe
      */
     public function __construct(
         private readonly string $userId,
         private array $labels,
-        private readonly array $subscribe,
-        private readonly string $comment
+        private readonly ?array $subscribe,
+        private readonly ?string $comment
     ) {
     }
 
