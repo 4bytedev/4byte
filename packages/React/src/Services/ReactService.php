@@ -194,7 +194,7 @@ class ReactService
             try {
                 $replyPaginationKeys = Redis::keys($this->cacheKey($commentableType, $commentableId, 'comment', $parentId, 'replies', 'pagination') . '*');
 
-                if (!empty($replyPaginationKeys)) {
+                if (! empty($replyPaginationKeys)) {
                     Redis::del(...$replyPaginationKeys);
                 }
             } catch (\Exception $e) {
@@ -208,7 +208,7 @@ class ReactService
         try {
             $paginationKeys = Redis::keys($this->cacheKey($commentableType, $commentableId, 'comments', 'pagination') . '*');
 
-            if (!empty($paginationKeys)) {
+            if (! empty($paginationKeys)) {
                 Redis::del(...$paginationKeys);
             }
         } catch (\Exception $e) {
@@ -299,7 +299,7 @@ class ReactService
     {
         $comments = Cache::rememberForever(
             $this->cacheKey($commentableType, $commentableId, 'comment', $parentId, 'replies', 'pagination', $page, $perPage),
-            fn() => Comment::where('commentable_id', $commentableId)
+            fn () => Comment::where('commentable_id', $commentableId)
                 ->where('commentable_type', $commentableType)
                 ->where('parent_id', $parentId)
                 ->orderByDesc('created_at')
