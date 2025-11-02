@@ -135,7 +135,7 @@
 
     "comments": "<0>{{count}}</0> Yorum",
     "Comment is required": "Yorum gereklidir",
-    "Comment must be at least 20 characters": "Yorum en az 8 karater olmalıdır",
+    "Comment must be at least 20 characters": "Yorum en az 20 karater olmalıdır",
     "Share your thoughts...": "Düşüncelerini paylaş...",
     "Reply": "Yanıtla",
     "replies": "{{count}} Yanıt",
