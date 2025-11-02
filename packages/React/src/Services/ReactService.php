@@ -5,6 +5,7 @@ namespace Packages\React\Services;
 use App\Models\User;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Redis;
 use Packages\React\Data\CommentData;
 use Packages\React\Models\Comment;
 use Packages\React\Models\Dislike;
@@ -184,17 +185,36 @@ class ReactService
      */
     public function insertComment(string $commentableType, int $commentableId, string $content, int $userId, ?int $parentId = null): CommentData
     {
-        if (! $parentId) {
-            Cache::increment($this->cacheKey($commentableType, $commentableId, 'comments'));
-        } else {
+        if ($parentId) {
             Comment::where('id', $parentId)
                 ->where('commentable_id', $commentableId)
                 ->where('commentable_type', $commentableType)
                 ->existsOrFail();
-            Cache::increment($this->cacheKey($commentableType, $commentableId, 'comments'));
             Cache::increment($this->cacheKey($commentableType, $commentableId, 'comment', $parentId, 'replies'));
-            Cache::forever($this->cacheKey($commentableType, $commentableId, $userId, 'commented'), true);
+            try {
+                $replyPaginationKeys = Redis::keys($this->cacheKey($commentableType, $commentableId, 'comment', $parentId, 'replies', 'pagination') . '*');
+
+                if (!empty($replyPaginationKeys)) {
+                    Redis::del(...$replyPaginationKeys);
+                }
+            } catch (\Exception $e) {
+                logger()->warning('Redis is not avaliable: ' . $e->getMessage());
+            }
         }
+
+        Cache::increment($this->cacheKey($commentableType, $commentableId, 'comments'));
+        Cache::forever($this->cacheKey($commentableType, $commentableId, $userId, 'commented'), true);
+
+        try {
+            $paginationKeys = Redis::keys($this->cacheKey($commentableType, $commentableId, 'comments', 'pagination') . '*');
+
+            if (!empty($paginationKeys)) {
+                Redis::del(...$paginationKeys);
+            }
+        } catch (\Exception $e) {
+            logger()->warning('Redis is not avaliable: ' . $e->getMessage());
+        }
+
         $comment = Comment::create([
             'content'          => $content,
             'user_id'          => $userId,
@@ -238,13 +258,16 @@ class ReactService
      */
     public function getComments(string $commentableType, int $commentableId, int $page, int $perPage): Collection
     {
-        $comments = Comment::where('commentable_id', $commentableId)
-            ->where('commentable_type', $commentableType)
-            ->whereNull('parent_id')
-            ->orderByDesc('created_at')
-            ->skip(($page - 1) * $perPage)
-            ->take($perPage)
-            ->get();
+        $comments = Cache::rememberForever(
+            $this->cacheKey($commentableType, $commentableId, 'comments', 'pagination', (string) $page, (string) $perPage),
+            fn () => Comment::where('commentable_id', $commentableId)
+                ->where('commentable_type', $commentableType)
+                ->whereNull('parent_id')
+                ->orderByDesc('created_at')
+                ->skip(($page - 1) * $perPage)
+                ->take($perPage)
+                ->get()
+        );
 
         return CommentData::collect($comments);
     }
@@ -274,13 +297,16 @@ class ReactService
      */
     public function getCommentReplies(string $commentableType, int $commentableId, int $parentId, int $page, int $perPage): Collection
     {
-        $comments = Comment::where('commentable_id', $commentableId)
-            ->where('commentable_type', $commentableType)
-            ->where('parent_id', $parentId)
-            ->orderByDesc('created_at')
-            ->skip(($page - 1) * $perPage)
-            ->take($perPage)
-            ->get();
+        $comments = Cache::rememberForever(
+            $this->cacheKey($commentableType, $commentableId, 'comment', $parentId, 'replies', 'pagination', $page, $perPage),
+            fn() => Comment::where('commentable_id', $commentableId)
+                ->where('commentable_type', $commentableType)
+                ->where('parent_id', $parentId)
+                ->orderByDesc('created_at')
+                ->skip(($page - 1) * $perPage)
+                ->take($perPage)
+                ->get()
+        );
 
         return CommentData::collect($comments);
     }
