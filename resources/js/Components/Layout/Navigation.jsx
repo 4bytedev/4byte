@@ -3,6 +3,7 @@ import { Button } from "@/Components/Ui/Button";
 import { useAuthStore } from "@/Stores/AuthStore";
 import { Link } from "@inertiajs/react";
 import { useTranslation } from "react-i18next";
+import { SearchBar } from "../Content/SearchBar";
 
 export function Navigation() {
 	const authStore = useAuthStore();
@@ -17,9 +18,9 @@ export function Navigation() {
 	];
 
 	return (
-		<aside className="w-full border-r bg-background/50 p-4 space-y-6">
-			{/* Navigation Links */}
+		<aside className="w-full p-4 space-y-6">
 			<div className="space-y-2">
+				<SearchBar isMobile />
 				{authStore.isAuthenticated && !authStore.user.verified && (
 					<Link href={route("user.verification.view")}>
 						<Button className="mb-2 whitespace-normal">
