@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Calendar, Share2, Check } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/Components/Ui/Avatar";
-import { Button } from "@/Components/Ui/Button";
+import { Button } from "@/Components/Ui/Form/Button";
 import { Separator } from "@/Components/Ui/Separator";
-import { UserProfileHover } from "@/Components/Ui/UserProfileHover";
-import MarkdownRenderer from "@/Components/Ui/MarkdownRenderer";
+import { UserProfileHover } from "@/Components/Common/UserProfileHover";
+import MarkdownRenderer from "@/Components/Common/MarkdownRenderer";
 
 export default function PagePage({ page }) {
 	const [isCopied, setIsCopied] = useState(false);

@@ -1,4 +1,4 @@
-import Feed from "@/Components/Layout/Feed";
+import Feed from "@/Components/Content/Feed";
 import { useTranslation } from "react-i18next";
 
 export default function SearchPage({ q, results }) {

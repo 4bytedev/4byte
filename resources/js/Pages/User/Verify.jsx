@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Mail, CheckCircle, AlertCircle, RefreshCw } from "lucide-react";
-import { Button } from "@/Components/Ui/Button";
+import { Button } from "@/Components/Ui/Form/Button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/Components/Ui/Card";
 import { useAuthStore } from "@/Stores/AuthStore";
 import ApiService from "@/Services/ApiService";
