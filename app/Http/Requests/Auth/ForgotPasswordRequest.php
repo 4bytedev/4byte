@@ -72,12 +72,6 @@ class ForgotPasswordRequest extends FormRequest
             },
         );
 
-        if ($status !== Password::RESET_LINK_SENT) {
-            throw ValidationException::withMessages([
-                'email' => 'Try again later',
-            ]);
-        }
-
         return response()->json(['message' => 'Email successfully sended'], 200);
     }
 

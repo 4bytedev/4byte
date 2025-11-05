@@ -11,19 +11,19 @@ import {
 	Check,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/Components/Ui/Avatar";
-import { Button } from "@/Components/Ui/Button";
+import { Button } from "@/Components/Ui/Form/Button";
 import { Badge } from "@/Components/Ui/Badge";
 import { Separator } from "@/Components/Ui/Separator";
-import { UserProfileHover } from "@/Components/Ui/UserProfileHover";
+import { UserProfileHover } from "@/Components/Common/UserProfileHover";
 import { Link } from "@inertiajs/react";
 import ApiService from "@/Services/ApiService";
-import MarkdownRenderer from "@/Components/Ui/MarkdownRenderer";
-import Feed from "@/Components/Layout/Feed";
+import MarkdownRenderer from "@/Components/Common/MarkdownRenderer";
+import Feed from "@/Components/Content/Feed";
 import { useAuthStore } from "@/Stores/AuthStore";
 import { Card, CardContent } from "@/Components/Ui/Card";
 import { useTranslation } from "react-i18next";
 import { toast } from "@/Hooks/useToast";
-import TableOfContents from "@/Components/Ui/TableOfContents";
+import TableOfContents from "@/Components/Common/TableOfContents";
 import { Comments } from "@/Components/Content/Comments";
 
 export default function ArticlePage({ article }) {

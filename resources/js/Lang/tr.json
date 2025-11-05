@@ -247,5 +247,25 @@
     "No results found": "Sonuç bulunamadı",
     "Type at least 3 characters to search": "Aramak için en az 3 karakter yazın",
     "Search": "Ara",
-    "search_results": "'{{q}}' için arama sonuçları"
+    "search_results": "'{{q}}' için arama sonuçları",
+
+    "Invalid credentials. Please try again.": "Geçersiz kimlik bilgileri. Lütfen tekrar deneyin.",
+
+    "We use cookies": "Çerezleri kullanıyoruz",
+    "Your experience on this site will be improved by allowing cookies.": "Çerezlere izin vererek bu sitedeki deneyiminizi iyileştirebilirsiniz.",
+    "Accept All": "Tümünü Kabul Et",
+    "Privacy Policy": "Gizlilik Politikası",
+
+    "Validating reset link...": "Validating reset link...",
+    "Invalid reset link": "Invalid reset link",
+    "This password reset link is invalid or has expired.": "This password reset link is invalid or has expired.",
+    "Request new reset link": "Request new reset link",
+    "Password reset successful": "Password reset successful",
+    "Your password has been successfully updated.": "Your password has been successfully updated.",
+    "Sign in with new password": "Sign in with new password",
+    "Reset your password": "Reset your password",
+    "Enter your new password below": "Enter your new password below",
+    "Update password": "Update password",
+
+    "Invalid URL": "Geçersiz Bağlantı"
 }

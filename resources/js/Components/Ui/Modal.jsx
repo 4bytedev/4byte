@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { cn } from "@/Lib/Utils";
-import { Button } from "@/Components/Ui/Button";
+import { Button } from "@/Components/Ui/Form/Button";
 
 const Modal = React.forwardRef(({ ...props }, ref) => (
 	<DialogPrimitive.Root {...props} ref={ref} />

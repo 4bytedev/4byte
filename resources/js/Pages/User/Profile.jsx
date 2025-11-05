@@ -9,12 +9,12 @@ import {
 	LaptopMinimalCheck,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/Components/Ui/Avatar";
-import { Button } from "@/Components/Ui/Button";
+import { Button } from "@/Components/Ui/Form/Button";
 import { Card, CardContent } from "@/Components/Ui/Card";
 import { useAuthStore } from "@/Stores/AuthStore";
 import { Link } from "@inertiajs/react";
 import ApiService from "@/Services/ApiService";
-import Feed from "@/Components/Layout/Feed";
+import Feed from "@/Components/Content/Feed";
 import { Trans, useTranslation } from "react-i18next";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/Ui/Tabs";
 import { toast } from "@/Hooks/useToast";
