@@ -8,16 +8,17 @@ import { FeedSidebar } from "../Sidebar/FeedSidebar";
 
 export default function Feed({ hasNavigation = false, hasSidebar = false, ...props }) {
 	const { t } = useTranslation();
-	const { setIsVisible, isOpen } = useSidebar();
+	const { setIsVisible, setIsOpen, isOpen, isDesktop } = useSidebar();
 
 	useEffect(() => {
 		setIsVisible(hasNavigation);
+		setIsOpen(isDesktop);
 		return () => setIsVisible(false);
 	}, []);
 
 	return (
 		<div className="flex min-h-screen bg-background max-w-7xl mx-auto">
-			{(hasNavigation || isOpen) && (
+			{hasNavigation && isOpen && (
 				<>
 					<SidebarOverlay />
 					<SidebarRoot>
