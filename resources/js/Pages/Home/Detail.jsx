@@ -1,4 +1,4 @@
-import Feed from "@/Components/Layout/Feed";
+import Feed from "@/Components/Content/Feed";
 import { useAuthStore } from "@/Stores/AuthStore";
 import { useTranslation } from "react-i18next";
 

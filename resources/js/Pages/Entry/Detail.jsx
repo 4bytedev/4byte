@@ -1,15 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import { Calendar, Share2, Bookmark, ThumbsUp, ThumbsDown, Check } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/Components/Ui/Avatar";
-import { Button } from "@/Components/Ui/Button";
+import { Button } from "@/Components/Ui/Form/Button";
 import { Separator } from "@/Components/Ui/Separator";
-import { UserProfileHover } from "@/Components/Ui/UserProfileHover";
+import { UserProfileHover } from "@/Components/Common/UserProfileHover";
 import ApiService from "@/Services/ApiService";
-import MarkdownRenderer from "@/Components/Ui/MarkdownRenderer";
-import Feed from "@/Components/Layout/Feed";
+import MarkdownRenderer from "@/Components/Common/MarkdownRenderer";
+import Feed from "@/Components/Content/Feed";
 import { useAuthStore } from "@/Stores/AuthStore";
 import { toast } from "@/Hooks/useToast";
-import { ImageSlider } from "@/Components/Ui/ImageSlider";
+import { ImageSlider } from "@/Components/Common/ImageSlider";
 import { Comments } from "@/Components/Content/Comments";
 import { useTranslation } from "react-i18next";
 

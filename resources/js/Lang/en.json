@@ -247,5 +247,25 @@
     "No results found": "No results found",
     "Type at least 3 characters to search": "Type at least 3 characters to search",
     "Search": "Search",
-    "search_results": "Search results for: {{q}}"
+    "search_results": "Search results for: {{q}}",
+
+    "Invalid credentials. Please try again.": "Invalid credentials. Please try again.",
+
+    "We use cookies": "We use cookies",
+    "Your experience on this site will be improved by allowing cookies.": "Your experience on this site will be improved by allowing cookies.",
+    "Accept All": "Accept All",
+    "Privacy Policy": "Privacy Policy",
+
+    "Validating reset link...": "Validating reset link...",
+    "Invalid reset link": "Invalid reset link",
+    "This password reset link is invalid or has expired.": "This password reset link is invalid or has expired.",
+    "Request new reset link": "Request new reset link",
+    "Password reset successful": "Password reset successful",
+    "Your password has been successfully updated.": "Your password has been successfully updated.",
+    "Sign in with new password": "Sign in with new password",
+    "Reset your password": "Reset your password",
+    "Enter your new password below": "Enter your new password below",
+    "Update password": "Update password",
+
+    "Invalid URL": "Invalid URL"
 }

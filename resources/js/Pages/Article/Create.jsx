@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { ArrowLeft, Save, Upload, X, Plus } from "lucide-react";
-import { Button } from "@/Components/Ui/Button";
-import { Input } from "@/Components/Ui/Input";
-import { Label } from "@/Components/Ui/Label";
-import { Textarea } from "@/Components/Ui/Textarea";
+import { Button } from "@/Components/Ui/Form/Button";
+import { Input } from "@/Components/Ui/Form/Input";
+import { Label } from "@/Components/Ui/Form/Label";
+import { Textarea } from "@/Components/Ui/Form/Textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/Components/Ui/Card";
-import { Switch } from "@/Components/Ui/Switch";
+import { Switch } from "@/Components/Ui/Form/Switch";
 import { useTranslation } from "react-i18next";
-import { MultiSelect } from "@/Components/Ui/MultiSelect";
-import { MarkdownEditor } from "@/Components/Ui/MarkdownEditor";
+import { MultiSelect } from "@/Components/Ui/Form/MultiSelect";
+import { MarkdownEditor } from "@/Components/Common/MarkdownEditor";
 import { router } from "@inertiajs/react";
 import ApiService from "@/Services/ApiService";
 

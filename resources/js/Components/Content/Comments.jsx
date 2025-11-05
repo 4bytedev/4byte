@@ -6,11 +6,11 @@ import { ArrowDown, ArrowUp, Heart, MessageCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { Card, CardContent } from "../Ui/Card";
-import { Textarea } from "../Ui/Textarea";
-import { Button } from "../Ui/Button";
-import { UserProfileHover } from "../Ui/UserProfileHover";
+import { Textarea } from "../Ui/Form/Textarea";
+import { Button } from "../Ui/Form/Button";
+import { UserProfileHover } from "../Common/UserProfileHover";
 import { Avatar, AvatarFallback, AvatarImage } from "../Ui/Avatar";
-import MarkdownRenderer from "../Ui/MarkdownRenderer";
+import MarkdownRenderer from "../Common/MarkdownRenderer";
 
 export function Comments({ commentsCounts: initialCommentsCounts, type, slug }) {
 	const [comment, setComment] = useState("");
