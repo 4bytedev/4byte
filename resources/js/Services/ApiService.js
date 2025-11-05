@@ -17,7 +17,14 @@ export default class ApiService {
 		if (options.isMultipart) {
 			const formData = new FormData();
 			for (const key in body) {
-				formData.append(key, body[key]);
+				const value = body[key];
+				if (Array.isArray(value)) {
+					value.forEach((arrayValue, index) => {
+						formData.append(`${key}[${index}]`, arrayValue);
+					});
+				} else {
+					formData.append(key, body[key]);
+				}
 			}
 			options.body = formData;
 			delete headers["Content-Type"];

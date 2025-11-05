@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { Hash, UserCheck, UserPlus } from "lucide-react";
-import { Button } from "@/Components/Ui/Button";
+import { Button } from "@/Components/Ui/Form/Button";
 import { Card, CardContent } from "@/Components/Ui/Card";
 import { Badge } from "@/Components/Ui/Badge";
 import { Link } from "@inertiajs/react";
 import { useAuthStore } from "@/Stores/AuthStore";
 import ApiService from "@/Services/ApiService";
-import Feed from "@/Components/Layout/Feed";
+import Feed from "@/Components/Content/Feed";
 import { toast } from "@/Hooks/useToast";
 import { useTranslation } from "react-i18next";
 

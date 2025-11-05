@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Card, CardContent, CardFooter } from "@/Components/Ui/Card";
-import { Textarea } from "@/Components/Ui/Textarea";
+import { Textarea } from "@/Components/Ui/Form/Textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/Components/Ui/Avatar";
 import { Separator } from "@/Components/Ui/Separator";
 import {
@@ -8,15 +8,15 @@ import {
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
-} from "@/Components/Ui/DropdownMenu";
+} from "@/Components/Ui/Form/DropdownMenu";
 import { ArrowRight, Image, Pencil } from "lucide-react";
 import { Link } from "@inertiajs/react";
 import { useTranslation } from "react-i18next";
 import { useAuthStore } from "@/Stores/AuthStore";
-import { Button } from "@/Components/Ui/Button";
+import { Button } from "@/Components/Ui/Form/Button";
 import ApiService from "@/Services/ApiService";
-import { Label } from "../Ui/Label";
-import { ImageSlider } from "@/Components/Ui/ImageSlider";
+import { Label } from "../Ui/Form/Label";
+import { ImageSlider } from "@/Components/Common/ImageSlider";
 import { toast } from "@/Hooks/useToast";
 
 export function CreatorCard() {

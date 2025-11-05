@@ -1,23 +1,23 @@
 import React from "react";
 import { Link } from "@inertiajs/react";
 import { User, Settings, LogOut, Menu, X } from "lucide-react";
-import { Button } from "@/Components/Ui/Button";
+import { Button } from "@/Components/Ui/Form/Button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
-} from "@/Components/Ui/DropdownMenu";
+} from "@/Components/Ui/Form/DropdownMenu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/Components/Ui/Avatar";
-import { ThemeToggle } from "@/Components/Ui/ThemeToggle";
-import { NotificationDropdown } from "@/Components/Ui/NotificationDropdown";
+import { ThemeToggle } from "@/Components/Common/ThemeToggle";
+import { NotificationDropdown } from "@/Components/Common/NotificationDropdown";
 import ApiService from "@/Services/ApiService";
 import { useAuthStore } from "@/Stores/AuthStore";
 import { useSiteStore } from "@/Stores/SiteStore";
 import { useModalStore } from "@/Stores/ModalStore";
 import { useTranslation } from "react-i18next";
-import { SearchBar } from "../Content/SearchBar";
+import { SearchBar } from "./SearchBar";
 import { useSidebar } from "@/Contexts/SidebarContext";
 
 export function Navbar() {
