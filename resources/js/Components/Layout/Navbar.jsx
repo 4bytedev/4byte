@@ -37,7 +37,7 @@ export function Navbar() {
 			<div className="container mx-auto px-4">
 				<div className="flex h-16 items-center justify-between">
 					{isVisible && (
-						<div className="flex sm:hidden">
+						<div className="flex md:hidden">
 							<Button
 								variant="ghost"
 								onClick={toggleSidebar}
