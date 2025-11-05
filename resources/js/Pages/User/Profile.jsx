@@ -26,7 +26,6 @@ export default function UserProfilePage({ user, profile }) {
 	const authStore = useAuthStore();
 	const { t } = useTranslation();
 	const { isDesktop } = useDevice();
-	console.log(isDesktop);
 
 	const isOwnProfile = authStore.isAuthenticated && user.username === authStore.user.username;
 
