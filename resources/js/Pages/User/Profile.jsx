@@ -18,14 +18,15 @@ import Feed from "@/Components/Content/Feed";
 import { Trans, useTranslation } from "react-i18next";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/Ui/Tabs";
 import { toast } from "@/Hooks/useToast";
-import { useMediaQuery } from "@uidotdev/usehooks";
+import { useDevice } from "@/Hooks/useDevice";
 
 export default function UserProfilePage({ user, profile }) {
 	const [isFollowing, setIsFollowing] = useState(user.isFollowing);
 	const [followers, setFollowers] = useState(Number(user.followers));
 	const authStore = useAuthStore();
 	const { t } = useTranslation();
-	const isDesktop = useMediaQuery("(min-width: 1024px)");
+	const { isDesktop } = useDevice();
+	console.log(isDesktop);
 
 	const isOwnProfile = authStore.isAuthenticated && user.username === authStore.user.username;
 
