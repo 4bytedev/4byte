@@ -5,14 +5,16 @@ import { useSidebar } from "@/Contexts/SidebarContext";
 import { useEffect } from "react";
 import { SidebarOverlay, SidebarRoot } from "../Ui/Sidebar";
 import { FeedSidebar } from "../Sidebar/FeedSidebar";
+import { useDevice } from "@/Hooks/useDevice";
 
 export default function Feed({ hasNavigation = false, hasSidebar = false, ...props }) {
 	const { t } = useTranslation();
-	const { setIsVisible, setIsOpen, isOpen, isDesktop } = useSidebar();
+	const { setIsVisible, setIsOpen, isOpen } = useSidebar();
+	const { isMobile } = useDevice();
 
 	useEffect(() => {
 		setIsVisible(hasNavigation);
-		setIsOpen(isDesktop);
+		setIsOpen(!isMobile);
 		return () => setIsVisible(false);
 	}, []);
 
