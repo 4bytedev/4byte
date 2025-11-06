@@ -89,7 +89,7 @@ export function CreatorCard() {
 			)}
 
 			<Card
-				className={`mb-4 z-50 ${
+				className={`mb-4 z-40 ${
 					expanded
 						? "fixed top-[250px] left-1/2 w-full max-w-2xl -translate-x-1/2 -translate-y-1/2 shadow-2xl"
 						: "relative"

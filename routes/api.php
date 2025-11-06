@@ -34,8 +34,8 @@ Route::name('api.')->prefix('api')->middleware(BatchLogsActivity::class)->group(
         Route::prefix('notifications')->name('notification.')->controller(NotificationController::class)->group(function () {
             Route::get('/', 'list')->name('list')->can('view-notification');
             Route::get('/count', 'count')->name('count')->can('view-notification');
-            Route::post('/mark-as-read', 'markAsRead')->name('mark-as-read')->can('view-notification');
-            Route::post('/mark-all-as-read', 'markAllAsRead')->name('mark-all-as-read')->can('view-notification');
+            Route::post('/mark-as-read', 'read')->name('read')->can('view-notification');
+            Route::post('/mark-all-as-read', 'readAll')->name('read-all')->can('view-notification');
         });
     });
 });
