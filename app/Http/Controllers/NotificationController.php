@@ -34,7 +34,7 @@ class NotificationController extends Controller
     /**
      * Mark a specific notification as read.
      */
-    public function markAsRead(Request $request): void
+    public function read(Request $request): void
     {
         $request->validate([
             'id' => 'required|uuid',
@@ -50,7 +50,7 @@ class NotificationController extends Controller
     /**
      * Mark all unread notifications as read.
      */
-    public function markAllAsRead(): void
+    public function readAll(): void
     {
         auth()->user()->unreadNotifications->markAsRead(); /* @phpstan-ignore-line */
     }
