@@ -1,6 +1,3 @@
-#!/usr/bin/make
-# Makefile readme (en): <https://www.gnu.org/software/make/manual/html_node/index.html#SEC_Contents>
-
 SHELL = /bin/bash
 ENV ?= development
 
@@ -18,13 +15,33 @@ DC_RUN_ARGS = $(ENV_FILE) $(DC_PROFILES) $(DC_FILE)
 HOST_UID=$(shell id -u)
 HOST_GID=$(shell id -g)
 
-.PHONY : help up down shell\:app stop-all ps update build restart down-up images\:list images\:clean logs\:app logs containers\:health command\:app
+PACKAGE_DIRS := $(wildcard packages/*/database/migrations)
+
+.PHONY : help migrate up down shell\:app stop-all ps update build restart down-up images\:list images\:clean logs\:app logs containers\:health command\:app
 .DEFAULT_GOAL : help
 
 # This will output the help for each task. thanks to https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 help: ## Show this help
 	@printf "\033[33m%s:\033[0m\n" 'Available commands'
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z0-9_-]+:.*?## / {printf "  \033[32m%-18s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
+
+migrate: ## Run all migrations
+	php artisan migrate
+	php artisan migrate --path=/packages/Article/database/migrations
+	php artisan migrate --path=/packages/Category/database/migrations
+	php artisan migrate --path=/packages/Entry/database/migrations
+	php artisan migrate --path=/packages/News/database/migrations
+	php artisan migrate --path=/packages/Page/database/migrations
+	php artisan migrate --path=/packages/React/database/migrations
+	php artisan migrate --path=/packages/Recommend/database/migrations
+	php artisan migrate --path=/packages/Search/database/migrations
+	php artisan migrate --path=/packages/Tag/database/migrations
+
+seed: ## Run all seeders with fake data
+	php artisan db:seed
+
+create-permissions: ## Create all permissions
+	php artisan shield:generate --all --option=permissions --panel=admin
 
 up: ## Up containers
 	docker compose ${DC_RUN_ARGS} up -d --remove-orphans
