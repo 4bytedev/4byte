@@ -54,7 +54,7 @@ class ForgotPasswordRequest extends FormRequest
         $this->ensureForgotPasswordEnabled();
         $this->ensureIsNotRateLimited();
 
-        $status = Password::broker(Filament::getAuthPasswordBroker())->sendResetLink(
+        Password::broker(Filament::getAuthPasswordBroker())->sendResetLink(
             $this->only('email'),
             function (User $user, string $token): void {
                 $notification      = app(ResetPassword::class, ['token' => $token]);
