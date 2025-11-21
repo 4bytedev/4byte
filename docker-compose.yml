@@ -9,10 +9,10 @@ x-healthcheck: &default-healthcheck
   retries: 5
   timeout: 3s
 services:
-    php-backend:
+    app:
         profiles:
             - app
-        container_name: php-backend
+        container_name: app
         image: 4bytedev/4byte:latest
         depends_on:
             - pgsql
@@ -47,7 +47,7 @@ services:
         logging:
             <<: *default-logging
         restart: unless-stopped
-    php-backend-development:
+    app-development:
         profiles:
             - development
         build: .

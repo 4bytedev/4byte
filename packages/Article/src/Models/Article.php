@@ -184,6 +184,7 @@ class Article extends Model implements HasMedia
             ->width(256)
             ->height(256)
             ->sharpen(10)
+            ->performOnCollections('cover')
             ->queued();
     }
 

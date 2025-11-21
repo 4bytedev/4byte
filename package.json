@@ -54,6 +54,7 @@
     "react-hook-form": "^7.66.0",
     "react-i18next": "^15.7.3",
     "react-photo-view": "^1.2.7",
+    "react-player": "^3.4.0",
     "rehype-code-group": "^0.2.4",
     "rehype-css-to-top": "^4.0.1",
     "rehype-external-links": "^3.0.0",

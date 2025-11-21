@@ -1,214 +1,111 @@
-import { Clock, Users, Star, BookOpen, Circle, FileText, Code, Video } from "lucide-react";
+import {
+	Circle,
+	FileText,
+	Code,
+	Video,
+	Hash,
+	Tag,
+	ThumbsUp,
+	ThumbsDown,
+	Bookmark,
+	Check,
+	Share2,
+} from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/Components/Ui/Avatar";
 import { Button } from "@/Components/Ui/Form/Button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/Components/Ui/Card";
 import { Badge } from "@/Components/Ui/Badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/Ui/Tabs";
 import { UserProfileHover } from "@/Components/Common/UserProfileHover";
+import MarkdownRenderer from "@/Components/Common/MarkdownRenderer";
+import { Link } from "@inertiajs/react";
+import { useState } from "react";
+import { useAuthStore } from "@/Stores/AuthStore";
+import ApiService from "@/Services/ApiService";
+import { toast, useToast } from "@/Hooks/useToast";
 
-export default function TutorialPage() {
-	const tutorial = {
-		title: "Complete React Developer Course",
-		description:
-			"Master React from basics to advanced concepts including hooks, context, performance optimization, and modern development patterns.",
-		instructor: {
-			name: "Sarah Johnson",
-			username: "sarahjohnson",
-			avatar: "/placeholder-avatar.jpg",
-			role: "Senior React Developer",
-			bio: "Passionate about React, TypeScript, and building scalable web applications.",
-			location: "San Francisco, CA",
-			joinedDate: "2022-01-15",
-			followers: 1234,
-			following: 567,
-			articles: 42,
-			tags: ["React", "TypeScript", "JavaScript", "Frontend"],
-		},
-		difficulty: "Beginner",
-		duration: "24 hours",
-		totalLessons: 48,
-		enrolled: 1234,
-		rating: 4.8,
-		reviews: 156,
-		price: "Free",
-		tags: ["React", "JavaScript", "Frontend", "Hooks"],
-		chapters: [
-			{
-				title: "Introduction to React",
-				lessons: [
-					{
-						title: "What is React?",
-						duration: "12:34",
-						type: "video",
-						description: "Introduction to React and its core concepts",
-						content: {
-							videoUrl: "https://example.com/video1.mp4",
-							transcript: "Welcome to React fundamentals...",
-						},
-					},
-					{
-						title: "React Fundamentals Guide",
-						duration: "15:00",
-						type: "article",
-						description: "Comprehensive written guide to React basics",
-						content: {
-							markdown: `# React Fundamentals
+export default function TutorialPage({ course, cirriculum }) {
+	const [isLiked, setIsLiked] = useState(course.isLiked);
+	const [isDisliked, setIsDisliked] = useState(course.isDisliked);
+	const [likes, setLikes] = useState(Number(course.likes));
+	const [dislikes, setDislikes] = useState(Number(course.dislikes));
+	const [isSaved, setIsSaved] = useState(course.isSaved);
+	const [isCopied, setIsCopied] = useState(false);
 
-React is a JavaScript library for building user interfaces. It was created by Facebook and is now maintained by Facebook and the community.
+	const authStore = useAuthStore();
+	const { t } = useToast();
 
-## Key Concepts
+	const handleLike = () => {
+		if (!authStore.isAuthenticated) return;
+		ApiService.fetchJson(route("api.react.like", { type: "course", slug: course.slug }))
+			.then(() => {
+				if (isLiked) {
+					setIsLiked(false);
+					setLikes(likes - 1);
+				} else {
+					if (isDisliked) {
+						setIsDisliked(false);
+						setDislikes(dislikes - 1);
+					}
+					setIsLiked(true);
+					setLikes(likes + 1);
+				}
+			})
+			.catch(() => {
+				toast({
+					title: t("Error"),
+					description: t("You can react to the same article once a day"),
+					variant: "destructive",
+				});
+			});
+	};
 
-### Components
-Components are the building blocks of React applications. They let you split the UI into independent, reusable pieces.
+	const handleDislike = () => {
+		if (!authStore.isAuthenticated) return;
+		ApiService.fetchJson(route("api.react.dislike", { type: "course", slug: course.slug }))
+			.then(() => {
+				if (isDisliked) {
+					setIsDisliked(false);
+					setDislikes(dislikes - 1);
+				} else {
+					if (isLiked) {
+						setIsLiked(false);
+						setLikes(likes - 1);
+					}
+					setIsDisliked(true);
+					setDislikes(dislikes + 1);
+				}
+			})
+			.catch(() => {
+				toast({
+					title: t("Error"),
+					description: t("You can react to the same article once a day"),
+					variant: "destructive",
+				});
+			});
+	};
 
-### JSX
-JSX is a syntax extension for JavaScript that looks similar to XML or HTML.
-
-### Props
-Props are how you pass data from parent components to child components.
-
-### State
-State is how you store and manage data that can change over time in your component.`,
-						},
-					},
-					{
-						title: "Build Your First Component",
-						duration: "30:00",
-						type: "exercise",
-						description:
-							"Hands-on coding exercise to create your first React component",
-						content: {
-							instructions:
-								"Create a simple React component that displays a greeting message",
-							starterCode: `import React from 'react';
-
-function Greeting() {
-  // Your code here
-  return (
-    <div>
-      {/* Add your greeting message */}
-    </div>
-  );
-}
-
-export default Greeting;`,
-							solution: `import React from 'react';
-
-function Greeting({ name = "World" }) {
-  return (
-    <div>
-      <h1>Hello, {name}!</h1>
-      <p>Welcome to React!</p>
-    </div>
-  );
-}
-
-export default Greeting;`,
-							tests: [
-								"Component renders without crashing",
-								"Displays greeting message",
-								"Accepts name prop",
-							],
-						},
-					},
-					{
-						title: "React Setup Video Tutorial",
-						duration: "18:45",
-						type: "video",
-						description:
-							"Step-by-step video guide to setting up React development environment",
-						content: {
-							videoUrl: "https://example.com/video2.mp4",
-							transcript:
-								"In this video, we'll set up our React development environment...",
-						},
-					},
-				],
+	const handleSave = () => {
+		if (!authStore.isAuthenticated) return;
+		ApiService.fetchJson(route("api.react.save", { type: "course", slug: course.slug })).then(
+			() => {
+				setIsSaved(!isSaved);
 			},
-			{
-				title: "Components and Props",
-				lessons: [
-					{
-						title: "Understanding Props",
-						duration: "16:30",
-						type: "video",
-						description: "How to pass data between components using props",
-						content: {
-							videoUrl: "https://example.com/video3.mp4",
-							transcript:
-								"Props are the way we pass data from parent to child components...",
-						},
-					},
-					{
-						title: "Component Composition Guide",
-						duration: "20:00",
-						type: "article",
-						description:
-							"Written guide on building complex UIs with component composition",
-						content: {
-							markdown: `# Component Composition
+		);
+	};
 
-Component composition is a powerful pattern in React that allows you to build complex UIs by combining simpler components.
-
-## Benefits of Composition
-
-- **Reusability**: Components can be reused across different parts of your application
-- **Maintainability**: Smaller components are easier to understand and maintain
-- **Testability**: Individual components can be tested in isolation
-
-## Composition Patterns
-
-### Children Props
-The most basic form of composition uses the \`children\` prop.
-
-### Render Props
-A technique for sharing code between React components using a prop whose value is a function.`,
-						},
-					},
-					{
-						title: "Props Exercise",
-						duration: "25:00",
-						type: "exercise",
-						description: "Practice passing and using props in React components",
-						content: {
-							instructions:
-								"Create a UserCard component that accepts user data as props",
-							starterCode: `import React from 'react';
-
-function UserCard(props) {
-  // Implement the UserCard component
-  return (
-    <div>
-      {/* Your implementation here */}
-    </div>
-  );
-}
-
-export default UserCard;`,
-							solution: `import React from 'react';
-
-function UserCard({ name, email, avatar, role }) {
-  return (
-    <div className="user-card">
-      <img src={avatar} alt={name} />
-      <h3>{name}</h3>
-      <p>{email}</p>
-      <span className="role">{role}</span>
-    </div>
-  );
-}
-
-export default UserCard;`,
-							tests: [
-								"Component accepts props correctly",
-								"Displays user information",
-								"Handles missing props gracefully",
-							],
-						},
-					},
-				],
-			},
-		],
+	const handleShare = () => {
+		if (navigator.share) {
+			navigator.share({
+				url: route("course.view", { slug: course.slug }),
+			});
+		} else {
+			navigator.clipboard.writeText(route("course.view", { slug: course.slug }));
+			setIsCopied(true);
+			setTimeout(() => {
+				setIsCopied(false);
+			}, 1500);
+		}
 	};
 
 	const getDifficultyColor = (difficulty) => {
@@ -250,83 +147,126 @@ export default UserCard;`,
 		}
 	};
 
+	const firstLesson = cirriculum
+		.map((ch) => ch.lessons)
+		.find((lessons) => lessons.length > 0)?.[0];
+
 	return (
 		<div className="container mx-auto px-4 py-8">
 			<div className="max-w-6xl mx-auto">
 				<div className="grid lg:grid-cols-3 gap-8 mb-8">
 					<div className="lg:col-span-2">
 						<div className="flex items-center space-x-2 text-sm text-muted-foreground mb-4">
-							<Badge className={getDifficultyColor(tutorial.difficulty)}>
-								{tutorial.difficulty}
+							<Badge className={getDifficultyColor(course.difficulty)}>
+								{course.difficulty}
 							</Badge>
-							{tutorial.tags.map((tag) => (
-								<Badge key={tag} variant="outline">
-									{tag}
-								</Badge>
+							{course.categories.slice(0, 3).map((category) => (
+								<Link
+									key={category.slug}
+									href={route("category.view", { slug: category.slug })}
+								>
+									<Badge
+										key={category.slug}
+										variant="outline"
+										className="text-xs p-1 px-2"
+									>
+										<Tag className="h-4 w-4 mr-1" />
+										{category.name}
+									</Badge>
+								</Link>
+							))}
+							{course.tags.slice(0, 3).map((tag) => (
+								<Link key={tag.slug} href={route("tag.view", { slug: tag.slug })}>
+									<Badge variant="outline" className="text-xs p-1 px-2">
+										<Hash className="h-4 w-4 mr-1" />
+										{tag.name}
+									</Badge>
+								</Link>
 							))}
 						</div>
 
-						<h1 className="text-3xl font-bold mb-4">{tutorial.title}</h1>
-						<p className="text-muted-foreground text-lg mb-6">{tutorial.description}</p>
+						<h1 className="text-3xl font-bold mb-4">{course.title}</h1>
+						<p className="text-muted-foreground text-lg mb-6">{course.excerpt}</p>
 
-						<div className="flex items-center space-x-6 text-sm">
-							<div className="flex items-center space-x-1">
-								<Clock className="h-4 w-4 text-muted-foreground" />
-								<span>{tutorial.duration}</span>
-							</div>
-							<div className="flex items-center space-x-1">
-								<BookOpen className="h-4 w-4 text-muted-foreground" />
-								<span>{tutorial.totalLessons} lessons</span>
-							</div>
-							<div className="flex items-center space-x-1">
-								<Users className="h-4 w-4 text-muted-foreground" />
-								<span>{tutorial.enrolled.toLocaleString()} enrolled</span>
-							</div>
-							<div className="flex items-center space-x-1">
-								<Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-								<span>
-									{tutorial.rating} ({tutorial.reviews} reviews)
-								</span>
-							</div>
+						<div className="flex items-center space-x-2 text-sm">
+							<Button
+								variant={isLiked ? "default" : "outline"}
+								size="sm"
+								disabled={!authStore.isAuthenticated}
+								onClick={handleLike}
+							>
+								<ThumbsUp
+									className={`h-4 w-4 mr-1 ${isLiked ? "fill-current" : ""}`}
+								/>
+								{likes}
+							</Button>
+							<Button
+								variant={isDisliked ? "default" : "outline"}
+								size="sm"
+								disabled={!authStore.isAuthenticated}
+								onClick={handleDislike}
+							>
+								<ThumbsDown
+									className={`h-4 w-4 mr-1 ${isDisliked ? "fill-current" : ""}`}
+								/>
+								{dislikes}
+							</Button>
+							<Button
+								variant={isSaved ? "default" : "outline"}
+								size="sm"
+								disabled={!authStore.isAuthenticated}
+								onClick={handleSave}
+							>
+								<Bookmark className={`h-4 w-4 ${isSaved ? "fill-current" : ""}`} />
+							</Button>
+							<Button variant="outline" size="sm" onClick={handleShare}>
+								{isCopied ? (
+									<Check className="h-4 w-4" />
+								) : (
+									<Share2 className="h-4 w-4" />
+								)}
+							</Button>
 						</div>
 					</div>
 
 					<div className="space-y-4">
 						<Card>
 							<CardContent className="p-6">
-								<UserProfileHover user={tutorial.instructor}>
-									<div className="flex items-center space-x-3 cursor-pointer mb-4">
+								<UserProfileHover username={course.user.username}>
+									<div className="flex items-center space-x-3 cursor-pointer">
 										<Avatar className="h-12 w-12">
 											<AvatarImage
-												src={tutorial.instructor.avatar}
-												alt={tutorial.instructor.name}
+												src={course.user.avatar}
+												alt={course.user.name}
 											/>
 											<AvatarFallback>
-												{tutorial.instructor.name
+												{course.user.name
 													.split(" ")
 													.map((n) => n[0])
 													.join("")}
 											</AvatarFallback>
 										</Avatar>
 										<div>
-											<p className="font-medium">
-												{tutorial.instructor.name}
-											</p>
+											<p className="font-medium">{course.user.name}</p>
 											<p className="text-sm text-muted-foreground">
-												{tutorial.instructor.role}
+												@{course.user.username}
 											</p>
 										</div>
 									</div>
 								</UserProfileHover>
 
 								<div className="text-center">
-									<div className="text-2xl font-bold mb-2">{tutorial.price}</div>
-									<Button
-										className="w-full"
-										size="lg"
-										onClick={() => console.log("Start Tutorial")}
-									>
-										{"Start Course"}
+									<div className="text-2xl font-bold mb-2">Free</div>
+									<Button className="w-full" size="lg" type="button">
+										<Link
+											className="w-full"
+											href={route("course.page", {
+												slug: course.slug,
+												page: firstLesson.slug,
+											})}
+										>
+											{"Start Course"}
+										</Link>
 									</Button>
 								</div>
 							</CardContent>
@@ -340,29 +280,12 @@ export default UserCard;`,
 					</TabsList>
 
 					<TabsContent value="overview" className="mt-6">
-						<div className="prose prose-lg dark:prose-invert max-w-none">
-							<h2>What You&apos;ll Learn</h2>
-							<ul>
-								<li>Fundamentals of React and component-based architecture</li>
-								<li>Modern React hooks and state management</li>
-								<li>Building interactive user interfaces</li>
-								<li>Performance optimization techniques</li>
-								<li>Testing React applications</li>
-								<li>Deployment and production best practices</li>
-							</ul>
-
-							<h2>Prerequisites</h2>
-							<ul>
-								<li>Basic knowledge of HTML, CSS, and JavaScript</li>
-								<li>Familiarity with ES6+ features</li>
-								<li>Understanding of web development concepts</li>
-							</ul>
-						</div>
+						<MarkdownRenderer content={course.content} />
 					</TabsContent>
 
 					<TabsContent value="curriculum" className="mt-6">
 						<div className="space-y-4">
-							{tutorial.chapters.map((chapter, chapterIndex) => (
+							{cirriculum.map((chapter, chapterIndex) => (
 								<Card key={chapterIndex}>
 									<CardHeader>
 										<CardTitle className="text-lg">{chapter.title}</CardTitle>
@@ -376,9 +299,16 @@ export default UserCard;`,
 												>
 													<div className="flex items-center space-x-3">
 														{getLessonTypeIcon(lesson.type)}
-														<span className="font-medium">
-															{lesson.title}
-														</span>
+														<Link
+															href={route("course.page", {
+																slug: course.slug,
+																page: lesson.slug,
+															})}
+														>
+															<span className="font-medium">
+																{lesson.title}
+															</span>
+														</Link>
 														<Badge
 															variant="outline"
 															className="text-xs capitalize"
@@ -386,9 +316,6 @@ export default UserCard;`,
 															{getLessonTypeLabel(lesson.type)}
 														</Badge>
 													</div>
-													<span className="text-sm text-muted-foreground">
-														{lesson.duration}
-													</span>
 												</div>
 											))}
 										</div>

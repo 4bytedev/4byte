@@ -12,4 +12,5 @@ return [
     Packages\Entry\EntryProvider::class,
     Packages\React\ReactProvider::class,
     Packages\Search\SearchProvider::class,
+    Packages\Course\CourseProvider::class
 ];
