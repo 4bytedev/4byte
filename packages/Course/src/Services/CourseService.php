@@ -56,7 +56,17 @@ class CourseService
     /**
      * Get course cirriculum data by course ID.
      *
-     * @return array<int, object<string, string>>
+     * @return array<int, array{
+     *     id: int,
+     *     title: string,
+     *     course_id: int,
+     *     lessons: array<int, array{
+     *         id: int,
+     *         title: string,
+     *         slug: string,
+     *         chapter_id: int
+     *     }>
+     * }>
      */
     public function getCirriculum(int $courseId): array
     {
@@ -78,9 +88,9 @@ class CourseService
      *
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function getLesson(int $courseId, string $page)
+    public function getLesson(int $courseId, string $page): CourseLessonData
     {
-        $lesson = Cache::rememberForever("course:{$courseId}:lesson:{$page}", function () use ($courseId, $page) {
+        $lesson = Cache::rememberForever("course:{$courseId}:lesson:{$page}", function () use ($page) {
             return CourseLesson::query()
                 ->where('status', 'PUBLISHED')
                 ->where('slug', $page)

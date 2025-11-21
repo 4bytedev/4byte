@@ -12,17 +12,14 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @property int $follower_id
  * @property string $followable_type
  * @property int $followable_id
- *
- * @property-read Model $followable
+ * @property-read \Illuminate\Database\Eloquent\Model $followable
  * @property-read User $follower
- *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Follow newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Follow newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Follow query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Follow whereFollowableId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Follow whereFollowableType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Follow whereFollowerId($value)
- *
  * @mixin \Eloquent
  */
 class Follow extends Model

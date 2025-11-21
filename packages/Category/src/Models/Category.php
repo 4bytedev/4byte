@@ -17,15 +17,13 @@ use Spatie\Activitylog\Traits\LogsActivity;
  * @property string $slug
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- *
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activities
  * @property-read int|null $activities_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Article> $articles
  * @property-read int|null $articles_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Packages\React\Models\Follow> $followers
  * @property-read int|null $followers_count
- * @property-read CategoryProfile|null $profile
- *
+ * @property-read \Packages\Category\Models\CategoryProfile|null $profile
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Category newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Category newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Category query()
@@ -34,7 +32,6 @@ use Spatie\Activitylog\Traits\LogsActivity;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Category whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Category whereSlug($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Category whereUpdatedAt($value)
- *
  * @mixin \Eloquent
  */
 class Category extends Model

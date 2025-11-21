@@ -12,17 +12,14 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @property int $user_id
  * @property string $dislikeable_type
  * @property int $dislikeable_id
- *
- * @property-read Model $dislikeable
+ * @property-read \Illuminate\Database\Eloquent\Model $dislikeable
  * @property-read User $user
- *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Dislike newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Dislike newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Dislike query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Dislike whereDislikeableId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Dislike whereDislikeableType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Dislike whereUserId($value)
- *
  * @mixin \Eloquent
  */
 class Dislike extends Model

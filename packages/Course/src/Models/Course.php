@@ -20,6 +20,55 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\File;
 
+/**
+ * @property int $id
+ * @property string $title
+ * @property string $slug
+ * @property string|null $difficulty
+ * @property string|null $excerpt
+ * @property string|null $content
+ * @property string $status
+ * @property int $user_id
+ * @property \Illuminate\Support\Carbon|null $published_at
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activities
+ * @property-read int|null $activities_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Category> $categories
+ * @property-read int|null $categories_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Packages\Course\Models\CourseChapter> $chapters
+ * @property-read int|null $chapters_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Packages\React\Models\Comment> $comments
+ * @property-read int|null $comments_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Packages\React\Models\Dislike> $dislikes
+ * @property-read int|null $dislikes_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Packages\Course\Models\CourseLesson> $lessons
+ * @property-read int|null $lessons_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Packages\React\Models\Like> $likes
+ * @property-read int|null $likes_count
+ * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
+ * @property-read int|null $media_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Packages\React\Models\Save> $saves
+ * @property-read int|null $saves_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Tag> $tags
+ * @property-read int|null $tags_count
+ * @property-read User $user
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Course newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Course newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Course query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Course whereContent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Course whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Course whereDifficulty($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Course whereExcerpt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Course whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Course wherePublishedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Course whereSlug($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Course whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Course whereTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Course whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Course whereUserId($value)
+ * @mixin \Eloquent
+ */
 class Course extends Model implements HasMedia
 {
     use HasComments;

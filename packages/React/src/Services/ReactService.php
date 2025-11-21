@@ -194,7 +194,7 @@ class ReactService
             try {
                 $replyPaginationKeys = Redis::keys($this->cacheKey($commentableType, $commentableId, 'comment', $parentId, 'replies', 'pagination') . '*');
 
-                if (! empty($replyPaginationKeys)) {
+                if (count($replyPaginationKeys) > 0) {
                     Redis::del(...$replyPaginationKeys);
                 }
             } catch (\Exception $e) {
@@ -208,7 +208,7 @@ class ReactService
         try {
             $paginationKeys = Redis::keys($this->cacheKey($commentableType, $commentableId, 'comments', 'pagination') . '*');
 
-            if (! empty($paginationKeys)) {
+            if (count($paginationKeys) > 0) {
                 Redis::del(...$paginationKeys);
             }
         } catch (\Exception $e) {

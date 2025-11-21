@@ -9,6 +9,27 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
+/**
+ * @property int $id
+ * @property int $course_id
+ * @property string $title
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activities
+ * @property-read int|null $activities_count
+ * @property-read \Packages\Course\Models\Course $course
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Packages\Course\Models\CourseLesson> $lessons
+ * @property-read int|null $lessons_count
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CourseChapter newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CourseChapter newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CourseChapter query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CourseChapter whereCourseId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CourseChapter whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CourseChapter whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CourseChapter whereTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CourseChapter whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
 class CourseChapter extends Model
 {
     /** @use HasFactory<\Packages\Course\Database\Factories\CourseFactory> */

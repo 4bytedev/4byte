@@ -30,7 +30,7 @@ class ChaptersRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('created_at')->date(),
             ])
             ->filters([
-                //
+
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make(),

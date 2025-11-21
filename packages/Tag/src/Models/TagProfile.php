@@ -17,13 +17,11 @@ use Spatie\Activitylog\Traits\LogsActivity;
  * @property int $tag_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- *
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activities
  * @property-read int|null $activities_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Category> $categories
  * @property-read int|null $categories_count
- * @property-read Tag $tag
- *
+ * @property-read \Packages\Tag\Models\Tag $tag
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TagProfile newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TagProfile newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TagProfile query()
@@ -33,7 +31,6 @@ use Spatie\Activitylog\Traits\LogsActivity;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TagProfile whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TagProfile whereTagId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|TagProfile whereUpdatedAt($value)
- *
  * @mixin \Eloquent
  */
 class TagProfile extends Model

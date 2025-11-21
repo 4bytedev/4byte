@@ -142,13 +142,7 @@ return [
 
     'model_locations' => [
         'app',
-        'packages/Article/src/Models',
-        'packages/Category/src/Models',
-        'packages/Entry/src/Models',
-        'packages/News/src/Models',
-        'packages/Page/src/Models',
-        'packages/React/src/Models',
-        'packages/Tag/src/Models',
+        'packages/*/src/Models',
     ],
 
     /*

@@ -51,7 +51,7 @@ class CourseChapterResource extends Resource
                 Tables\Columns\TextColumn::make('course.title')->label('Course'),
             ])
             ->filters([
-                //
+
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

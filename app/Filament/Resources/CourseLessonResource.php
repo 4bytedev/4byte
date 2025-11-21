@@ -123,7 +123,7 @@ class CourseLessonResource extends Resource
                 Tables\Columns\TextColumn::make('user.name')->label('Author'),
             ])
             ->filters([
-                //
+
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

@@ -15,6 +15,44 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\File;
 
+/**
+ * @property int $id
+ * @property string $title
+ * @property string $slug
+ * @property string|null $content
+ * @property string|null $video_url
+ * @property string $status
+ * @property \Illuminate\Support\Carbon|null $published_at
+ * @property int $user_id
+ * @property int $chapter_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activities
+ * @property-read int|null $activities_count
+ * @property-read \Packages\Course\Models\CourseChapter $chapter
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Packages\React\Models\Comment> $comments
+ * @property-read int|null $comments_count
+ * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
+ * @property-read int|null $media_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \Packages\React\Models\Save> $saves
+ * @property-read int|null $saves_count
+ * @property-read User $user
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CourseLesson newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CourseLesson newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CourseLesson query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CourseLesson whereChapterId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CourseLesson whereContent($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CourseLesson whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CourseLesson whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CourseLesson wherePublishedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CourseLesson whereSlug($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CourseLesson whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CourseLesson whereTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CourseLesson whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CourseLesson whereUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|CourseLesson whereVideoUrl($value)
+ * @mixin \Eloquent
+ */
 class CourseLesson extends Model implements HasMedia
 {
     use HasComments;
