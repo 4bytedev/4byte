@@ -21,7 +21,7 @@ export function ArticleCard({
 		<Card className="group hover:shadow-lg transition-all duration-200 overflow-hidden">
 			<CardHeader className="p-2">
 				<div className="flex items-center justify-between">
-					<UserInfo user={user} />
+					<UserInfo {...user} />
 					<div className="flex items-center space-x-1">
 						{categories.slice(0, 3).map((category) => (
 							<Link
