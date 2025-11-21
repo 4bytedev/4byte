@@ -20,12 +20,34 @@
 Install && run project with docker-compose
 
 ```bash
-wget https://raw.githubusercontent.com/4bytedev/4byte/refs/heads/main/docker-compose.yml
-wget https://raw.githubusercontent.com/4bytedev/4byte/refs/heads/main/.env.example -O .env
+wget https://raw.githubusercontent.com/4bytedev/4byte.dev/refs/heads/main/docker-compose.yml
+wget https://raw.githubusercontent.com/4bytedev/4byte.dev/refs/heads/main/.env.example -O .env
 
 # Start Docker containers
 docker compose --env-file .env --profile app --profile production up -d
 ```
+
+## Local Development
+
+Clone the repository
+
+```bash
+git clone https://github.com/4bytedev/4byte.dev.git
+```
+
+Preapre local development data
+
+```bash
+make migrate
+make create-permissions
+make seed
+```
+
+Now, you can login /admin page with the following credentials
+
+admin@example.com
+password
+
 ## Authors
 
 - Open source community

@@ -8,6 +8,7 @@ return [
         'tag'      => Packages\Tag\Models\Tag::class,
         'user'     => App\Models\User::class,
         'comment'  => Packages\React\Models\Comment::class,
+        'course'   => Packages\Course\Models\Course::class,
     ],
 
     'callbacks' => [
@@ -17,5 +18,6 @@ return [
         'tag'      => Packages\Tag\Services\TagService::class,
         'user'     => App\Services\UserService::class,
         'comment'  => "self",
+        'course'   => Packages\Course\Services\CourseService::class,
     ],
 ];

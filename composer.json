@@ -63,7 +63,8 @@
             "Packages\\Recommend\\": "packages/Recommend/src/",
             "Packages\\Entry\\": "packages/Entry/src/",
             "Packages\\React\\": "packages/React/src/",
-            "Packages\\Search\\": "packages/Search/src/"
+            "Packages\\Search\\": "packages/Search/src/",
+            "Packages\\Course\\": "packages/Course/src/"
         }
     },
     "autoload-dev": {

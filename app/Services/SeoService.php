@@ -13,6 +13,8 @@ use Honeystone\Seo\OpenGraph\ProfileProperties;
 use Packages\Article\Data\ArticleData;
 use Packages\Category\Data\CategoryData;
 use Packages\Category\Data\CategoryProfileData;
+use Packages\Course\Data\CourseData;
+use Packages\Course\Data\CourseLessonData;
 use Packages\Entry\Data\EntryData;
 use Packages\News\Data\NewsData;
 use Packages\Page\Data\PageData;
@@ -184,6 +186,72 @@ class SeoService
         return $this->buildSeo([
             'title' => __('Edit Article'),
         ]);
+    }
+
+    /**
+     * Get SEO data for the course detail page.
+     */
+    public function getCourseSEO(CourseData $course, UserData $user): BuildsMetadata
+    {
+        $schema = Schema::course()
+            ->headline($course->title)
+            ->author(
+                Schema::person()->name($user->name)
+            )
+            ->publisher(
+                Schema::organization()
+                    ->name($this->siteSettings->title)
+                    ->description($this->seoSettings->meta_description)
+                    ->logo(
+                        Schema::imageObject()->url($this->siteSettings->getLightLogoUrlAttribute())
+                    )
+            )
+            ->mainEntityOfPage(
+                Schema::webPage()->url(route('course.view', ['slug' => $course->slug]))
+                    ->image($course->image['thumb'])
+                    ->name($course->title)
+            )
+            ->image($course->image['thumb']);
+
+        return $this->buildSeo([
+            'title'         => $course->title,
+            'image'         => $course->image['thumb'],
+            'url'           => route('course.view', ['slug' => $course->slug]),
+            'openGraphType' => new ArticleProperties(
+                expirationTime: null,
+                author: new ProfileProperties(
+                    firstName: $user->name,
+                    lastName: null,
+                    username: $user->username
+                )
+            ),
+        ])->openGraphProperty('og:updated_time', $course->published_at->format('Uu'))->jsonLdImport($schema);
+    }
+
+    /**
+     * Get SEO data for the course lesson page.
+     */
+    public function getCourseLessonSEO(CourseLessonData $lesson, string $slug): BuildsMetadata
+    {
+        $schema = Schema::article()
+            ->headline($lesson->title)
+            ->publisher(
+                Schema::organization()
+                    ->name($this->siteSettings->title)
+                    ->description($this->seoSettings->meta_description)
+                    ->logo(
+                        Schema::imageObject()->url($this->siteSettings->getLightLogoUrlAttribute())
+                    )
+            )
+            ->mainEntityOfPage(
+                Schema::webPage()->url(route('course.page', ['slug' => $slug, 'page' => $lesson->slug]))
+                    ->name($lesson->title)
+            );
+
+        return $this->buildSeo([
+            'title'         => $lesson->title,
+            'url'           => route('course.page', ['slug' => $slug, 'page' => $lesson->slug]),
+        ])->openGraphProperty('og:updated_time', $lesson->published_at->format('Uu'))->jsonLdImport($schema);
     }
 
     /**

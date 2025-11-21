@@ -26,12 +26,12 @@ use Spatie\MediaLibrary\MediaCollections\File;
  * @property string $slug
  * @property string|null $excerpt
  * @property string|null $content
+ * @property array<array-key, mixed>|null $sources
  * @property string $status
  * @property int $user_id
  * @property \Illuminate\Support\Carbon|null $published_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property array<array-key, mixed>|null $sources
  *
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activities
  * @property-read int|null $activities_count
@@ -184,6 +184,7 @@ class Article extends Model implements HasMedia
             ->width(256)
             ->height(256)
             ->sharpen(10)
+            ->performOnCollections('cover')
             ->queued();
     }
 
