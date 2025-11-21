@@ -21,13 +21,15 @@ use Spatie\Activitylog\Traits\LogsActivity;
  * @property int $commentable_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ *
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activities
  * @property-read int|null $activities_count
- * @property-read \Illuminate\Database\Eloquent\Model $commentable
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Packages\React\Models\Like> $likes
+ * @property-read Model $commentable
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, Like> $likes
  * @property-read int|null $likes_count
  * @property-read Comment|null $parent
  * @property-read User $user
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment query()
@@ -39,6 +41,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment whereParentId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Comment whereUserId($value)
+ *
  * @mixin \Eloquent
  */
 class Comment extends Model

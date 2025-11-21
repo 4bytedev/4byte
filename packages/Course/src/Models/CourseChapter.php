@@ -15,11 +15,13 @@ use Spatie\Activitylog\Traits\LogsActivity;
  * @property string $title
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ *
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activities
  * @property-read int|null $activities_count
- * @property-read \Packages\Course\Models\Course $course
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Packages\Course\Models\CourseLesson> $lessons
+ * @property-read Course $course
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, CourseLesson> $lessons
  * @property-read int|null $lessons_count
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CourseChapter newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CourseChapter newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CourseChapter query()
@@ -28,6 +30,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CourseChapter whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CourseChapter whereTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CourseChapter whereUpdatedAt($value)
+ *
  * @mixin \Eloquent
  */
 class CourseChapter extends Model

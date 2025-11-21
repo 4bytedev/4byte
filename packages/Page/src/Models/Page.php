@@ -24,11 +24,13 @@ use Spatie\MediaLibrary\MediaCollections\File;
  * @property \Illuminate\Support\Carbon|null $published_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ *
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activities
  * @property-read int|null $activities_count
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, \Spatie\MediaLibrary\MediaCollections\Models\Media> $media
  * @property-read int|null $media_count
  * @property-read User $user
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Page newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Page newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Page query()
@@ -42,6 +44,7 @@ use Spatie\MediaLibrary\MediaCollections\File;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Page whereTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Page whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Page whereUserId($value)
+ *
  * @mixin \Eloquent
  */
 class Page extends Model implements HasMedia

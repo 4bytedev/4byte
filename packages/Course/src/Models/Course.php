@@ -32,17 +32,18 @@ use Spatie\MediaLibrary\MediaCollections\File;
  * @property \Illuminate\Support\Carbon|null $published_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ *
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activities
  * @property-read int|null $activities_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Category> $categories
  * @property-read int|null $categories_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Packages\Course\Models\CourseChapter> $chapters
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, CourseChapter> $chapters
  * @property-read int|null $chapters_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Packages\React\Models\Comment> $comments
  * @property-read int|null $comments_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Packages\React\Models\Dislike> $dislikes
  * @property-read int|null $dislikes_count
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \Packages\Course\Models\CourseLesson> $lessons
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, CourseLesson> $lessons
  * @property-read int|null $lessons_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Packages\React\Models\Like> $likes
  * @property-read int|null $likes_count
@@ -53,6 +54,7 @@ use Spatie\MediaLibrary\MediaCollections\File;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Tag> $tags
  * @property-read int|null $tags_count
  * @property-read User $user
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Course newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Course newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Course query()
@@ -67,6 +69,7 @@ use Spatie\MediaLibrary\MediaCollections\File;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Course whereTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Course whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Course whereUserId($value)
+ *
  * @mixin \Eloquent
  */
 class Course extends Model implements HasMedia

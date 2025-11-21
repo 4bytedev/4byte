@@ -27,6 +27,7 @@ use Spatie\MediaLibrary\MediaCollections\File;
  * @property \Illuminate\Support\Carbon|null $published_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ *
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activities
  * @property-read int|null $activities_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Category> $categories
@@ -36,6 +37,7 @@ use Spatie\MediaLibrary\MediaCollections\File;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Tag> $tags
  * @property-read int|null $tags_count
  * @property-read User $user
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|News newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|News newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|News query()
@@ -50,6 +52,7 @@ use Spatie\MediaLibrary\MediaCollections\File;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|News whereTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|News whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|News whereUserId($value)
+ *
  * @mixin \Eloquent
  */
 class News extends Model implements HasMedia

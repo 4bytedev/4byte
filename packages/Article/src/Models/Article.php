@@ -32,6 +32,7 @@ use Spatie\MediaLibrary\MediaCollections\File;
  * @property \Illuminate\Support\Carbon|null $published_at
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ *
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activities
  * @property-read int|null $activities_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Category> $categories
@@ -49,6 +50,7 @@ use Spatie\MediaLibrary\MediaCollections\File;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Tag> $tags
  * @property-read int|null $tags_count
  * @property-read User $user
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Article newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Article newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Article query()
@@ -63,6 +65,7 @@ use Spatie\MediaLibrary\MediaCollections\File;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Article whereTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Article whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Article whereUserId($value)
+ *
  * @mixin \Eloquent
  */
 class Article extends Model implements HasMedia

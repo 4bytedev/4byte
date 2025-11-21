@@ -12,14 +12,17 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @property int $user_id
  * @property string $likeable_type
  * @property int $likeable_id
- * @property-read \Illuminate\Database\Eloquent\Model $likeable
+ *
+ * @property-read Model $likeable
  * @property-read User $user
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Like newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Like newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Like query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Like whereLikeableId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Like whereLikeableType($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Like whereUserId($value)
+ *
  * @mixin \Eloquent
  */
 class Like extends Model

@@ -15,9 +15,11 @@ use Spatie\Activitylog\Traits\LogsActivity;
  * @property int $category_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ *
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activities
  * @property-read int|null $activities_count
- * @property-read \Packages\Category\Models\Category $category
+ * @property-read Category $category
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CategoryProfile newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CategoryProfile newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CategoryProfile query()
@@ -27,6 +29,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CategoryProfile whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CategoryProfile whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|CategoryProfile whereUpdatedAt($value)
+ *
  * @mixin \Eloquent
  */
 class CategoryProfile extends Model

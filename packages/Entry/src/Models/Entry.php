@@ -23,6 +23,7 @@ use Spatie\MediaLibrary\MediaCollections\File;
  * @property int $user_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ *
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Spatie\Activitylog\Models\Activity> $activities
  * @property-read int|null $activities_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Packages\React\Models\Comment> $comments
@@ -36,6 +37,7 @@ use Spatie\MediaLibrary\MediaCollections\File;
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Packages\React\Models\Save> $saves
  * @property-read int|null $saves_count
  * @property-read User $user
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Entry newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Entry newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Entry query()
@@ -45,6 +47,7 @@ use Spatie\MediaLibrary\MediaCollections\File;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Entry whereSlug($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Entry whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Entry whereUserId($value)
+ *
  * @mixin \Eloquent
  */
 class Entry extends Model implements HasMedia
