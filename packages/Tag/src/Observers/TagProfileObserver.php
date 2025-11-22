@@ -3,16 +3,16 @@
 namespace Packages\Tag\Observers;
 
 use Illuminate\Support\Facades\Cache;
-use Packages\Tag\Models\Tag;
+use Packages\Tag\Models\TagProfile;
 
 class TagProfileObserver
 {
-    public function updated(Tag $tag): void
+    public function updated(TagProfile $tag): void
     {
         Cache::forget("tag:{$tag->id}:profile");
     }
 
-    public function deleted(Tag $tag): void
+    public function deleted(TagProfile $tag): void
     {
         Cache::forget("tag:{$tag->id}:profile");
     }
