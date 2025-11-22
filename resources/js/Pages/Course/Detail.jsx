@@ -258,15 +258,17 @@ export default function TutorialPage({ course, cirriculum }) {
 								<div className="text-center">
 									<div className="text-2xl font-bold mb-2">Free</div>
 									<Button className="w-full" size="lg" type="button">
-										<Link
-											className="w-full"
-											href={route("course.page", {
-												slug: course.slug,
-												page: firstLesson.slug,
-											})}
-										>
-											{"Start Course"}
-										</Link>
+										{firstLesson && (
+											<Link
+												className="w-full"
+												href={route("course.page", {
+													slug: course.slug,
+													page: firstLesson.slug,
+												})}
+											>
+												{"Start Course"}
+											</Link>
+										)}
 									</Button>
 								</div>
 							</CardContent>
