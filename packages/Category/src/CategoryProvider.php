@@ -10,6 +10,7 @@ use Packages\Category\Models\CategoryProfile;
 use Packages\Category\Observers\CategoryObserver;
 use Packages\Category\Observers\CategoryProfileObserver;
 use Packages\Category\Policies\CategoryPolicy;
+use Packages\React\Services\ReactService;
 
 class CategoryProvider extends ServiceProvider
 {
@@ -24,6 +25,7 @@ class CategoryProvider extends ServiceProvider
         $this->loadFactories();
         $this->loadSeeders();
         $this->loadMigrations();
+        $this->configureReact();
     }
 
     public function loadPolicies(): void
@@ -66,5 +68,14 @@ class CategoryProvider extends ServiceProvider
                 __DIR__ . '/../database/migrations' => database_path('migrations/'),
             ], 'migrations');
         }
+    }
+
+    protected function configureReact(): void
+    {
+        ReactService::registerHandler(
+            name: "category",
+            class: Category::class, 
+            callback: fn ($slug) => app(Services\CategoryService::class)->getId($slug)
+        );
     }
 }

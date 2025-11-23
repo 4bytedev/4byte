@@ -3,6 +3,7 @@
 namespace Packages\React\Services;
 
 use App\Models\User;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Redis;
@@ -15,6 +16,39 @@ use Packages\React\Models\Save;
 
 class ReactService
 {
+    /**
+     * @var array<string, string|Model>
+     */
+    protected static array $classes = [];
+
+    /**
+     * @var array<string, callable|string>
+     */
+    protected static array $callbacks = [];
+
+    /**
+     * Register handler.
+     *
+     * @param string $name
+     * @param string|Model $class
+     * @param callable|string $callback
+     *
+     * @return void
+     */
+    public static function registerHandler(string $name, string|Model $class, callable|string $callback): void
+    {
+        self::$classes[$name] = $class;
+        self::$callbacks[$name] = $callback;
+    }
+
+    public static function getClass(string $name): Model|string|null {
+        return self::$classes[$name] ?? null;
+    }
+
+    public static function getCallback(string $name): callable|string|null {
+        return self::$callbacks[$name] ?? null;
+    }
+
     /**
      * Inserts a like for the given user on the specified model.
      */

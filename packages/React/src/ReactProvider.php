@@ -23,6 +23,7 @@ use Packages\React\Policies\DislikePolicy;
 use Packages\React\Policies\FollowPolicy;
 use Packages\React\Policies\LikePolicy;
 use Packages\React\Policies\SavePolicy;
+use Packages\React\Services\ReactService;
 
 class ReactProvider extends ServiceProvider
 {
@@ -31,21 +32,13 @@ class ReactProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->loadConfig();
         $this->loadPolicies();
         $this->loadObservers();
         $this->loadRoutes();
         $this->loadEvents();
         $this->loadFactories();
         $this->loadMigrations();
-    }
-
-    public function loadConfig(): void
-    {
-        $this->publishes([
-            __DIR__ . '/../config/react.php' => config_path('react.php'),
-        ]);
-        $this->mergeConfigFrom(__DIR__ . '/../config/react.php', 'react');
+        $this->configureReact();
     }
 
     public function loadPolicies(): void
@@ -91,5 +84,14 @@ class ReactProvider extends ServiceProvider
                 __DIR__ . '/../database/migrations' => database_path('migrations/'),
             ], 'migrations');
         }
+    }
+
+    protected function configureReact(): void
+    {
+        ReactService::registerHandler(
+            name: "comment",
+            class: Comment::class, 
+            callback: fn ($slug) => $slug
+        );
     }
 }

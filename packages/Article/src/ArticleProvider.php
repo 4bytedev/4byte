@@ -12,6 +12,7 @@ use Packages\Article\Listeners\ArticlePublishedListener;
 use Packages\Article\Models\Article;
 use Packages\Article\Observers\ArticleObserver;
 use Packages\Article\Policies\ArticlePolicy;
+use Packages\React\Services\ReactService;
 use Packages\Search\Services\SearchService;
 
 class ArticleProvider extends ServiceProvider
@@ -31,6 +32,7 @@ class ArticleProvider extends ServiceProvider
         $this->loadTranslations();
         $this->loadMigrations();
         $this->configureSearch();
+        $this->configureReact();
     }
 
     public function loadPolicies(): void
@@ -99,6 +101,15 @@ class ArticleProvider extends ServiceProvider
             searchableAttributes: ['title'],
             filterableAttributes: ['id'],
             sortableAttributes: ['updated_at']
+        );
+    }
+
+    protected function configureReact(): void
+    {
+        ReactService::registerHandler(
+            name: "article",
+            class: Article::class, 
+            callback: fn ($slug) => app(Services\ArticleService::class)->getId($slug)
         );
     }
 }

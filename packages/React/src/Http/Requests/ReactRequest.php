@@ -4,6 +4,7 @@ namespace Packages\React\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\ValidationException;
+use Packages\React\Services\ReactService;
 
 class ReactRequest extends FormRequest
 {
@@ -36,17 +37,14 @@ class ReactRequest extends FormRequest
     public function resolveTarget(): array
     {
         $type         = $this->route('type');
-        $serviceClass = config('react.callbacks')[$type] ?? null;
-        $baseClass    = config('react.classes')[$type] ?? null;
+        $callback = ReactService::getCallback($type);
+        $baseClass    = ReactService::getClass($type);
 
-        if (! isset($serviceClass) || ! isset($baseClass)) {
+        if (! isset($callback) || ! isset($baseClass)) {
             throw ValidationException::withMessages(['type' => 'Invalid reaction type.']);
         }
 
-        $service = $serviceClass === 'self' ? null : app($serviceClass);
-        $itemId  = $serviceClass === 'self'
-            ? $this->route('slug')
-            : $service->getId($this->slug);
+        $itemId = $callback($this->route('slug'));
 
         return [$baseClass, $itemId, $type];
     }

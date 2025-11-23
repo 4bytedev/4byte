@@ -19,6 +19,7 @@ use Packages\Course\Observers\CourseObserver;
 use Packages\Course\Policies\CourseChapterPolicy;
 use Packages\Course\Policies\CourseLessonPolicy;
 use Packages\Course\Policies\CoursePolicy;
+use Packages\React\Services\ReactService;
 use Packages\Search\Services\SearchService;
 
 class CourseProvider extends ServiceProvider
@@ -117,6 +118,15 @@ class CourseProvider extends ServiceProvider
             searchableAttributes: ['title'],
             filterableAttributes: ['id', 'chapter_id'],
             sortableAttributes: ['updated_at']
+        );
+    }
+
+    protected function configureReact(): void
+    {
+        ReactService::registerHandler(
+            name: "course",
+            class: Course::class, 
+            callback: fn ($slug) => app(Services\CourseService::class)->getId($slug)
         );
     }
 }
