@@ -3,11 +3,10 @@ name: Bug Report
 about: Report a bug in the project
 title: "[BUG] "
 labels: bug
-assignees: ""
+assignees: "omerfdmrl"
 ---
 
-Issue tracker is **ONLY** used for reporting bugs. New features should be discussed on our website. Please use [4Byte](https://4byte.dev) for supporting issues.
-
+Please use this template for reporting bugs.
 ## Environment
 
 - Browser: [e.g. Chrome, Firefox, Safari]

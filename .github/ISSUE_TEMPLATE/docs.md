@@ -3,7 +3,7 @@ name: Documentation Update
 about: Request changes or improvements to the documentation
 title: "[DOC] "
 labels: documentation
-assignees: ""
+assignees: "omerfdmrl"
 ---
 
 Please use this template for issues related to documentation improvements.
