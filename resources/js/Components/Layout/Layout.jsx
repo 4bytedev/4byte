@@ -14,13 +14,15 @@ import { I18nProvider } from "@/Contexts/I18nContext";
 import { ToastContext } from "@/Contexts/ToastContext";
 import { SidebarProvider } from "@/Contexts/SidebarContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useModalStore } from "@/Stores/ModalStore";
 
 export default function Layout({ children }) {
 	const { site, account, csrf_token } = usePage().props;
-
 	const { url } = usePage();
+
 	const authStore = useAuthStore();
 	const siteStore = useSiteStore();
+	const modalStore = useModalStore();
 
 	const queryClient = new QueryClient();
 
@@ -48,6 +50,12 @@ export default function Layout({ children }) {
 			siteStore.setSite(site);
 		}
 	}, [site]);
+
+	useEffect(() => {
+		router.on("navigate", () => {
+			modalStore.closeAll();
+		});
+	}, []);
 
 	return (
 		<I18nProvider>
