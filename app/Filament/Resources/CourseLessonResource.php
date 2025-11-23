@@ -114,10 +114,21 @@ class CourseLessonResource extends Resource
                 Tables\Columns\TextColumn::make('user.name')->label('Author'),
             ])
             ->filters([
-
+                Tables\Filters\SelectFilter::make('chapter')
+                    ->label(__('Chapter'))
+                    ->relationship('chapter', 'title'),
+                Tables\Filters\SelectFilter::make('user')
+                    ->label(__('User'))
+                    ->relationship('user', 'name')
+                    ->multiple(),
+                Tables\Filters\SelectFilter::make('status')
+                    ->label(__('Status'))
+                    ->options(['DRAFT' => 'Draft', 'PUBLISHED' => 'Published', 'PENDING' => 'Pending']),
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
