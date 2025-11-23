@@ -2,7 +2,6 @@ import { create } from "zustand";
 
 export const useModalStore = create()(
 	(set, get) => ({
-		// State
 		login: false,
 		register: false,
 		forgotPassword: false,
@@ -22,6 +21,16 @@ export const useModalStore = create()(
 
 		close: (modal) => () => {
 			set({ [modal]: false });
+		},
+
+		closeAll: () => {
+			set({
+				login: false,
+				register: false,
+				forgotPassword: false,
+				navigation: false,
+				passwordConfirmation: false,
+			});
 		},
 
 		toggle: (modal) => () => {
