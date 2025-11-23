@@ -154,6 +154,7 @@ class CourseLesson extends Model implements HasMedia
     {
         return [
             'id'    => (int) $this->id,
+            'chapter_id' => (int) $this->chapter_id,
             'title' => $this->title,
         ];
     }

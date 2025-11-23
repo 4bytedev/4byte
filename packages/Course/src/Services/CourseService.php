@@ -119,4 +119,22 @@ class CourseService
 
         return CourseLessonData::fromModel($lesson);
     }
+
+    /**
+     * Retrieve lesson data by its id and chapter ,d.
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     */
+    public function getLessonByChapter(int $chapterId, int $lessonId): CourseLessonData
+    {
+        $lesson = Cache::rememberForever("course:chapter:{$chapterId}:lesson:{$lessonId}", function () use ($chapterId, $lessonId) {
+            return CourseLesson::query()
+                ->where('status', 'PUBLISHED')
+                ->where('chapter_id', $chapterId)
+                ->select(['id', 'title', 'slug', 'content', 'video_url', 'published_at', 'user_id'])
+                ->findOrFail($lessonId);
+        });
+
+        return CourseLessonData::fromModel($lesson);
+    }
 }
