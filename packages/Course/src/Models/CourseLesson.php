@@ -153,9 +153,9 @@ class CourseLesson extends Model implements HasMedia
     public function toSearchableArray(): array
     {
         return [
-            'id'    => (int) $this->id,
+            'id'         => (int) $this->id,
             'chapter_id' => (int) $this->chapter_id,
-            'title' => $this->title,
+            'title'      => $this->title,
         ];
     }
 }
