@@ -24,6 +24,7 @@ use Packages\React\Policies\FollowPolicy;
 use Packages\React\Policies\LikePolicy;
 use Packages\React\Policies\SavePolicy;
 use Packages\React\Services\ReactService;
+use Packages\Recommend\Services\FeedService;
 
 class ReactProvider extends ServiceProvider
 {
@@ -39,6 +40,7 @@ class ReactProvider extends ServiceProvider
         $this->loadFactories();
         $this->loadMigrations();
         $this->configureReact();
+        $this->configureFeed();
     }
 
     public function loadPolicies(): void
@@ -92,6 +94,15 @@ class ReactProvider extends ServiceProvider
             name: 'comment',
             class: Comment::class,
             callback: fn ($slug) => $slug
+        );
+    }
+
+    protected function configureFeed(): void
+    {
+        FeedService::registerHandler(
+            name: 'article',
+            isFilter: false,
+            callback: fn ($slug) => app(ReactService::class)->getComment($slug)
         );
     }
 }
