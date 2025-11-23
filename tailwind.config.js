@@ -16,6 +16,9 @@ export default {
 		extend: {
 			spacing: {
 				8: "2rem",
+				17: "4.25rem",
+				18: "4.50rem",
+				19: "4.75rem",
 			},
 			fontFamily: {
 				sans: ["Figtree", ...defaultTheme.fontFamily.sans],

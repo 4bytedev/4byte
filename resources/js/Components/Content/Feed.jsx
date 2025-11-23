@@ -23,8 +23,8 @@ export default function Feed({ hasNavigation = false, hasSidebar = false, ...pro
 			{hasNavigation && isOpen && (
 				<>
 					<SidebarOverlay />
-					<SidebarRoot>
-						<div className="lg:w-72 md:w-48 sm:w-32 w-64 w-full sticky sm:top-16 h-[calc(100vh-4rem)]">
+					<SidebarRoot className="md:sticky sm:top-17">
+						<div className="lg:w-72 md:w-48 sm:w-32 w-64 w-full h-[calc(100vh-4rem)]">
 							<FeedSidebar />
 						</div>
 					</SidebarRoot>
@@ -42,7 +42,7 @@ export default function Feed({ hasNavigation = false, hasSidebar = false, ...pro
 			/>
 
 			{hasSidebar && (
-				<div className="w-72 sticky top-16 h-[calc(100vh-4rem)] overflow-y-auto border-l border-border scrollbar-none hidden lg:block">
+				<div className="w-72 sticky top-17 h-[calc(100vh-4rem)] overflow-y-auto border-l border-border scrollbar-none hidden lg:block">
 					<Sidebar />
 				</div>
 			)}
