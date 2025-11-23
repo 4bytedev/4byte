@@ -8,6 +8,7 @@ use Illuminate\Support\ServiceProvider;
 use Packages\Entry\Models\Entry;
 use Packages\Entry\Observers\EntryObserver;
 use Packages\Entry\Policies\EntryPolicy;
+use Packages\React\Services\ReactService;
 
 class EntryProvider extends ServiceProvider
 {
@@ -22,6 +23,7 @@ class EntryProvider extends ServiceProvider
         $this->loadFactories();
         $this->loadSeeders();
         $this->loadMigrations();
+        $this->configureReact();
     }
 
     public function loadPolicies(): void
@@ -63,5 +65,14 @@ class EntryProvider extends ServiceProvider
                 __DIR__ . '/../database/migrations' => database_path('migrations/'),
             ], 'migrations');
         }
+    }
+
+    protected function configureReact(): void
+    {
+        ReactService::registerHandler(
+            name: 'entry',
+            class: Entry::class,
+            callback: fn ($slug) => app(Services\EntryService::class)->getId($slug)
+        );
     }
 }
