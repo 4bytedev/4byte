@@ -84,18 +84,37 @@ class CourseService
     }
 
     /**
-     * Retrieve lesson data by its ID.
+     * Retrieve the ID of a lesson by its slug.
      *
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
-    public function getLesson(int $courseId, string $page): CourseLessonData
+    public function getLessonId(int $courseId, string $slug): int
     {
-        $lesson = Cache::rememberForever("course:{$courseId}:lesson:{$page}", function () use ($page) {
+        return Cache::rememberForever("course:{$courseId}:lesson:{$slug}:id", function () use ($courseId, $slug) {
+            return CourseLesson::where('slug', $slug)
+                ->whereHas('chapter', function ($q) use ($courseId) {
+                    $q->where('course_id', $courseId);
+                })
+                ->select(['id'])
+                ->firstOrFail()->id;
+        });
+    }
+
+    /**
+     * Retrieve lesson data by its id and course id.
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     */
+    public function getLesson(int $courseId, int $lessonId): CourseLessonData
+    {
+        $lesson = Cache::rememberForever("course:{$courseId}:lesson:{$lessonId}", function () use ($courseId, $lessonId) {
             return CourseLesson::query()
                 ->where('status', 'PUBLISHED')
-                ->where('slug', $page)
+                ->whereHas('chapter', function ($q) use ($courseId) {
+                    $q->where('course_id', $courseId);
+                })
                 ->select(['id', 'title', 'slug', 'content', 'video_url', 'published_at', 'user_id'])
-                ->firstOrFail();
+                ->findOrFail($lessonId);
         });
 
         return CourseLessonData::fromModel($lesson);

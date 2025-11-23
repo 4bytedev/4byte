@@ -47,7 +47,8 @@ class CourseController extends Controller
         $slug       = $request->route('slug');
         $page       = $request->route('page');
         $courseId   = $this->courseService->getId($slug);
-        $lesson     = $this->courseService->getLesson($courseId, $page);
+        $lessonId   = $this->courseService->getLessonId($courseId, $page);
+        $lesson     = $this->courseService->getLesson($courseId, $lessonId);
         $cirriculum = $this->courseService->getCirriculum($courseId);
 
         return Inertia::render('Course/Page', [
