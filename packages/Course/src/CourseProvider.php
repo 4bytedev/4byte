@@ -111,5 +111,12 @@ class CourseProvider extends ServiceProvider
             filterableAttributes: ['id'],
             sortableAttributes: ['updated_at']
         );
+        SearchService::registerHandler(
+            index: 'lessons',
+            callback: fn ($hit) => app(Services\CourseService::class)->getLessonByChapter($hit['chapter_id'], $hit['id']),
+            searchableAttributes: ['title'],
+            filterableAttributes: ['id', 'chapter_id'],
+            sortableAttributes: ['updated_at']
+        );
     }
 }
