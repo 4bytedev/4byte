@@ -11,6 +11,7 @@ use Packages\Category\Observers\CategoryObserver;
 use Packages\Category\Observers\CategoryProfileObserver;
 use Packages\Category\Policies\CategoryPolicy;
 use Packages\React\Services\ReactService;
+use Packages\Recommend\Services\FeedService;
 
 class CategoryProvider extends ServiceProvider
 {
@@ -26,6 +27,7 @@ class CategoryProvider extends ServiceProvider
         $this->loadSeeders();
         $this->loadMigrations();
         $this->configureReact();
+        $this->configureFeed();
     }
 
     public function loadPolicies(): void
@@ -75,6 +77,15 @@ class CategoryProvider extends ServiceProvider
         ReactService::registerHandler(
             name: 'category',
             class: Category::class,
+            callback: fn ($slug) => app(Services\CategoryService::class)->getId($slug)
+        );
+    }
+
+    protected function configureFeed(): void
+    {
+        FeedService::registerHandler(
+            name: 'category',
+            isFilter: true,
             callback: fn ($slug) => app(Services\CategoryService::class)->getId($slug)
         );
     }

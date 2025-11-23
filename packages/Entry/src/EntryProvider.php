@@ -9,6 +9,7 @@ use Packages\Entry\Models\Entry;
 use Packages\Entry\Observers\EntryObserver;
 use Packages\Entry\Policies\EntryPolicy;
 use Packages\React\Services\ReactService;
+use Packages\Recommend\Services\FeedService;
 
 class EntryProvider extends ServiceProvider
 {
@@ -24,6 +25,7 @@ class EntryProvider extends ServiceProvider
         $this->loadSeeders();
         $this->loadMigrations();
         $this->configureReact();
+        $this->configureFeed();
     }
 
     public function loadPolicies(): void
@@ -73,6 +75,15 @@ class EntryProvider extends ServiceProvider
             name: 'entry',
             class: Entry::class,
             callback: fn ($slug) => app(Services\EntryService::class)->getId($slug)
+        );
+    }
+
+    protected function configureFeed(): void
+    {
+        FeedService::registerHandler(
+            name: 'entry',
+            isFilter: false,
+            callback: fn ($slug) => app(Services\EntryService::class)->getData($slug)
         );
     }
 }

@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 use Packages\React\Services\ReactService;
+use Packages\Recommend\Services\FeedService;
 use Packages\Search\Services\SearchService;
 
 class AppServiceProvider extends ServiceProvider
@@ -46,6 +47,8 @@ class AppServiceProvider extends ServiceProvider
         $this->loadMacros();
         $this->configureSearch();
         $this->configureReact();
+        $this->configureSearch();
+        $this->configureFeed();
 
         try {
             $siteSettings = SettingsService::getSiteSettings();
@@ -148,6 +151,15 @@ class AppServiceProvider extends ServiceProvider
         ReactService::registerHandler(
             name: 'user',
             class: User::class,
+            callback: fn ($slug) => app(\App\Services\UserService::class)->getId($slug)
+        );
+    }
+
+    protected function configureFeed(): void
+    {
+        FeedService::registerHandler(
+            name: 'user',
+            isFilter: true,
             callback: fn ($slug) => app(\App\Services\UserService::class)->getId($slug)
         );
     }

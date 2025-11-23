@@ -13,6 +13,7 @@ use Packages\Article\Models\Article;
 use Packages\Article\Observers\ArticleObserver;
 use Packages\Article\Policies\ArticlePolicy;
 use Packages\React\Services\ReactService;
+use Packages\Recommend\Services\FeedService;
 use Packages\Search\Services\SearchService;
 
 class ArticleProvider extends ServiceProvider
@@ -33,6 +34,7 @@ class ArticleProvider extends ServiceProvider
         $this->loadMigrations();
         $this->configureSearch();
         $this->configureReact();
+        $this->configureFeed();
     }
 
     public function loadPolicies(): void
@@ -110,6 +112,15 @@ class ArticleProvider extends ServiceProvider
             name: 'article',
             class: Article::class,
             callback: fn ($slug) => app(Services\ArticleService::class)->getId($slug)
+        );
+    }
+
+    protected function configureFeed(): void
+    {
+        FeedService::registerHandler(
+            name: 'article',
+            isFilter: false,
+            callback: fn ($slug) => app(Services\ArticleService::class)->getData($slug)
         );
     }
 }

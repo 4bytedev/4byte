@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Packages\React\Services\ReactService;
+use Packages\Recommend\Services\FeedService;
 use Packages\Tag\Models\Tag;
 use Packages\Tag\Models\TagProfile;
 use Packages\Tag\Observers\TagObserver;
@@ -26,6 +27,7 @@ class TagProvider extends ServiceProvider
         $this->loadSeeders();
         $this->loadMigrations();
         $this->configureReact();
+        $this->configureFeed();
     }
 
     public function loadPolicies(): void
@@ -75,6 +77,15 @@ class TagProvider extends ServiceProvider
         ReactService::registerHandler(
             name: 'tag',
             class: Tag::class,
+            callback: fn ($slug) => app(Services\TagService::class)->getId($slug)
+        );
+    }
+
+    protected function configureFeed(): void
+    {
+        FeedService::registerHandler(
+            name: 'tag',
+            isFilter: true,
             callback: fn ($slug) => app(Services\TagService::class)->getId($slug)
         );
     }

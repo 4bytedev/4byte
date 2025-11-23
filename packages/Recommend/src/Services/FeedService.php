@@ -2,7 +2,6 @@
 
 namespace Packages\Recommend\Services;
 
-use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
@@ -10,25 +9,24 @@ use Illuminate\Support\Facades\DB;
 use Packages\Article\Models\Article;
 use Packages\Article\Services\ArticleService;
 use Packages\Category\Services\CategoryService;
-use Packages\Entry\Services\EntryService;
-use Packages\News\Services\NewsService;
 use Packages\React\Models\Save;
-use Packages\React\Services\ReactService;
 use Packages\Tag\Services\TagService;
 
 class FeedService
 {
+    /**
+     * @var array<string, callable>
+     */
+    protected static array $filters = [];
+
+    /**
+     * @var array<string, callable>
+     */
+    protected static array $contents = [];
+
     protected GorseService $gorseService;
 
     protected ArticleService $articleService;
-
-    protected NewsService $newsService;
-
-    protected EntryService $entryService;
-
-    protected ReactService $reactService;
-
-    protected UserService $userService;
 
     protected TagService $tagService;
 
@@ -38,12 +36,26 @@ class FeedService
     {
         $this->gorseService    = app(GorseService::class);
         $this->articleService  = app(ArticleService::class);
-        $this->newsService     = app(NewsService::class);
-        $this->entryService    = app(EntryService::class);
-        $this->reactService    = app(ReactService::class);
-        $this->userService     = app(UserService::class);
         $this->tagService      = app(TagService::class);
         $this->categoryService = app(CategoryService::class);
+    }
+
+    /**
+     * Register filter and content.
+     *
+     * @param string $name
+     * @param bool $isFilter
+     * @param callable $callback
+     *
+     * @return void
+     */
+    public static function registerHandler(string $name, bool $isFilter, callable $callback): void
+    {
+        if ($isFilter) {
+            self::$filters[$name] = $callback;
+        } else {
+            self::$contents[$name] = $callback;
+        }
     }
 
     /**
@@ -112,23 +124,18 @@ class FeedService
     {
         $filters = [];
 
-        if ($request->tab && $request->tab !== 'all') {
-            $filters[] = $request->tab;
-        }
+        foreach (self::$filters as $key => $callback) {
+            $value = $request->input($key);
 
-        $tagId = $request->tag && $request->tag !== 'all' ? $this->tagService->getId($request->tag) : null;
-        if ($tagId) {
-            $filters[] = "tag:{$tagId}";
-        }
+            if ($value === null || $value === '' || $value === 'all') {
+                continue;
+            }
 
-        $categoryId = $request->category && $request->category !== 'all' ? $this->categoryService->getId($request->category) : null;
-        if ($categoryId) {
-            $filters[] = "category:{$categoryId}";
-        }
+            $result = $callback($value);
 
-        $userId = $request->user && $request->user !== 'all' ? $this->userService->getId($request->user) : null;
-        if ($userId) {
-            $filters[] = "user:{$userId}";
+            if ($result !== null && $result !== '') {
+                $filters[] = $result;
+            }
         }
 
         return $filters;
@@ -238,16 +245,14 @@ class FeedService
      *
      * @return mixed|null
      */
-    private function getContent(string $type, int $id)
+    private function getContent(string $type, int $id): mixed
     {
         try {
-            return match ($type) {
-                'article' => $this->articleService->getData($id),
-                'news'    => $this->newsService->getData($id),
-                'entry'   => $this->entryService->getData($id),
-                'comment' => $this->reactService->getComment($id),
-                default   => null,
-            };
+            if (! isset(self::$contents[$type])) {
+                return null;
+            }
+
+            return self::$contents[$type]($id);
         } catch (\Throwable $th) {
             logger()->error('Invalid recommended content', [
                 'type' => $type,
@@ -255,7 +260,7 @@ class FeedService
                 'th'   => $th,
             ]);
 
-            return;
+            return null;
         }
     }
 
