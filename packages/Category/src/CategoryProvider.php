@@ -73,8 +73,8 @@ class CategoryProvider extends ServiceProvider
     protected function configureReact(): void
     {
         ReactService::registerHandler(
-            name: "category",
-            class: Category::class, 
+            name: 'category',
+            class: Category::class,
             callback: fn ($slug) => app(Services\CategoryService::class)->getId($slug)
         );
     }

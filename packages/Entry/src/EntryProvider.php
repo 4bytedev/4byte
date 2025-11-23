@@ -70,8 +70,8 @@ class EntryProvider extends ServiceProvider
     protected function configureReact(): void
     {
         ReactService::registerHandler(
-            name: "entry",
-            class: Entry::class, 
+            name: 'entry',
+            class: Entry::class,
             callback: fn ($slug) => app(Services\EntryService::class)->getId($slug)
         );
     }

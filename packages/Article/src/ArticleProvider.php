@@ -107,8 +107,8 @@ class ArticleProvider extends ServiceProvider
     protected function configureReact(): void
     {
         ReactService::registerHandler(
-            name: "article",
-            class: Article::class, 
+            name: 'article',
+            class: Article::class,
             callback: fn ($slug) => app(Services\ArticleService::class)->getId($slug)
         );
     }

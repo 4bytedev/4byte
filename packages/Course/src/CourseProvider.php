@@ -124,8 +124,8 @@ class CourseProvider extends ServiceProvider
     protected function configureReact(): void
     {
         ReactService::registerHandler(
-            name: "course",
-            class: Course::class, 
+            name: 'course',
+            class: Course::class,
             callback: fn ($slug) => app(Services\CourseService::class)->getId($slug)
         );
     }

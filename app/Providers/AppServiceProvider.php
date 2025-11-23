@@ -146,8 +146,8 @@ class AppServiceProvider extends ServiceProvider
     protected function configureReact(): void
     {
         ReactService::registerHandler(
-            name: "user",
-            class: User::class, 
+            name: 'user',
+            class: User::class,
             callback: fn ($slug) => app(\App\Services\UserService::class)->getId($slug)
         );
     }

@@ -37,15 +37,17 @@ class ReactService
      */
     public static function registerHandler(string $name, string|Model $class, callable|string $callback): void
     {
-        self::$classes[$name] = $class;
+        self::$classes[$name]   = $class;
         self::$callbacks[$name] = $callback;
     }
 
-    public static function getClass(string $name): Model|string|null {
+    public static function getClass(string $name): Model|string|null
+    {
         return self::$classes[$name] ?? null;
     }
 
-    public static function getCallback(string $name): callable|string|null {
+    public static function getCallback(string $name): callable|string|null
+    {
         return self::$callbacks[$name] ?? null;
     }
 

@@ -73,8 +73,8 @@ class TagProvider extends ServiceProvider
     protected function configureReact(): void
     {
         ReactService::registerHandler(
-            name: "tag",
-            class: Tag::class, 
+            name: 'tag',
+            class: Tag::class,
             callback: fn ($slug) => app(Services\TagService::class)->getId($slug)
         );
     }

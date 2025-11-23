@@ -37,7 +37,7 @@ class ReactRequest extends FormRequest
     public function resolveTarget(): array
     {
         $type         = $this->route('type');
-        $callback = ReactService::getCallback($type);
+        $callback     = ReactService::getCallback($type);
         $baseClass    = ReactService::getClass($type);
 
         if (! isset($callback) || ! isset($baseClass)) {

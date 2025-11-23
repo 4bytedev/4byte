@@ -89,8 +89,8 @@ class ReactProvider extends ServiceProvider
     protected function configureReact(): void
     {
         ReactService::registerHandler(
-            name: "comment",
-            class: Comment::class, 
+            name: 'comment',
+            class: Comment::class,
             callback: fn ($slug) => $slug
         );
     }
