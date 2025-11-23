@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\CourseLessonResource\Pages;
-use App\Forms\Components\SpatieMediaLibraryFileUpload;
 use App\Forms\Components\SpatieMediaLibraryMarkdownEditor;
 use Carbon\Carbon;
 use Filament\Forms;
@@ -70,14 +69,6 @@ class CourseLessonResource extends Resource
                             ->schema([
                                 Forms\Components\Section::make(__('Lesson Settings'))
                                     ->schema([
-                                        SpatieMediaLibraryFileUpload::make('image')
-                                            ->label(__('Image'))
-                                            ->image()
-                                            ->imageEditor()
-                                            ->imagePreviewHeight('150')
-                                            ->dehydrated(false)
-                                            ->collection('cover'),
-
                                         Forms\Components\Select::make('chapter_id')
                                             ->required()
                                             ->searchable()
