@@ -20,7 +20,12 @@ export const registerSchema = (t) =>
 			password: z
 				.string()
 				.min(8, t("Password must be at least 8 characters"))
-				.regex(Validation.password, t("These credentials do not match our records.")),
+				.regex(
+					Validation.password,
+					t(
+						"Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.",
+					),
+				),
 			password_confirmation: z.string().min(1, t("Password confirmation is required")),
 			termsAccepted: z.literal(true, t("You must accept the Terms of Service to continue.")),
 		})
