@@ -6,7 +6,7 @@ labels: documentation
 assignees: "omerfdmrl"
 ---
 
-Please use this template for issues related to documentation improvements.
+<!---Please use this template for issues related to documentation improvements. -->
 
 ## Current Documentation
 

@@ -6,7 +6,8 @@ labels: bug
 assignees: "omerfdmrl"
 ---
 
-Please use this template for reporting bugs.
+<!--- Please use this template for reporting bugs. -->
+
 ## Environment
 
 - Browser: [e.g. Chrome, Firefox, Safari]
