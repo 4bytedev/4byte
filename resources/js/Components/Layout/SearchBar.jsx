@@ -1,4 +1,3 @@
-import ApiService from "@/Services/ApiService";
 import { useRef, useState } from "react";
 import { ScrollArea } from "../Ui/ScrollArea";
 import { Popover, PopoverContent, PopoverTrigger } from "../Ui/Popover";
@@ -7,12 +6,28 @@ import { Input } from "../Ui/Form/Input";
 import { ContentPreviewCard } from "../Content/ContentPreviewCard";
 import { useTranslation } from "react-i18next";
 import { router } from "@inertiajs/react";
+import { useMutation } from "@tanstack/react-query";
+import ContentApi from "@/Api/ContentApi";
 
 export function SearchBar({ isMobile = false }) {
 	const [searchQuery, setSearchQuery] = useState("");
 	const [searchResults, setSearchResults] = useState([]);
 	const debounceRef = useRef(null);
 	const { t } = useTranslation();
+
+	const searchMutation = useMutation({
+		mutationFn: ({ query }) => ContentApi.search(query),
+		onSuccess: (data) => {
+			if (data && Array.isArray(data)) {
+				setSearchResults(data);
+			} else {
+				setSearchResults([]);
+			}
+		},
+		onError: () => {
+			setSearchResults([]);
+		},
+	});
 
 	const handleSearch = (query) => {
 		if (isMobile) return;
@@ -26,20 +41,8 @@ export function SearchBar({ isMobile = false }) {
 
 		if (debounceRef.current) clearTimeout(debounceRef.current);
 
-		debounceRef.current = setTimeout(async () => {
-			ApiService.fetchJson(
-				route("api.search") + `?q=${query}`,
-				{},
-				{
-					method: "GET",
-				},
-			).then((response) => {
-				if (response && Array.isArray(response)) {
-					setSearchResults(response);
-				} else {
-					setSearchResults([]);
-				}
-			});
+		debounceRef.current = setTimeout(() => {
+			searchMutation.mutate({ query });
 		}, 500);
 	};
 

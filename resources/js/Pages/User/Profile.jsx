@@ -13,12 +13,13 @@ import { Button } from "@/Components/Ui/Form/Button";
 import { Card, CardContent } from "@/Components/Ui/Card";
 import { useAuthStore } from "@/Stores/AuthStore";
 import { Link } from "@inertiajs/react";
-import ApiService from "@/Services/ApiService";
 import Feed from "@/Components/Content/Feed";
 import { Trans, useTranslation } from "react-i18next";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/Ui/Tabs";
 import { toast } from "@/Hooks/useToast";
 import { useDevice } from "@/Hooks/useDevice";
+import ReactApi from "@/Api/ReactApi";
+import { useMutation } from "@tanstack/react-query";
 
 export default function UserProfilePage({ user, profile }) {
 	const [isFollowing, setIsFollowing] = useState(user.isFollowing);
@@ -44,23 +45,23 @@ export default function UserProfilePage({ user, profile }) {
 
 	const tabs = [...baseTabs, ...authTabs];
 
-	const handleFollow = async () => {
-		ApiService.fetchJson(
-			route("api.react.follow", { type: "user", slug: user.username }),
-			{},
-			{ method: "POST" },
-		)
-			.then(() => {
-				setIsFollowing(!isFollowing);
-				setFollowers(isFollowing ? followers - 1 : followers + 1);
-			})
-			.catch(() => {
-				toast({
-					title: t("Error"),
-					description: t("You can react to the same user once a day"),
-					variant: "destructive",
-				});
+	const followMutation = useMutation({
+		mutationFn: () => ReactApi.follow({ type: "user", slug: user.username }),
+		onSuccess: () => {
+			setIsFollowing(!isFollowing);
+			setFollowers(isFollowing ? followers - 1 : followers + 1);
+		},
+		onError: () => {
+			toast({
+				title: t("Error"),
+				description: t("You can react to the same user once a day"),
+				variant: "destructive",
 			});
+		},
+	});
+
+	const handleFollow = async () => {
+		followMutation.mutate();
 	};
 
 	function ProfileSidebar({ user, profile }) {

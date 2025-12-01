@@ -17,7 +17,6 @@ export default function ResetPasswordModal({ email, token }) {
 	const { t } = useTranslation();
 	const modalStore = useModalStore();
 	const [tokenValid, setTokenValid] = useState(null);
-	const [isSuccess, setIsSuccess] = useState(false);
 
 	const form = useForm({
 		resolver: zodResolver(resetPasswordSchema(t)),
@@ -31,9 +30,6 @@ export default function ResetPasswordModal({ email, token }) {
 
 	const resetPasswordMutation = useMutation({
 		mutationFn: (data) => AuthApi.resetPassword(data),
-		onSuccess: () => {
-			setIsSuccess(true);
-		},
 		onError: (response) => {
 			if (response?.errors) {
 				Object.keys(response.errors).forEach((key) => {
@@ -115,7 +111,7 @@ export default function ResetPasswordModal({ email, token }) {
 		);
 	}
 
-	if (isSuccess) {
+	if (resetPasswordMutation.isSuccess) {
 		return (
 			<div className="min-h-screen flex items-center justify-center p-4">
 				<Card className="w-full max-w-md">

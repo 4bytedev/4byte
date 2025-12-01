@@ -12,13 +12,14 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/Components/Ui/Avatar";
 import { ThemeToggle } from "@/Components/Common/ThemeToggle";
 import { NotificationDropdown } from "@/Components/Common/NotificationDropdown";
-import ApiService from "@/Services/ApiService";
 import { useAuthStore } from "@/Stores/AuthStore";
 import { useSiteStore } from "@/Stores/SiteStore";
 import { useModalStore } from "@/Stores/ModalStore";
 import { useTranslation } from "react-i18next";
 import { SearchBar } from "./SearchBar";
 import { useSidebar } from "@/Contexts/SidebarContext";
+import { useMutation } from "@tanstack/react-query";
+import AuthApi from "@/Api/AuthApi";
 
 export function Navbar() {
 	const { isVisible, toggleSidebar, isOpen } = useSidebar();
@@ -27,9 +28,13 @@ export function Navbar() {
 	const modalStore = useModalStore();
 	const { t } = useTranslation();
 
+	const logoutMutation = useMutation({
+		mutationFn: () => AuthApi.logout(),
+		onSuccess: () => authStore.logout(),
+	});
+
 	const logout = () => {
-		ApiService.fetchJson(route("api.auth.logout"), {}, { method: "POST" });
-		authStore.logout();
+		logoutMutation.mutate();
 	};
 
 	return (

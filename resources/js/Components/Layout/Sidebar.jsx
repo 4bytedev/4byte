@@ -1,30 +1,23 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ChevronDown, ChevronRight, BookOpen, TrendingUp, ChartNoAxesCombined } from "lucide-react";
 import { Button } from "@/Components/Ui/Form/Button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/Components/Ui/Collapsible";
 import { useTranslation } from "react-i18next";
 import { ContentPreviewCard } from "../Content/ContentPreviewCard";
-import ApiService from "@/Services/ApiService";
+import { useQuery } from "@tanstack/react-query";
+import ContentApi from "@/Api/ContentApi";
 
 export function Sidebar() {
-	const [articles, setArticles] = useState();
-	const [tags, setTags] = useState();
-	const [categories, setCategories] = useState();
-	const [isLoading, setIsLoading] = useState(true);
 	const [isTagsOpen, setIsTagsOpen] = useState(true);
 	const [isArticlesOpen, setIsArticlesOpen] = useState(true);
 	const [isCategoriesOpen, setIsCategoriesOpen] = useState(true);
 	const { t } = useTranslation();
 
-	useEffect(() => {
-		setIsLoading(true);
-		ApiService.fetchJson(route("api.feed.data"), {}, { method: "GET" }).then((response) => {
-			setArticles(response.articles);
-			setTags(response.tags);
-			setCategories(response.categories);
-			setIsLoading(false);
-		});
-	}, []);
+	const { data, isLoading } = useQuery({
+		queryKey: ["sidebar-data"],
+		queryFn: () => ContentApi.feedData(),
+		staleTime: 5 * 60 * 1000,
+	});
 
 	if (isLoading) {
 		return (
@@ -51,7 +44,7 @@ export function Sidebar() {
 					</Button>
 				</CollapsibleTrigger>
 				<CollapsibleContent className="space-y-2 mt-3">
-					{tags.map((tag) => (
+					{data.tags.map((tag) => (
 						<ContentPreviewCard
 							key={tag.data.slug}
 							item={{ ...tag.data, total: tag.total }}
@@ -75,7 +68,7 @@ export function Sidebar() {
 					</Button>
 				</CollapsibleTrigger>
 				<CollapsibleContent className="space-y-2 mt-3">
-					{categories.map((category) => (
+					{data.categories.map((category) => (
 						<ContentPreviewCard
 							key={category.data.slug}
 							item={{ ...category.data, total: category.total }}
@@ -99,7 +92,7 @@ export function Sidebar() {
 					</Button>
 				</CollapsibleTrigger>
 				<CollapsibleContent className="space-y-2 mt-3">
-					{articles.map((article) => (
+					{data.articles.map((article) => (
 						<ContentPreviewCard key={article.slug} item={article} />
 					))}
 				</CollapsibleContent>

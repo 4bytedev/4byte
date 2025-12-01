@@ -122,7 +122,8 @@ html {
 }
 
 .w-md-editor-text-pre > code,
-.w-md-editor-text-input {
+.w-md-editor-text-input,
+.wmde-markdown-color .code-line {
   font-size: 20px !important;
   line-height: 21px !important;
 }

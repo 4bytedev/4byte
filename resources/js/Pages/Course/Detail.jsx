@@ -21,8 +21,9 @@ import MarkdownRenderer from "@/Components/Common/MarkdownRenderer";
 import { Link } from "@inertiajs/react";
 import { useState } from "react";
 import { useAuthStore } from "@/Stores/AuthStore";
-import ApiService from "@/Services/ApiService";
 import { toast, useToast } from "@/Hooks/useToast";
+import ReactApi from "@/Api/ReactApi";
+import { useMutation } from "@tanstack/react-query";
 
 export default function TutorialPage({ course, cirriculum }) {
 	const [isLiked, setIsLiked] = useState(course.isLiked);
@@ -35,63 +36,82 @@ export default function TutorialPage({ course, cirriculum }) {
 	const authStore = useAuthStore();
 	const { t } = useToast();
 
+	const likeMutation = useMutation({
+		mutationFn: () => ReactApi.like({ type: "course", slug: course.slug }),
+		onSuccess: () => {
+			setIsLiked((prev) => {
+				if (prev) {
+					setLikes((l) => l - 1);
+					return false;
+				}
+
+				if (isDisliked) {
+					setIsDisliked(false);
+					setDislikes((d) => d - 1);
+				}
+
+				setLikes((l) => l + 1);
+				return true;
+			});
+		},
+		onError: () => {
+			toast({
+				title: t("Error"),
+				description: t("You can react to the same course once a day"),
+				variant: "destructive",
+			});
+		},
+	});
+
 	const handleLike = () => {
 		if (!authStore.isAuthenticated) return;
-		ApiService.fetchJson(route("api.react.like", { type: "course", slug: course.slug }))
-			.then(() => {
-				if (isLiked) {
-					setIsLiked(false);
-					setLikes(likes - 1);
-				} else {
-					if (isDisliked) {
-						setIsDisliked(false);
-						setDislikes(dislikes - 1);
-					}
-					setIsLiked(true);
-					setLikes(likes + 1);
-				}
-			})
-			.catch(() => {
-				toast({
-					title: t("Error"),
-					description: t("You can react to the same article once a day"),
-					variant: "destructive",
-				});
-			});
+		likeMutation.mutate();
 	};
+
+	const dislikeMutation = useMutation({
+		mutationFn: () => ReactApi.dislike({ type: "course", slug: course.slug }),
+		onSuccess: () => {
+			setIsDisliked((disliked) => {
+				const willDislike = !disliked;
+
+				if (willDislike) {
+					if (isLiked) {
+						setIsLiked(false);
+						setLikes((l) => l - 1);
+					}
+
+					setDislikes((d) => d + 1);
+				} else {
+					setDislikes((d) => d - 1);
+				}
+
+				return willDislike;
+			});
+		},
+		onError: () => {
+			toast({
+				title: t("Error"),
+				description: t("You can react to the same course once a day"),
+				variant: "destructive",
+			});
+		},
+	});
 
 	const handleDislike = () => {
 		if (!authStore.isAuthenticated) return;
-		ApiService.fetchJson(route("api.react.dislike", { type: "course", slug: course.slug }))
-			.then(() => {
-				if (isDisliked) {
-					setIsDisliked(false);
-					setDislikes(dislikes - 1);
-				} else {
-					if (isLiked) {
-						setIsLiked(false);
-						setLikes(likes - 1);
-					}
-					setIsDisliked(true);
-					setDislikes(dislikes + 1);
-				}
-			})
-			.catch(() => {
-				toast({
-					title: t("Error"),
-					description: t("You can react to the same article once a day"),
-					variant: "destructive",
-				});
-			});
+		dislikeMutation.mutate();
 	};
+
+	const saveMutation = useMutation({
+		mutationFn: () => ReactApi.save({ type: "course", slug: course.slug }),
+		onSuccess: () => {
+			setIsSaved(!isSaved);
+		},
+	});
 
 	const handleSave = () => {
 		if (!authStore.isAuthenticated) return;
-		ApiService.fetchJson(route("api.react.save", { type: "course", slug: course.slug })).then(
-			() => {
-				setIsSaved(!isSaved);
-			},
-		);
+		saveMutation.mutate();
 	};
 
 	const handleShare = () => {

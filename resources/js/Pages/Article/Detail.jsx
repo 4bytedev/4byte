@@ -16,7 +16,6 @@ import { Badge } from "@/Components/Ui/Badge";
 import { Separator } from "@/Components/Ui/Separator";
 import { UserProfileHover } from "@/Components/Common/UserProfileHover";
 import { Link } from "@inertiajs/react";
-import ApiService from "@/Services/ApiService";
 import MarkdownRenderer from "@/Components/Common/MarkdownRenderer";
 import Feed from "@/Components/Content/Feed";
 import { useAuthStore } from "@/Stores/AuthStore";
@@ -25,6 +24,8 @@ import { useTranslation } from "react-i18next";
 import { toast } from "@/Hooks/useToast";
 import TableOfContents from "@/Components/Common/TableOfContents";
 import { Comments } from "@/Components/Content/Comments";
+import { useMutation } from "@tanstack/react-query";
+import ReactApi from "@/Api/ReactApi";
 
 export default function ArticlePage({ article }) {
 	const [isLiked, setIsLiked] = useState(article.isLiked);
@@ -42,63 +43,82 @@ export default function ArticlePage({ article }) {
 	const authStore = useAuthStore();
 	const { t } = useTranslation();
 
+	const likeMutation = useMutation({
+		mutationFn: () => ReactApi.like({ type: "article", slug: article.slug }),
+		onSuccess: () => {
+			setIsLiked((prev) => {
+				if (prev) {
+					setLikes((l) => l - 1);
+					return false;
+				}
+
+				if (isDisliked) {
+					setIsDisliked(false);
+					setDislikes((d) => d - 1);
+				}
+
+				setLikes((l) => l + 1);
+				return true;
+			});
+		},
+		onError: () => {
+			toast({
+				title: t("Error"),
+				description: t("You can react to the same article once a day"),
+				variant: "destructive",
+			});
+		},
+	});
+
 	const handleLike = () => {
 		if (!authStore.isAuthenticated) return;
-		ApiService.fetchJson(route("api.react.like", { type: "article", slug: article.slug }))
-			.then(() => {
-				if (isLiked) {
-					setIsLiked(false);
-					setLikes(likes - 1);
-				} else {
-					if (isDisliked) {
-						setIsDisliked(false);
-						setDislikes(dislikes - 1);
-					}
-					setIsLiked(true);
-					setLikes(likes + 1);
-				}
-			})
-			.catch(() => {
-				toast({
-					title: t("Error"),
-					description: t("You can react to the same article once a day"),
-					variant: "destructive",
-				});
-			});
+		likeMutation.mutate();
 	};
+
+	const dislikeMutation = useMutation({
+		mutationFn: () => ReactApi.dislike({ type: "article", slug: article.slug }),
+		onSuccess: () => {
+			setIsDisliked((disliked) => {
+				const willDislike = !disliked;
+
+				if (willDislike) {
+					if (isLiked) {
+						setIsLiked(false);
+						setLikes((l) => l - 1);
+					}
+
+					setDislikes((d) => d + 1);
+				} else {
+					setDislikes((d) => d - 1);
+				}
+
+				return willDislike;
+			});
+		},
+		onError: () => {
+			toast({
+				title: t("Error"),
+				description: t("You can react to the same article once a day"),
+				variant: "destructive",
+			});
+		},
+	});
 
 	const handleDislike = () => {
 		if (!authStore.isAuthenticated) return;
-		ApiService.fetchJson(route("api.react.dislike", { type: "article", slug: article.slug }))
-			.then(() => {
-				if (isDisliked) {
-					setIsDisliked(false);
-					setDislikes(dislikes - 1);
-				} else {
-					if (isLiked) {
-						setIsLiked(false);
-						setLikes(likes - 1);
-					}
-					setIsDisliked(true);
-					setDislikes(dislikes + 1);
-				}
-			})
-			.catch(() => {
-				toast({
-					title: t("Error"),
-					description: t("You can react to the same article once a day"),
-					variant: "destructive",
-				});
-			});
+		dislikeMutation.mutate();
 	};
+
+	const saveMutation = useMutation({
+		mutationFn: () => ReactApi.save({ type: "article", slug: article.slug }),
+		onSuccess: () => {
+			setIsSaved(!isSaved);
+		},
+	});
 
 	const handleSave = () => {
 		if (!authStore.isAuthenticated) return;
-		ApiService.fetchJson(route("api.react.save", { type: "article", slug: article.slug })).then(
-			() => {
-				setIsSaved(!isSaved);
-			},
-		);
+		saveMutation.mutate();
 	};
 
 	const handleShare = () => {

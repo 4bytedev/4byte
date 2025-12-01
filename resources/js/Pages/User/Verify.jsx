@@ -3,11 +3,11 @@ import { Mail, CheckCircle, AlertCircle, RefreshCw } from "lucide-react";
 import { Button } from "@/Components/Ui/Form/Button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/Components/Ui/Card";
 import { useAuthStore } from "@/Stores/AuthStore";
-import ApiService from "@/Services/ApiService";
 import { Trans, useTranslation } from "react-i18next";
+import { useMutation } from "@tanstack/react-query";
+import UserApi from "@/Api/UserApi";
 
 export default function VerifyPage() {
-	const [isLoading, setIsLoading] = useState(false);
 	const [isVerified, setIsVerified] = useState(false);
 	const [errors, setErrors] = useState({});
 	const [resendCooldown, setResendCooldown] = useState(0);
@@ -29,13 +29,6 @@ export default function VerifyPage() {
 	}, [resendCooldown]);
 
 	useEffect(() => {
-		if (resendCooldown > 0) {
-			const timer = setTimeout(() => setResendCooldown(resendCooldown - 1), 1000);
-			return () => clearTimeout(timer);
-		}
-	}, [resendCooldown]);
-
-	useEffect(() => {
 		if (isVerified && redirectCountdown > 0) {
 			const timer = setTimeout(() => setRedirectCountdown(redirectCountdown - 1), 1000);
 			return () => clearTimeout(timer);
@@ -46,27 +39,21 @@ export default function VerifyPage() {
 		}
 	}, [isVerified, redirectCountdown]);
 
+	const resendMutation = useMutation({
+		mutationFn: () => UserApi.resendVerify(),
+		onSuccess: () => {
+			setResendCooldown(60);
+			setErrors({});
+		},
+		onError: (error) => {
+			setErrors(error.errors || { general: "Please try again later." });
+		},
+	});
+
 	const handleResendLink = async () => {
 		if (resendCooldown > 0) return;
 
-		setIsLoading(true);
-
-		ApiService.fetchJson(
-			route("api.user.verification.resend"),
-			{},
-			{
-				method: "POST",
-			},
-		)
-			.then(() => {
-				setResendCooldown(60);
-				setErrors({});
-				setIsLoading(false);
-			})
-			.catch((response) => {
-				setErrors(response.errors || { general: "Please try again later." });
-				setIsLoading(false);
-			});
+		resendMutation.mutate();
 	};
 
 	if (isVerified) {
@@ -127,10 +114,10 @@ export default function VerifyPage() {
 						<Button
 							variant="outline"
 							onClick={handleResendLink}
-							disabled={isLoading || resendCooldown > 0}
+							disabled={resendMutation.isPending || resendCooldown > 0}
 							className="w-full"
 						>
-							{isLoading ? (
+							{resendMutation.isPending ? (
 								<div className="flex items-center space-x-2">
 									<div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current"></div>
 									<span>{t("Sending...")}</span>
