@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { CreatorCard } from "./CreatorCard";
 import { ContentCard } from "./ContentCard";
 import ApiService from "@/Services/ApiService";
+import { useMutation } from "@tanstack/react-query";
 
 const ContentScroll = ({
 	endpoint,
@@ -18,17 +19,55 @@ const ContentScroll = ({
 	const [activeTab, setActiveTab] = useState(initialTab);
 	const [content, setContent] = useState([]);
 	const [contentCache, setContentCache] = useState({});
-	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
 	const [, setPage] = useState(1);
 	const [hasMore, setHasMore] = useState(true);
 	const observer = useRef();
 	const { t } = useTranslation();
 
-	const fetchContent = async (tab = activeTab, pageOverride = 1) => {
-		if (!endpoint) return;
-		const cached = contentCache[tab];
+	const fetchContentMutation = useMutation({
+		mutationFn: async ({ tab, page }) => {
+			if (!endpoint) throw new Error("Endpoint missing");
 
+			const url = new URL(endpoint);
+			url.searchParams.append("page", page);
+
+			if (tab !== "all") {
+				url.searchParams.append("tab", tab);
+			}
+
+			Object.keys(filters).forEach((filter) => {
+				url.searchParams.append(filter, filters[filter]);
+			});
+
+			return ApiService.fetchJson(url, {}, { method: "GET" });
+		},
+		onSuccess: (response, variables) => {
+			const { tab, page } = variables;
+			const items = response.items || response.content || response;
+			const more = items.length === 10;
+
+			const newContent = page === 1 ? items : [...(contentCache[tab]?.items || []), ...items];
+
+			setContent(newContent);
+			setHasMore(more);
+
+			setContentCache((prev) => ({
+				...prev,
+				[tab]: { items: newContent, hasMore: more },
+			}));
+		},
+		onError: (error) => {
+			console.error("Failed to fetch content:", error);
+			setError(error.message);
+			setHasMore(false);
+		},
+	});
+
+	const fetchContent = (tab = activeTab, pageOverride = 1) => {
+		if (!endpoint) return;
+
+		const cached = contentCache[tab];
 		if (pageOverride === 1 && cached) {
 			setContent(cached.items);
 			setHasMore(cached.hasMore);
@@ -39,55 +78,9 @@ const ContentScroll = ({
 			setContent([]);
 		}
 
-		if (loading) return;
+		if (fetchContentMutation.isPending) return;
 
-		setLoading(true);
-		setError(null);
-
-		try {
-			const url = new URL(endpoint);
-			url.searchParams.append("page", pageOverride);
-
-			if (tab !== "all") {
-				url.searchParams.append("tab", tab);
-			}
-
-			Object.keys(filters).forEach((filter) => {
-				url.searchParams.append(filter, filters[filter]);
-			});
-
-			ApiService.fetchJson(
-				url,
-				{},
-				{
-					method: "GET",
-				},
-			)
-				.then((response) => {
-					const items = response.items || response.content || response;
-
-					const newContent =
-						pageOverride === 1 ? items : [...(cached?.items || []), ...items];
-
-					const more = items.length == 10;
-
-					setContent(newContent);
-					setHasMore(more);
-
-					setContentCache((prev) => ({
-						...prev,
-						[tab]: { items: newContent, hasMore: more },
-					}));
-				})
-				.catch(() => {
-					setHasMore(false);
-				});
-		} catch (err) {
-			setError(err.message);
-			console.error("Failed to fetch content:", err);
-		} finally {
-			setLoading(false);
-		}
+		fetchContentMutation.mutate({ tab, page: pageOverride });
 	};
 
 	useEffect(() => {
@@ -97,7 +90,8 @@ const ContentScroll = ({
 
 	const lastItemRef = useCallback(
 		(node) => {
-			if (loading) return;
+			if (fetchContentMutation.isPending) return;
+
 			if (observer.current) observer.current.disconnect();
 
 			observer.current = new IntersectionObserver(
@@ -117,7 +111,7 @@ const ContentScroll = ({
 
 			if (node) observer.current.observe(node);
 		},
-		[loading, hasMore, activeTab],
+		[fetchContentMutation.isPending, hasMore, activeTab],
 	);
 
 	const handleTabChange = (value) => {
@@ -170,13 +164,15 @@ const ContentScroll = ({
 									</div>
 								)}
 
-								{!error && content.length === 0 && !loading && (
-									<div className="text-center py-12">
-										<p className="text-muted-foreground">
-											{t("No content found")}
-										</p>
-									</div>
-								)}
+								{!error &&
+									content.length === 0 &&
+									!fetchContentMutation.isPending && (
+										<div className="text-center py-12">
+											<p className="text-muted-foreground">
+												{t("No content found")}
+											</p>
+										</div>
+									)}
 
 								<div className="grid gap-6 grid-cols-1">
 									{content.map((item, idx) => (
@@ -185,7 +181,7 @@ const ContentScroll = ({
 								</div>
 
 								<div ref={lastItemRef} className="flex justify-center py-8">
-									{loading && (
+									{fetchContentMutation.isPending && (
 										<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
 									)}
 								</div>

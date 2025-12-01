@@ -137,6 +137,7 @@
     "Comment is required": "Yorum gereklidir",
     "Comment must be at least 20 characters": "Yorum en az 20 karater olmalıdır",
     "Share your thoughts...": "Düşüncelerini paylaş...",
+    "Post Comment": "Yorum Paylaş",
     "Reply": "Yanıtla",
     "replies": "{{count}} Yanıt",
 
@@ -165,7 +166,7 @@
     "You can react to the same comment once a day": "Aynı yoruma günde bir kez tepki verebilirsiniz",
     "Contents": "İçindekiler",
 
-    "What do you thinking?": "Ne düşünüyorsun?",
+    "What are you thinking?": "Ne düşünüyorsun?",
     "Write": "Yaz",
     "Article": "Makale",
 
@@ -267,5 +268,7 @@
     "Enter your new password below": "Enter your new password below",
     "Update password": "Update password",
 
-    "Invalid URL": "Geçersiz Bağlantı"
+    "Invalid URL": "Geçersiz Bağlantı",
+
+    "You can react to the same course once a day": "Aynı kursa günde bir kez tepki verebilirsiniz"
 }

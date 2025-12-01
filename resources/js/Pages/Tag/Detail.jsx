@@ -5,32 +5,35 @@ import { Card, CardContent } from "@/Components/Ui/Card";
 import { Badge } from "@/Components/Ui/Badge";
 import { Link } from "@inertiajs/react";
 import { useAuthStore } from "@/Stores/AuthStore";
-import ApiService from "@/Services/ApiService";
 import Feed from "@/Components/Content/Feed";
 import { toast } from "@/Hooks/useToast";
 import { useTranslation } from "react-i18next";
+import { useMutation } from "@tanstack/react-query";
+import ReactApi from "@/Api/ReactApi";
 
 export default function TagDetailPage({ tag, profile, articles, news, tags }) {
-	console.log(tags);
-
 	const [isFollowing, setIsFollowing] = useState(tag.isFollowing);
 	const [followers, setFollowers] = useState(Number(tag.followers));
 	const authStore = useAuthStore();
 	const { t } = useTranslation();
 
-	const handleFollow = async () => {
-		ApiService.fetchJson(route("api.react.follow", { type: "tag", slug: tag.slug }))
-			.then(() => {
-				setIsFollowing(!isFollowing);
-				setFollowers(isFollowing ? followers - 1 : followers + 1);
-			})
-			.catch(() => {
-				toast({
-					title: t("Error"),
-					description: t("You can react to the same tag once a day"),
-					variant: "destructive",
-				});
+	const followMutation = useMutation({
+		mutationFn: () => ReactApi.follow({ type: "tag", slug: tag.slug }),
+		onSuccess: () => {
+			setIsFollowing(!isFollowing);
+			setFollowers(isFollowing ? followers - 1 : followers + 1);
+		},
+		onError: () => {
+			toast({
+				title: t("Error"),
+				description: t("You can react to the same tag once a day"),
+				variant: "destructive",
 			});
+		},
+	});
+
+	const handleFollow = async () => {
+		followMutation.mutate();
 	};
 
 	return (

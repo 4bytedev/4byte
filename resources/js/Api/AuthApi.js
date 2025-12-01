@@ -13,4 +13,7 @@ export default {
 	resetPassword: (data) => {
 		return ApiService.fetchJson(route("api.auth.reset-password.request"), data);
 	},
+	logout: () => {
+		return ApiService.fetchJson(route("api.auth.logout"));
+	},
 };

@@ -29,7 +29,12 @@ export default function MarkdownRenderer({ content }) {
 	useEffect(() => {
 		initCodeGroups();
 		document.querySelectorAll("pre code").forEach((block) => {
-			hljs.highlightElement(block);
+			document.querySelectorAll("pre code").forEach((block) => {
+				if (!block.dataset.highlighted) {
+					hljs.highlightElement(block);
+				}
+			});
+
 			if (!block.parentElement.querySelector(".copy-btn")) {
 				const btn = document.createElement("button");
 				btn.innerText = t("Copy");

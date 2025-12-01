@@ -1,172 +1,126 @@
 import { toast } from "@/Hooks/useToast";
 import { useTimeAgo } from "@/Lib/TimeAgo";
-import ApiService from "@/Services/ApiService";
 import { useAuthStore } from "@/Stores/AuthStore";
 import { ArrowDown, ArrowUp, Heart, MessageCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { Card, CardContent } from "../Ui/Card";
-import { Textarea } from "../Ui/Form/Textarea";
 import { Button } from "../Ui/Form/Button";
 import { UserProfileHover } from "../Common/UserProfileHover";
 import { Avatar, AvatarFallback, AvatarImage } from "../Ui/Avatar";
 import MarkdownRenderer from "../Common/MarkdownRenderer";
+import { useMutation } from "@tanstack/react-query";
+import ReactApi from "@/Api/ReactApi";
+import { CommentSubmitForm } from "./CommentParts/CommentSubmitForm";
+import { CommentReplies } from "./CommentParts/CommentReplies";
 
 export function Comments({ commentsCounts: initialCommentsCounts, type, slug }) {
-	const [comment, setComment] = useState("");
 	const [comments, setComments] = useState([]);
 	const [showReplies, setShowReplies] = useState({});
 	const [isRepliesLoading, setIsRepliesLoading] = useState({});
 	const [repliesComments, setRepliesComments] = useState({});
 	const [replies, setReplies] = useState({});
 	const [commentsCount, setCommentsCount] = useState(Number(initialCommentsCounts));
-	const [errors, setErrors] = useState({});
-	const [isCommentsLoading, setIsCommentsLoading] = useState(false);
 	const timeAgo = useTimeAgo();
 	const { t } = useTranslation();
 
 	const authStore = useAuthStore();
 
-	useEffect(() => {
-		ApiService.fetchJson(route("api.react.comments", { type, slug })).then((response) => {
-			setIsCommentsLoading(false);
+	const fetchComments = useMutation({
+		mutationFn: () => ReactApi.comments({ type, slug }),
+		onSuccess: (response) => {
 			setComments(response);
-		});
+		},
+	});
+
+	useEffect(() => {
+		fetchComments.mutate();
 	}, []);
 
-	const validateComment = () => {
-		const newErrors = {};
-
-		if (!comment) newErrors.comment = t("Comment is required");
-		else if (comment.length < 20)
-			newErrors.comment = t("Comment must be at least 20 characters");
-
-		setErrors(newErrors);
-		return Object.keys(newErrors).length === 0;
+	const onCommentSubmit = (data) => {
+		setCommentsCount(commentsCount + 1);
+		setComments([data, ...comments]);
 	};
 
-	const validateReply = (commentId) => {
-		const newErrors = {};
-
-		if (!repliesComments[commentId]) newErrors[commentId] = t("Comment is required");
-		else if (repliesComments[commentId].length < 20)
-			newErrors[commentId] = t("Comment must be at least 20 characters");
-
-		setErrors(newErrors);
-
-		return Object.keys(newErrors).length === 0;
+	const onCommentReplySubmit = (data) => {
+		const parentId = data.parent;
+		setRepliesComments({ ...repliesComments, [parentId]: "" });
+		setCommentsCount(commentsCount + 1);
+		setReplies({ ...replies, [parentId]: [data, ...(replies[parentId] ?? [])] });
+		setComments((prev) =>
+			prev.map((c) => (c.id === parentId ? { ...c, replies: c.replies + 1 } : c)),
+		);
 	};
 
-	const handleComment = () => {
-		setErrors({});
+	const toggleReplyMutation = useMutation({
+		mutationFn: ({ parentId }) => ReactApi.replies({ type, slug, parent: parentId }),
+		onMutate: ({ parentId }) => setIsRepliesLoading({ ...isRepliesLoading, [parentId]: true }),
+		onSuccess: (response, { parentId }) => {
+			console.log(comments);
 
-		if (!validateComment()) return;
-
-		const data = {
-			content: comment,
-			parent: null,
-		};
-
-		ApiService.fetchJson(route("api.react.comment", { type, slug }), data)
-			.then((response) => {
-				setComment("");
-				setCommentsCount(commentsCount + 1);
-				setComments([response, ...comments]);
-			})
-			.catch((response) => {
-				setErrors(response.errors || { general: "Invalid credentials. Please try again." });
-			});
-	};
-
-	const handleReply = (parentId) => {
-		setErrors({});
-
-		if (!parentId) return;
-		if (!validateReply(parentId)) return;
-
-		const data = {
-			content: repliesComments[parentId],
-			parent: parentId,
-		};
-
-		ApiService.fetchJson(route("api.react.comment", { type, slug }), data).then((response) => {
-			setRepliesComments({ ...repliesComments, [parentId]: "" });
-			setCommentsCount(commentsCount + 1);
-			if (!parentId) {
-				setComments([response, ...comments]);
-			} else {
-				setReplies({ ...replies, [parentId]: [response, ...(replies[parentId] ?? [])] });
-				setComments((prev) =>
-					prev.map((c) => (c.id === parentId ? { ...c, replies: c.replies + 1 } : c)),
-				);
-			}
-		});
-	};
+			setReplies({ ...replies, [parentId]: response });
+			setShowReplies({ ...showReplies, [parentId]: true });
+			setIsRepliesLoading({ ...isRepliesLoading, [parentId]: false });
+		},
+	});
 
 	const toggleReplies = (parentId) => {
 		if (showReplies[parentId]) {
 			setShowReplies({ ...showReplies, [parentId]: false });
 		} else {
 			if (!replies[parentId]) {
-				setIsRepliesLoading({ ...isRepliesLoading, [parentId]: true });
-				ApiService.fetchJson(
-					route("api.react.comment.replies", {
-						type,
-						slug,
-						parent: parentId,
-					}),
-				).then((response) => {
-					setReplies({ ...replies, [parentId]: response });
-					setShowReplies({ ...showReplies, [parentId]: true });
-					setIsRepliesLoading({ ...isRepliesLoading, [parentId]: false });
-				});
+				toggleReplyMutation.mutate({ parentId });
 			} else {
 				setShowReplies({ ...showReplies, [parentId]: true });
 			}
 		}
 	};
 
+	const likeMutation = useMutation({
+		mutationFn: ({ commentId }) => ReactApi.like({ type: "comment", slug: commentId }),
+		onSuccess: (_, { commentId, parentId }) => {
+			if (!parentId) {
+				setComments((prev) =>
+					prev.map((c) =>
+						c.id === commentId
+							? {
+									...c,
+									likes: c.likes + (c.isLiked ? -1 : 1),
+									isLiked: !c.isLiked,
+								}
+							: c,
+					),
+				);
+			} else {
+				setReplies((prevReplies) => ({
+					...prevReplies,
+					[parentId]: prevReplies[parentId].map((reply) =>
+						reply.id === commentId
+							? {
+									...reply,
+									likes: reply.likes + (reply.isLiked ? -1 : 1),
+									isLiked: !reply.isLiked,
+								}
+							: reply,
+					),
+				}));
+			}
+		},
+		onError: () => {
+			toast({
+				title: t("Error"),
+				description: t("You can react to the same comment once a day"),
+				variant: "destructive",
+			});
+		},
+	});
+
 	const handleCommentLike = (commentId, parentId) => {
 		if (!authStore.isAuthenticated) return;
-		ApiService.fetchJson(route("api.react.like", { type: "comment", slug: commentId }))
-			.then(() => {
-				if (!parentId) {
-					setComments((prev) =>
-						prev.map((c) =>
-							c.id === commentId
-								? {
-										...c,
-										likes: c.likes + (c.isLiked ? -1 : +1),
-										isLiked: !c.isLiked,
-									}
-								: c,
-						),
-					);
-				} else {
-					setReplies((prevReplies) => ({
-						...prevReplies,
-						[parentId]: prevReplies[parentId].map((reply) =>
-							reply.id === commentId
-								? {
-										...reply,
-										likes: reply.likes + (reply.isLiked ? -1 : 1),
-										isLiked: !reply.isLiked,
-									}
-								: reply,
-						),
-					}));
-				}
-			})
-			.catch(() => {
-				toast({
-					title: t("Error"),
-					description: t("You can react to the same comment once a day"),
-					variant: "destructive",
-				});
-			});
+		likeMutation.mutate({ commentId, parentId });
 	};
 
-	if (isCommentsLoading) {
+	if (fetchComments.isPending) {
 		return (
 			<div className="flex justify-center py-8">
 				<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -186,21 +140,7 @@ export function Comments({ commentsCounts: initialCommentsCounts, type, slug }) 
 			</h3>
 
 			{authStore.isAuthenticated && (
-				<Card className="mb-6">
-					<CardContent className="p-4">
-						<Textarea
-							placeholder={t("Share your thoughts...")}
-							value={comment}
-							onChange={(e) => setComment(e.target.value)}
-							className="mb-4"
-							rows={3}
-						/>
-						{errors.comment && <p className="text-sm text-red-500">{errors.comment}</p>}
-						<div className="flex justify-end">
-							<Button onClick={() => handleComment()}>Post Comment</Button>
-						</div>
-					</CardContent>
-				</Card>
+				<CommentSubmitForm type={type} slug={slug} onSuccess={onCommentSubmit} />
 			)}
 
 			{comments.length > 0 && (
@@ -278,104 +218,25 @@ export function Comments({ commentsCounts: initialCommentsCounts, type, slug }) 
 
 										<div className="mt-4 pl-4 border-l-2 border-muted space-y-4">
 											{showReplies[comment.id] && (
-												<Card className="mb-6 animate-fade-in-up">
-													<CardContent className="p-4">
-														<Textarea
-															placeholder={t(
-																"Share your thoughts...",
-															)}
-															value={repliesComments[comment.id]}
-															onChange={(e) =>
-																setRepliesComments({
-																	...repliesComments,
-																	[comment.id]: e.target.value,
-																})
-															}
-															className="mb-4"
-															rows={3}
-														/>
-														{errors[comment.id] && (
-															<p className="text-sm text-red-500">
-																{errors[comment.id]}
-															</p>
-														)}
-														<div className="flex justify-end">
-															<Button
-																onClick={() =>
-																	handleReply(comment.id)
-																}
-															>
-																Post Comment
-															</Button>
-														</div>
-													</CardContent>
-												</Card>
+												<CommentSubmitForm
+													type={type}
+													slug={slug}
+													parent={comment.id}
+													onSuccess={onCommentReplySubmit}
+												/>
 											)}
 											{isRepliesLoading[comment.id] && (
 												<div className="flex justify-center py-8">
 													<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
 												</div>
 											)}
-											{showReplies[comment.id] &&
-												replies[comment.id].map((reply) => (
-													<div
-														key={reply.id}
-														className="flex items-start space-x-3"
-													>
-														<UserProfileHover
-															username={reply.user.username}
-														>
-															<Avatar className="h-10 w-10 cursor-pointer">
-																<AvatarImage
-																	src={
-																		reply.user.avatar ||
-																		"/placeholder-avatar.jpg"
-																	}
-																	alt={reply.user.name || "User"}
-																/>
-																<AvatarFallback>
-																	{reply.user.name
-																		.split(" ")
-																		.map((n) => n[0])
-																		.join("") || "U"}
-																</AvatarFallback>
-															</Avatar>
-														</UserProfileHover>
-														<div className="flex-1">
-															<div className="flex items-center space-x-2 mb-1">
-																<span className="font-medium">
-																	{reply.user.name}
-																</span>
-																<span className="text-sm text-muted-foreground">
-																	{timeAgo(reply.created_at)}
-																</span>
-															</div>
-															<div className="text-sm text-muted-foreground mb-2">
-																<MarkdownRenderer
-																	content={reply.content}
-																/>
-															</div>
-															<Button
-																variant="ghost"
-																size="sm"
-																disabled={
-																	!authStore.isAuthenticated
-																}
-																onClick={() => {
-																	handleCommentLike(
-																		reply.id,
-																		comment.id,
-																	);
-																}}
-															>
-																<Heart
-																	className={`h-4 w-4 mr-1 ${reply.isLiked ? "fill-red-900" : ""}`}
-																/>{" "}
-																{reply.likes}
-															</Button>
-														</div>
-													</div>
-												))}
+											{showReplies[comment.id] && (
+												<CommentReplies
+													parentId={comment.id}
+													replies={replies[comment.id]}
+													onLike={handleCommentLike}
+												/>
+											)}
 										</div>
 									</div>
 								</div>

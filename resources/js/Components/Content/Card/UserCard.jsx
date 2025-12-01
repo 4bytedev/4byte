@@ -1,5 +1,4 @@
 import { Avatar, AvatarImage, AvatarFallback } from "@/Components/Ui/Avatar";
-import ApiService from "@/Services/ApiService";
 import { useEffect, useState } from "react";
 import { Card, CardContent } from "../../Ui/Card";
 import { Trans, useTranslation } from "react-i18next";
@@ -8,51 +7,54 @@ import { Button } from "../../Ui/Form/Button";
 import { toast } from "@/Hooks/useToast";
 import { Settings, UserCheck, UserPlus } from "lucide-react";
 import { Link } from "@inertiajs/react";
+import { useMutation } from "@tanstack/react-query";
+import UserApi from "@/Api/UserApi";
+import ReactApi from "@/Api/ReactApi";
 
 export function UserCard({ username }) {
 	const [isFollowing, setIsFollowing] = useState(false);
 	const [followers, setFollowers] = useState(0);
 	const [user, setUser] = useState({});
 	const [profile, setProfile] = useState({});
-	const [isLoading, setIsLoading] = useState(true);
 	const authStore = useAuthStore();
 	const { t } = useTranslation();
 
 	const isOwnProfile = authStore.isAuthenticated && user.username === authStore.user.username;
 
+	const previewMutation = useMutation({
+		mutationFn: () => UserApi.preview({ username }),
+		onSuccess: (response) => {
+			setUser(response.user);
+			setProfile(response.profile);
+			setFollowers(Number(response.user.followers));
+			setIsFollowing(response.user.isFollowing);
+		},
+	});
+
 	useEffect(() => {
-		setIsLoading(true);
-		ApiService.fetchJson(route("api.user.preview", { username }), {}, { method: "GET" }).then(
-			(response) => {
-				setUser(response.user);
-				setProfile(response.profile);
-				setFollowers(Number(response.user.followers));
-				setIsFollowing(response.user.isFollowing);
-				setIsLoading(false);
-			},
-		);
+		previewMutation.mutate();
 	}, []);
 
-	const handleFollow = async () => {
-		ApiService.fetchJson(
-			route("api.react.follow", { type: "user", slug: user.username }),
-			{},
-			{ method: "POST" },
-		)
-			.then(() => {
-				setIsFollowing(!isFollowing);
-				setFollowers(isFollowing ? followers - 1 : followers + 1);
-			})
-			.catch(() => {
-				toast({
-					title: t("Error"),
-					description: t("You can react to the same user once a day"),
-					variant: "destructive",
-				});
+	const followMutation = useMutation({
+		mutationFn: () => ReactApi.follow({ type: "user", slug: user.username }),
+		onSuccess: () => {
+			setIsFollowing(!isFollowing);
+			setFollowers(isFollowing ? followers - 1 : followers + 1);
+		},
+		onError: () => {
+			toast({
+				title: t("Error"),
+				description: t("You can react to the same user once a day"),
+				variant: "destructive",
 			});
+		},
+	});
+
+	const handleFollow = async () => {
+		followMutation.mutate();
 	};
 
-	if (isLoading) {
+	if (previewMutation.isPending) {
 		return (
 			<div className="flex justify-center py-8">
 				<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>

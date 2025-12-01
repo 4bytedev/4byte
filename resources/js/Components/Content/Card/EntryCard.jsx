@@ -16,10 +16,11 @@ import {
 	ThumbsUp,
 	Trash,
 } from "lucide-react";
-import ApiService from "@/Services/ApiService";
 import { useTranslation } from "react-i18next";
 import { toast } from "@/Hooks/useToast";
 import { Link } from "@inertiajs/react";
+import { useMutation } from "@tanstack/react-query";
+import ReactApi from "@/Api/ReactApi";
 
 export function EntryCard({
 	user,
@@ -45,61 +46,77 @@ export function EntryCard({
 	const { t } = useTranslation();
 	const hasMedia = media && media.length > 0;
 
-	const handleLike = () => {
-		if (!authStore.isAuthenticated) return;
-		ApiService.fetchJson(route("api.react.like", { type: "entry", slug: slug }))
-			.then(() => {
-				if (isLiked) {
-					setIsLiked(false);
-					setLikes(likes - 1);
-				} else {
-					if (isDisliked) {
-						setIsDisliked(false);
-						setDislikes(dislikes - 1);
-					}
-					setIsLiked(true);
-					setLikes(likes + 1);
-				}
-			})
-			.catch(() => {
-				toast({
-					title: t("Error"),
-					description: t("You can react to the same entry once a day"),
-					variant: "destructive",
-				});
-			});
-	};
-
-	const handleDislike = () => {
-		if (!authStore.isAuthenticated) return;
-		ApiService.fetchJson(route("api.react.dislike", { type: "entry", slug: slug }))
-			.then(() => {
+	const likeMutation = useMutation({
+		mutationFn: () => ReactApi.like({ type: "entry", slug: slug }),
+		onSuccess: () => {
+			if (isLiked) {
+				setIsLiked(false);
+				setLikes(likes - 1);
+			} else {
 				if (isDisliked) {
 					setIsDisliked(false);
 					setDislikes(dislikes - 1);
-				} else {
-					if (isLiked) {
-						setIsLiked(false);
-						setLikes(likes - 1);
-					}
-					setIsDisliked(true);
-					setDislikes(dislikes + 1);
 				}
-			})
-			.catch(() => {
-				toast({
-					title: t("Error"),
-					description: t("You can react to the same entry once a day"),
-					variant: "destructive",
-				});
+				setIsLiked(true);
+				setLikes(likes + 1);
+			}
+		},
+		onError: () => {
+			toast({
+				title: t("Error"),
+				description: t("You can react to the same entry once a day"),
+				variant: "destructive",
 			});
+		},
+	});
+
+	const handleLike = () => {
+		if (!authStore.isAuthenticated) return;
+
+		likeMutation.mutate();
 	};
+
+	const dislikeMutation = useMutation({
+		mutationFn: () => ReactApi.dislike({ type: "entry", slug: slug }),
+		onSuccess: () => {
+			if (isDisliked) {
+				setIsDisliked(false);
+				setDislikes(dislikes - 1);
+			} else {
+				if (isLiked) {
+					setIsLiked(false);
+					setLikes(likes - 1);
+				}
+				setIsDisliked(true);
+				setDislikes(dislikes + 1);
+			}
+		},
+		onError: () => {
+			toast({
+				title: t("Error"),
+				description: t("You can react to the same entry once a day"),
+				variant: "destructive",
+			});
+		},
+	});
+
+	const handleDislike = () => {
+		if (!authStore.isAuthenticated) return;
+
+		dislikeMutation.mutate();
+	};
+
+	const saveMutation = useMutation({
+		mutationFn: () => ReactApi.save({ type: "entry", slug: slug }),
+		onSuccess: () => {
+			setIsSaved(!isSaved);
+		},
+	});
 
 	const handleSave = () => {
 		if (!authStore.isAuthenticated) return;
-		ApiService.fetchJson(route("api.react.save", { type: "entry", slug: slug })).then(() => {
-			setIsSaved(!isSaved);
-		});
+
+		saveMutation.mutate();
 	};
 
 	const handleShare = () => {

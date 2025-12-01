@@ -137,6 +137,7 @@
     "Comment is required": "Comment is required",
     "Comment must be at least 20 characters": "Comment must be at least 20 characters",
     "Share your thoughts...": "Share your thoughts...,",
+    "Post Comment": "Post Comment",
     "Reply": "Reply",
     "replies": "{{count}} Reply",
 
@@ -165,7 +166,7 @@
     "You can react to the same comment once a day": "You can react to the same comment once a day",
     "Contents": "Contents",
 
-    "What do you thinking?": "What do you thinking?",
+    "What are you thinking?": "What are you thinking?",
     "Write": "Write",
     "Article": "Article",
 
@@ -267,5 +268,7 @@
     "Enter your new password below": "Enter your new password below",
     "Update password": "Update password",
 
-    "Invalid URL": "Invalid URL"
+    "Invalid URL": "Invalid URL",
+
+    "You can react to the same course once a day": "You can react to the same course once a day"
 }

@@ -119,7 +119,7 @@ class ReactController extends Controller
         [$baseClass, $itemId] = $request->resolveTarget();
         $userId               = Auth::id();
         $content              = $request->input('content');
-        $parentId             = $request->route('parent', null);
+        $parentId             = $request->input('parent', null);
 
         $comment = $this->reactService->insertComment($baseClass, $itemId, $content, $userId, $parentId);
 

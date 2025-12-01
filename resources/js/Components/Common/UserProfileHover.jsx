@@ -4,11 +4,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/Components/Ui/Avatar";
 import { Button } from "@/Components/Ui/Form/Button";
 import { Card, CardContent } from "@/Components/Ui/Card";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/Components/Ui/HoverCard";
-import ApiService from "@/Services/ApiService";
 import { Link } from "@inertiajs/react";
 import { useAuthStore } from "@/Stores/AuthStore";
 import { Trans, useTranslation } from "react-i18next";
 import { toast } from "@/Hooks/useToast";
+import { useMutation } from "@tanstack/react-query";
+import ReactApi from "@/Api/ReactApi";
+import UserApi from "@/Api/UserApi";
 
 export function UserProfileHover({ username, children }) {
 	const [isFollowing, setIsFollowing] = useState(false);
@@ -16,32 +18,28 @@ export function UserProfileHover({ username, children }) {
 	const [followings, setFollowings] = useState(0);
 	const [user, setUser] = useState({});
 	const [profile, setProfile] = useState({});
-	const [isLoading, setIsLoading] = useState(true);
 	const [hasFetched, setHasFetched] = useState(false);
 	const authStore = useAuthStore();
 	const [isOwnProfile, setIsOwnProfile] = useState(false);
 	const hoverTimeoutRef = useRef(null);
 	const { t } = useTranslation();
 
+	const previewMutation = useMutation({
+		mutationFn: () => UserApi.preview({ username }),
+		onSuccess: (response) => {
+			setUser(response.user);
+			setProfile(response.profile);
+			setFollowers(Number(response.user.followers));
+			setFollowings(Number(response.user.followings));
+			setIsFollowing(response.user.isFollowing);
+			setHasFetched(true);
+		},
+	});
+
 	const handleHover = () => {
 		if (hasFetched) return;
-		setIsLoading(true);
-
 		hoverTimeoutRef.current = setTimeout(() => {
-			setIsLoading(true);
-			ApiService.fetchJson(
-				route("api.user.preview", { username }),
-				{},
-				{ method: "GET" },
-			).then((response) => {
-				setUser(response.user);
-				setProfile(response.profile);
-				setFollowers(Number(response.user.followers));
-				setFollowings(Number(response.user.followings));
-				setIsFollowing(response.user.isFollowing);
-				setIsLoading(false);
-				setHasFetched(true);
-			});
+			previewMutation.mutate();
 		}, 600);
 	};
 
@@ -61,26 +59,26 @@ export function UserProfileHover({ username, children }) {
 	}, []);
 
 	useEffect(() => {
-		setIsOwnProfile(authStore.isAuthenticated && user.username == authStore.user.username);
+		setIsOwnProfile(authStore.isAuthenticated && username == authStore.user.username);
 	}, [user]);
 
-	const handleFollow = async () => {
-		ApiService.fetchJson(
-			route("api.react.follow", { type: "user", slug: user.username }),
-			{},
-			{ method: "POST" },
-		)
-			.then(() => {
-				setIsFollowing(!isFollowing);
-				setFollowers(isFollowing ? followers - 1 : followers + 1);
-			})
-			.catch(() => {
-				toast({
-					title: t("Error"),
-					description: t("You can react to the same user once a day"),
-					variant: "destructive",
-				});
+	const followMutation = useMutation({
+		mutationFn: () => ReactApi.follow({ type: "user", slug: username }),
+		onSuccess: () => {
+			setIsFollowing(!isFollowing);
+			setFollowers(isFollowing ? followers - 1 : followers + 1);
+		},
+		onError: () => {
+			toast({
+				title: t("Error"),
+				description: t("You can react to the same user once a day"),
+				variant: "destructive",
 			});
+		},
+	});
+
+	const handleFollow = () => {
+		followMutation.mutate();
 	};
 
 	return (
@@ -97,7 +95,7 @@ export function UserProfileHover({ username, children }) {
 			<HoverCardContent className="w-80" side="bottom" align="start">
 				<Card className="border-0 shadow-none">
 					<CardContent className="p-4">
-						{isLoading && (
+						{previewMutation.isPending && (
 							<div className="flex justify-center py-8">
 								<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
 							</div>
